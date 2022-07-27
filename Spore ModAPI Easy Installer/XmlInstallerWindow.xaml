@@ -1,0 +1,71 @@
+﻿<win:DecoratableWindow x:Class="Spore_ModAPI_Easy_Installer.XmlInstallerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Spore_ModAPI_Easy_Installer"
+        xmlns:ui="clr-namespace:ModApi.UI;assembly=ModApi.UI"
+        xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="XmlInstallerWindow" Width="600" Height="450" ResizeMode="NoResize" Closing="XmlInstallerWindow_Closing" Closed="XmlInstallerWindow_Closed"><!--Activated="XmlInstallerWindow_ActivatedDeactivated" Deactivated="XmlInstallerWindow_ActivatedDeactivated"-->
+    <win:DecoratableWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Themes/AlterMod.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </win:DecoratableWindow.Resources>
+    <win:DecoratableWindow.TitleBarContent>
+        <Grid Visibility="Collapsed" IsHitTestVisible="False" Margin="0,5">
+            <Image x:Name="BrandingCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform" IsHitTestVisible="False"/>
+        </Grid>
+    </win:DecoratableWindow.TitleBarContent>
+    <win:DecoratableWindow.FullWindowContent>
+        <ui:LoadingPanel x:Name="LoadingPanel" PreviewMouseLeftButtonDown="SplashBorder_PreviewMouseLeftButtonDown">Loading...</ui:LoadingPanel>
+    </win:DecoratableWindow.FullWindowContent>
+    <Grid x:Name="WindowBodyRootGrid">
+        <DockPanel>
+            <Border Style="{DynamicResource HorizontalBarBorderStyle}" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom">
+                <DockPanel>
+                    <Button x:Name="StartInstallationButton" DockPanel.Dock="Right" VerticalAlignment="Stretch" Margin="5" Padding="15,5" Click="StartInstallationButton_Click">Install</Button>
+                    <Button x:Name="StartUninstallationButton" DockPanel.Dock="Right" VerticalAlignment="Stretch" Margin="5" Padding="15,5" Visibility="Collapsed" Click="StartUninstallationButton_Click">Uninstall</Button>
+                    <ProgressBar x:Name="InstallProgressBar" Margin="5"/>
+                </DockPanel>
+            </Border>
+            <Border Style="{DynamicResource VerticalBarBorderStyle}" Width="225" DockPanel.Dock="Left" BorderThickness="0,0,1,0">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <StackPanel x:Name="ComponentListStackPanel" Orientation="Vertical" Visibility="Visible"/>
+                </ScrollViewer>
+            </Border>
+            <ScrollViewer x:Name="ComponentInfoScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Style="{DynamicResource ShadowScrollViewerStyle}">
+                <StackPanel x:Name="ComponentInfoStackPanel" Orientation="Vertical" Margin="20">
+                    <TextBlock x:Name="NameTextBlock" TextWrapping="Wrap" FontSize="18" Margin="0,0,0,20">MOD OR COMPONENT NAME</TextBlock>
+                    <Image x:Name="ComponentTopImage" HorizontalAlignment="Stretch" Stretch="Uniform" IsHitTestVisible="False" Visibility="Collapsed"/>
+                    <TextBlock x:Name="DescriptionTextBlock" TextWrapping="Wrap">MOD OR COMPONENT DESCRIPTION</TextBlock>
+                    <Image x:Name="ComponentBottomImage" HorizontalAlignment="Stretch" Stretch="Uniform" IsHitTestVisible="False" Source="{Binding Path=(Image.Source), ElementName=ComponentTopImage}" Visibility="Collapsed"/>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+        <StackPanel Orientation="Vertical" Margin="20" Visibility="Collapsed" VerticalAlignment="Top">
+            <TextBlock x:Name="InstallationCompleteHeaderTextBlock" TextWrapping="Wrap" FontSize="18" Margin="0,0,0,20">Installation complete!</TextBlock>
+            <DockPanel>
+                <Button x:Name="FinishButton" HorizontalAlignment="Right" DockPanel.Dock="Right" Click="FinishButton_Click">Finish</Button>
+                <TextBlock x:Name="InstallationCompleteDescriptionTextBlock" TextWrapping="Wrap">Your mod is now installed and ready for use. Enjoy!</TextBlock>
+            </DockPanel>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="20" Visibility="Collapsed" VerticalAlignment="Top">
+            <TextBlock x:Name="IncompatibleInstallerHeaderTextBlock" TextWrapping="Wrap" FontSize="18" Margin="0,0,0,20">Incompatible Mod</TextBlock>
+            <TextBlock x:Name="IncompatibleInstallerDescriptionTextBlock" TextWrapping="Wrap">Sorry, this mod requires a newer version of the Spore ModAPI Launcher Kit.</TextBlock>
+        </StackPanel>
+        <Grid Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch" Style="{DynamicResource ShadowScrollViewerStyle}">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                    <TextBlock x:Name="ErrorHeaderTextBlock" TextWrapping="Wrap" FontSize="18" Margin="0,0,0,20">Something Went Wrong</TextBlock>
+                    <TextBlock x:Name="ErrorDescriptionTextBlock" TextWrapping="Wrap" Margin="0,0,0,10">It seems that something went wrong while trying to start this mod's Installer. More information:</TextBlock>
+                    <TextBlock x:Name="ErrorInfoTextBlock" TextWrapping="Wrap">It seems that something went wrong while trying to start this mod's Installer.</TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</win:DecoratableWindow>

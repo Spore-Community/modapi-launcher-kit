@@ -1,0 +1,25 @@
+﻿<Window x:Class="Spore_ModAPI_Easy_Installer.ModInstalledWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Spore_ModAPI_Easy_Installer"
+        xmlns:ui="clr-namespace:ModApi.UI;assembly=ModApi.UI"
+        xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight" MaxWidth="400" ResizeMode="NoResize" Loaded="ModInstalledWindow_Loaded" Visibility="Visible" Closing="ModInstalledWindow_Closing">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Themes/AlterMod.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <StackPanel Orientation="Vertical">
+        <TextBlock x:Name="BodyTextBlock" Margin="8" FontSize="16" TextWrapping="Wrap">sample text</TextBlock>
+        <Border Style="{DynamicResource HorizontalBarBorderStyle}" BorderThickness="0,1,0,0" CornerRadius="0,0,2,2">
+            <Button x:Name="AcknowledgeButton" Visibility="Visible" Margin="5" Click="AcknowledgeButton_Click">OK</Button>
+        </Border>
+    </StackPanel>
+</Window>

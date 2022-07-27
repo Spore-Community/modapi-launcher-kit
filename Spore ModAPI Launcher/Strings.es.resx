@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ChooseGameVersion" xml:space="preserve">
+    <value>Su versión del juego no pudo ser detectada. Por favor seleccione su versión:</value>
+  </data>
+  <data name="ChooseGameVersionTitle" xml:space="preserve">
+    <value>Seleccione su versión del juego</value>
+  </data>
+  <data name="DownloadFixTitle" xml:space="preserve">
+    <value>Descargando el parche de ModAPI</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Descargando</value>
+  </data>
+  <data name="DownloadOriginFix" xml:space="preserve">
+    <value>Los usuarios de Origin necesitan descargar un archivo adicional para que ModAPI funcione correctamente. Si hace click en Aceptar, el launcher descargará y aplicará el archivo.</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ExtractingFiles" xml:space="preserve">
+    <value>Extrayendo archivos....</value>
+  </data>
+  <data name="FileNeeded" xml:space="preserve">
+    <value>Se necesita un archivo</value>
+  </data>
+  <data name="GalacticAdventuresNotExecuted" xml:space="preserve">
+    <value>Algo falló mientras se encendía el Spore: Aventuras Galácticas o mientras se inyectaban los mods. Puede que se abra el juego, pero algunos mods no funcionarán correctamente.\nSi ves este mensaje, por favor reporta este problema, junto con una captura de pantalla de este mensaje. Se abrirá en su navegador un foro en el que puede reportar el problema, pero si no se abre también puede encontrar el foro en el siguiente enlace:</value>
+  </data>
+  <data name="MightNotWork" xml:space="preserve">
+    <value>ModAPI necesita SPORE: Aventuras Galácticas y el parche de Spore 1.5.1 o superior para funcionar correctamente. Si su juego "crashea" (se para o aparece un error) o los mods de ModAPI no funcionan, instale SPORE: Aventuras Galácticas y descargue la última actualización en spore.com</value>
+  </data>
+  <data name="MightNotWorkTitle" xml:space="preserve">
+    <value>ModAPI podría no funcionar</value>
+  </data>
+  <data name="ProcessNotResumed" xml:space="preserve">
+    <value>El proceso no pudo ser resumido.</value>
+  </data>
+  <data name="ProcessNotStarted" xml:space="preserve">
+    <value>No se pudo iniciar el proceso.</value>
+  </data>
+  <data name="SteamLastVersion" xml:space="preserve">
+    <value>¿Tiene instalado el parche más reciente (publicado el 20 de Mayo 2017) instalado?</value>
+  </data>
+  <data name="SteamLastVersionTitle" xml:space="preserve">
+    <value>¿Tiene instalada la última versión?</value>
+  </data>
+  <data name="VersionNotDetected" xml:space="preserve">
+    <value>Su versión no pudo ser detectada, no se cargará ModAPI.</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Descarga completada. ¿Quiere ejecutar el juego ahora?</value>
+  </data>
+  <data name="DownloadCompleteTitle" xml:space="preserve">
+    <value>Descarga completada</value>
+  </data>
+  <data name="IncompatibleDarkInjection" xml:space="preserve">
+    <value>placeholder</value>
+  </data>
+  <data name="IncompatibleMod" xml:space="preserve">
+    <value>placeholder</value>
+  </data>
+</root>

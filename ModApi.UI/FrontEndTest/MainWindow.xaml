@@ -1,0 +1,37 @@
+﻿<win:DecoratableWindow x:Class="FrontEndTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontEndTest"
+        xmlns:ui="clr-namespace:ModApi.UI;assembly=ModApi.UI"
+        xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <win:DecoratableWindow.Resources>
+    </win:DecoratableWindow.Resources>
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox MinWidth="100">AAA</TextBox>
+            <Button x:Name="HideWindowButton" Click="HideWindowButton_Click">Temporarily hide window</Button>
+        </StackPanel>
+        <Border Style="{DynamicResource HorizontalBarBorderStyle}" VerticalAlignment="Bottom" BorderThickness="0,1,0,0" Height="Auto">
+            <StackPanel Orientation="Vertical" Margin="5">
+                <UniformGrid HorizontalAlignment="Left" Rows="1" Height="40" Margin="0,0,0,5" Width="750">
+                    <TextBlock VerticalAlignment="Center">Start9 Git Repos: </TextBlock>
+                    <Button Margin="5,0,0,0">start9</Button>
+                    <Button Margin="5,0,0,0">start9-ui</Button>
+                    <Button Margin="5,0,0,0">windows-sharp</Button>
+                    <Button Margin="5,0,0,0">View all Start9 repos...</Button>
+                </UniformGrid>
+                <UniformGrid HorizontalAlignment="Left" Rows="1" Height="40" Margin="0,0,0,5" Width="600">
+                    <TextBlock VerticalAlignment="Center">Connect:</TextBlock>
+                    <Button Margin="5,0,0,0">IRC</Button>
+                    <Button Margin="5,0,0,0">Discord</Button>
+                    <Button Margin="5,0,0,0">GitHub</Button>
+                </UniformGrid>
+                <TextBlock HorizontalAlignment="Left">Hope you have cookies enabled! We use session cookies to save theme data. [CLEAR COOKIES]</TextBlock>
+            </StackPanel>
+        </Border>
+    </Grid>
+</win:DecoratableWindow>
