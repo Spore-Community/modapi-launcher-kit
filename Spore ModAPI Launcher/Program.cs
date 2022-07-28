@@ -11,6 +11,9 @@ using System.IO;
 using System.IO.Compression;
 
 using ModAPI_Installers;
+using ModApi.UpdateManager;
+using System.Xml;
+using System.Reflection;
 
 namespace SporeModAPI_Launcher
 {
@@ -234,39 +237,47 @@ namespace SporeModAPI_Launcher
             Process.Start(ModApiHelpThreadURL);
         }
 
-        void InjectDLLs(string dllEnding)
-        { //coreLibs and mLibs
-            var baseFolder = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory;
+        void InjectDLLs(string dllEnding, List<string> dllExceptions)
+        { 
+            //coreLibs and mLibs
+            var baseFolder = new FileInfo(Assembly.GetEntryAssembly().Location).Directory;
             var coreFolder = Path.Combine(baseFolder.FullName, "coreLibs");
-            var mFolder = Path.Combine(baseFolder.FullName, "mLibs");
+            var mFolder    = Path.Combine(baseFolder.FullName, "mLibs");
             if (!Directory.Exists(mFolder))
                 Directory.CreateDirectory(mFolder);
+
             string libName = "SporeModAPI.lib";
             string MODAPI_DLL = "SporeModAPI-" + dllEnding + ".dll";
             string coreDllName = GameVersion.GetNewDLLName(_executableType);
             string coreDllOutPath = Path.Combine(mFolder, "SporeModAPI.dll");
+
+
             File.Copy(Path.Combine(coreFolder, libName), Path.Combine(mFolder, libName), true);
             File.Copy(Path.Combine(coreFolder, coreDllName), coreDllOutPath, true);
             Injector.InjectDLL(this.ProcessInfo, coreDllOutPath);
             //string legacyModApiDllOutPath = Path.Combine
             Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MODAPI_DLL));
+
             Program.CurrentError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-            foreach (string s in Directory.EnumerateFiles(mFolder).Where(x => (!Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase)) && x.ToLowerInvariant().EndsWith(".dll")))
+            foreach (string s in Directory.EnumerateFiles(mFolder)
+                                    .Where(x => !Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase) && 
+                                                x.ToLowerInvariant().EndsWith(".dll") &&
+                                                !dllExceptions.Contains(Path.GetFileName(x)))
+                    )
             {
-                int lastError2 = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
                 ERROR_TESTING_MSG("Now injecting: " + s);
                 Injector.InjectDLL(this.ProcessInfo, s);
-
-                lastError2 = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
             }
 
-            foreach (var file in baseFolder.EnumerateFiles("*" + dllEnding + ".dll").Where(x => (x.Name != MODAPI_DLL)))
+            foreach (var file in baseFolder
+                                    .EnumerateFiles("*" + dllEnding + ".dll")
+                                    .Where(x => x.Name != MODAPI_DLL && !dllExceptions.Contains(x.Name))
+                    )
             {
                 ERROR_TESTING_MSG("5.* Preparing " + file.Name);
                 // the ModAPI dll should already be loaded
                 if (file.Name != MODAPI_DLL)
                 {
-                    int lastError2 = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
                     ERROR_TESTING_MSG("5.* Injecting " + file.Name);
                     Injector.InjectDLL(this.ProcessInfo, file.FullName);
                     Program.CurrentError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
@@ -279,9 +290,11 @@ namespace SporeModAPI_Launcher
 
         void InjectNormalSporeProcess(string dllEnding)
         {
+            var dllExceptions = CheckOutdatedCoreDlls();
+
             CreateSporeProcess();
 
-            InjectDLLs(dllEnding);
+            InjectDLLs(dllEnding, dllExceptions);
 
             ResumeSporeProcess();
         }
@@ -291,6 +304,8 @@ namespace SporeModAPI_Launcher
         // Steam spore needs special treatment: the game will close if not executed through Steam
         void InjectSteamSporeProcess()
         {
+            var dllExceptions = CheckOutdatedCoreDlls();
+
             string steamPath = ProcessSteamPath();
             string sporeAppName = "SporeApp";
             steamPath = Path.Combine(steamPath, "Steam.exe");
@@ -341,7 +356,7 @@ namespace SporeModAPI_Launcher
             _executableType = GameVersionType.Steam_Patched;
             string dllEnding = GameVersion.VersionNames[(int)_executableType]; //string dllEnding = GameVersion.VersionNames[(int)this.ExecutableType];
 
-            InjectDLLs(dllEnding);
+            InjectDLLs(dllEnding, dllExceptions);
 
             // Resume the process again
             foreach (IntPtr pOpenThread in pOpenThreads)
@@ -603,6 +618,98 @@ namespace SporeModAPI_Launcher
                 ERROR_TESTING_MSG("FAILED TO INSPECT MOD CONFIGURATION NAMES\n" + ex);
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Checks that the current core DLLs version is high enough for all installed mods.
+        /// It will show an error dialog for those mods that won't be loaded becaues they
+        /// require a higher version.
+        /// Returns a list of all .dll files that MUST NOT be loaded.
+        /// </summary>
+        /// <returns></returns>
+        static List<string> CheckOutdatedCoreDlls()
+        {
+            var disabledDlls = new List<string>();
+
+            string modConfigsPath = Path.Combine(
+                Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), 
+                "ModConfigs");
+
+            var disabledMods = new List<string>();
+
+            var coreDllsVersion = UpdateManager.CurrentDllsBuild;
+            foreach (var modFolder in Directory.GetDirectories(modConfigsPath))
+            {
+                var xmlPath = Path.Combine(modFolder, "ModInfo.xml");
+                if (File.Exists(xmlPath))
+                {
+                    try
+                    {
+                        var document = new XmlDocument();
+                        document.Load(xmlPath);
+                        var modNode = document.SelectSingleNode("/mod");
+
+                        if (modNode != null &&
+                            modNode.Attributes["dllsBuild"] != null &&
+                            Version.TryParse(modNode.Attributes["dllsBuild"].Value, out Version requiredDllsVersion) &&
+                            requiredDllsVersion > coreDllsVersion)
+                        {
+                            disabledMods.Add(GetModDisplayName(modNode));
+
+                            foreach (var file in GetModFiles(modNode))
+                            {
+                                if (file.EndsWith(".dll"))
+                                {
+                                    disabledDlls.Add(Path.GetFileName(file));
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            if (disabledMods.Any())
+            {
+                var sb = new StringBuilder();
+                sb.Append("The following mods cannot be loaded because they require a greater version of the ModAPI Core DLLs. " +
+                    "Please, restart the launcher and allow it to update.\n");
+                foreach (var mod in disabledMods)
+                {
+                    sb.Append(" - ");
+                    sb.Append(mod);
+                    sb.Append("\n");
+                }
+
+                MessageBox.Show(sb.ToString(), "Error: some mods could not be loaded");
+            }
+
+            return disabledDlls;
+        }
+
+        private static string GetModDisplayName(XmlNode modNode)
+        {
+            return modNode.Attributes["displayName"]?.Value ?? modNode.Attributes["unique"]?.Value;
+        }
+
+        private static List<string> GetModFiles(XmlNode componentNode)
+        {
+            var modFiles = new List<string>();
+            foreach (XmlNode child in componentNode.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "component":
+                    case "prerequisite":
+                    case "compatfile":
+                        modFiles.AddRange(child.InnerText.Split('?'));
+                        break;
+                    case "componentgroup":
+                        modFiles.AddRange(GetModFiles(child));
+                        break;
+                }
+            }
+            return modFiles;
         }
     }
 }
