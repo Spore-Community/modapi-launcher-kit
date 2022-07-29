@@ -174,4 +174,12 @@
   <data name="IncompatibleMod" xml:space="preserve">
     <value>Incompatible Mod Detected</value>
   </data>
+  <data name="UnsupportedDllVersion" xml:space="preserve">
+    <value>The following mods cannot be loaded because they require a greater version of the ModAPI Core DLLs.
+Please, restart the launcher and allow it to update.
+</value>
+  </data>
+  <data name="UnsupportedDllVersionTitle" xml:space="preserve">
+    <value>Error: some mods could not be loaded</value>
+  </data>
 </root>

@@ -159,4 +159,11 @@
   <data name="ModNotInstalled2" xml:space="preserve">
     <value>" no pudo ser instalado.</value>
   </data>
+  <data name="UnsupportedDllVersion" xml:space="preserve">
+    <value> no se ha podido instalar, ya que requiere una versión más reciente de los ModAPI Core DLLs.
+Por favor, reinicia el launcher y permite que se actualice.</value>
+  </data>
+  <data name="UnsupportedDllVersionTitle" xml:space="preserve">
+    <value>Error: el mod no se puede instalar</value>
+  </data>
 </root>

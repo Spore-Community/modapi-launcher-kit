@@ -15,6 +15,8 @@ using System.Diagnostics;
 using ModAPI_Installers;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.Xml;
+using ModApi.UpdateManager;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -505,6 +507,30 @@ namespace Spore_ModAPI_Easy_Installer
         [DllImport("user32.dll", ExactSpelling = true)]
         static extern bool IsWindow(IntPtr hWnd);
 
+        private static bool CheckModCoreDllsVersion(ZipArchiveEntry xmlEntry)
+        {
+            try
+            {
+                using (var stream = xmlEntry.Open())
+                {
+                    var document = new XmlDocument();
+                    document.Load(stream);
+                    var modNode = document.SelectSingleNode("/mod");
+
+                    if (modNode != null &&
+                        modNode.Attributes["dllsBuild"] != null &&
+                        Version.TryParse(modNode.Attributes["dllsBuild"].Value, out Version requiredDllsVersion) &&
+                        requiredDllsVersion > UpdateManager.CurrentDllsBuild)
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch {
+            }
+            return true;
+        }
+
         static ResultType TryExecuteInstaller(string inputFile, string modName)
         {
             string tempFile = null;
@@ -517,6 +543,13 @@ namespace Spore_ModAPI_Easy_Installer
 
                 if (xmlEntry != null)
                 {
+                    if (!CheckModCoreDllsVersion(xmlEntry))
+                    {
+                        MessageBox.Show($"\"{modName}\"{Strings.UnsupportedDllVersion}", 
+                            Strings.UnsupportedDllVersionTitle);
+                        return ResultType.ModNotInstalled;
+                    }
+
                     /*XmlDocument Document = new XmlDocument();
                     archive.GetEntry("ModInfo.xml").Open();
                     modName*/

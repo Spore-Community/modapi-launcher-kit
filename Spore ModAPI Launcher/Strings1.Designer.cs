@@ -19,7 +19,7 @@ namespace SporeModAPI_Launcher {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -219,6 +219,26 @@ namespace SporeModAPI_Launcher {
         public static string SteamLastVersionTitle {
             get {
                 return ResourceManager.GetString("SteamLastVersionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following mods cannot be loaded because they require a greater version of the ModAPI Core DLLs.
+        ///Please, restart the launcher and allow it to update.
+        ///.
+        /// </summary>
+        public static string UnsupportedDllVersion {
+            get {
+                return ResourceManager.GetString("UnsupportedDllVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: some mods could not be loaded.
+        /// </summary>
+        public static string UnsupportedDllVersionTitle {
+            get {
+                return ResourceManager.GetString("UnsupportedDllVersionTitle", resourceCulture);
             }
         }
         

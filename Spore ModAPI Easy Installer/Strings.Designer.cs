@@ -19,7 +19,7 @@ namespace Spore_ModAPI_Easy_Installer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -183,6 +183,25 @@ namespace Spore_ModAPI_Easy_Installer {
         internal static string ModNotInstalled2 {
             get {
                 return ResourceManager.GetString("ModNotInstalled2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  cannot be installed, because it requires a greater version of the ModAPI Core DLLs.
+        ///Please, restart the launcher and allow it to update..
+        /// </summary>
+        internal static string UnsupportedDllVersion {
+            get {
+                return ResourceManager.GetString("UnsupportedDllVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: mod cannot be installed.
+        /// </summary>
+        internal static string UnsupportedDllVersionTitle {
+            get {
+                return ResourceManager.GetString("UnsupportedDllVersionTitle", resourceCulture);
             }
         }
     }

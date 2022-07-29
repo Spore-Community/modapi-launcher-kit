@@ -177,4 +177,12 @@
   <data name="IncompatibleMod" xml:space="preserve">
     <value>placeholder</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value>Error: algunos mods no se han podido cargar</value>
+  </data>
+  <data name="UnsupportedDllVersion" xml:space="preserve">
+    <value>No se ha podido cargar los siguientes mods, ya que requieren una versión más reciente de los ModAPI Core DLLs.
+Por favor, reinicia el launcher y permite que se actualice.
+</value>
+  </data>
 </root>

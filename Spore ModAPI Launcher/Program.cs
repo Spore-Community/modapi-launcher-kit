@@ -672,8 +672,6 @@ namespace SporeModAPI_Launcher
             if (disabledMods.Any())
             {
                 var sb = new StringBuilder();
-                sb.Append("The following mods cannot be loaded because they require a greater version of the ModAPI Core DLLs. " +
-                    "Please, restart the launcher and allow it to update.\n");
                 foreach (var mod in disabledMods)
                 {
                     sb.Append(" - ");
@@ -681,7 +679,7 @@ namespace SporeModAPI_Launcher
                     sb.Append("\n");
                 }
 
-                MessageBox.Show(sb.ToString(), "Error: some mods could not be loaded");
+                MessageBox.Show(Strings.UnsupportedDllVersion + sb.ToString(), Strings.UnsupportedDllVersionTitle);
             }
 
             return disabledDlls;
