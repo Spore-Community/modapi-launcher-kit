@@ -1,9 +1,13 @@
-﻿using System;
+﻿using ModAPI_Installers;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 
@@ -54,11 +58,33 @@ namespace ModApi.UpdateManager
                 Process.GetCurrentProcess().Kill();
             }
 
+            if (DllsUpdater.HasDllsUpdate(out var githubRelease))
+            {
+                var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    var dialog = new ProgressDialog(
+                        CommonStrings.UpdatingDllsDialog + githubRelease.tag_name, 
+                        CommonStrings.UpdatingDllsDialogTitle, 
+                        (s, e) =>
+                    {
+                        DllsUpdater.UpdateDlls(githubRelease, progress =>
+                        {
+                            (s as BackgroundWorker).ReportProgress(progress);
+                        });
+                    });
+                    dialog.ShowDialog();
+                }
+            }
+
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
-            File.WriteAllText(Path.Combine(AppDataPath, "path.info"), Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString());
+
+            File.WriteAllText(Path.Combine(AppDataPath, "path.info"), Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString());
+
             if (File.Exists(UpdaterDestPath))
                 File.Delete(UpdaterDestPath);
+
             if (File.Exists(UpdaterOverridePath))
                 PathPrefix = File.ReadAllText(UpdaterOverridePath);
             if (!File.Exists(UpdaterBlockPath))

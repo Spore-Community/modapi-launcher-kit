@@ -19,7 +19,7 @@ namespace ModAPI_Installers {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class CommonStrings {
@@ -57,6 +57,24 @@ namespace ModAPI_Installers {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An update to the ModAPI DLLs is available. It includes new features and bugfixes, and is required to run modern mods. Do you want to download it?.
+        /// </summary>
+        public static string DllsUpdateAvailable {
+            get {
+                return ResourceManager.GetString("DllsUpdateAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ModAPI DLLs Update Available.
+        /// </summary>
+        public static string DllsUpdateAvailableTitle {
+            get {
+                return ResourceManager.GetString("DllsUpdateAvailableTitle", resourceCulture);
             }
         }
         
@@ -156,6 +174,24 @@ namespace ModAPI_Installers {
         public static string UnauthorizedAccessTitle {
             get {
                 return ResourceManager.GetString("UnauthorizedAccessTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ModAPI DLLs are updating to version .
+        /// </summary>
+        public static string UpdatingDllsDialog {
+            get {
+                return ResourceManager.GetString("UpdatingDllsDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ModAPI DLLs Updating.
+        /// </summary>
+        public static string UpdatingDllsDialogTitle {
+            get {
+                return ResourceManager.GetString("UpdatingDllsDialogTitle", resourceCulture);
             }
         }
     }

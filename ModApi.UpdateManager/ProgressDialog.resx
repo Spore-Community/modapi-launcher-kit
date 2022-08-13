@@ -117,49 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DllsUpdateAvailable" xml:space="preserve">
-    <value>Hay una actualización disponible de los ModAPI DLLs. Incluye nuevas características, y es necesaria para usar mods modernos. ¿Quieres descargarla?</value>
-  </data>
-  <data name="DllsUpdateAvailableTitle" xml:space="preserve">
-    <value>Actualización de ModAPI DLLs disponible</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="GalacticAdventuresNotFound" xml:space="preserve">
-    <value>No se encontró SPORE: Aventuras Galácticas.</value>
-  </data>
-  <data name="GalacticAdventuresNotFoundSpecifyManual" xml:space="preserve">
-    <value>No se encontró SPORE: Aventuras Galácticas. Por favor, especifique la carpeta de instalación manualmente (normalmente llamada SPORE_EP1 o SPORE Aventuras Galacticas).</value>
-  </data>
-  <data name="InvalidPath" xml:space="preserve">
-    <value>La ruta especificada no existe o no es válida.</value>
-  </data>
-  <data name="InvalidPathTitle" xml:space="preserve">
-    <value>Ruta no válida</value>
-  </data>
-  <data name="SporeNotFound" xml:space="preserve">
-    <value>No se encontró SPORE.</value>
-  </data>
-  <data name="SporeNotFoundSpecifyManual" xml:space="preserve">
-    <value>No se encontró Spore. Por favor, especifique la carpeta de instalación manualmente (normalmente llamada SPORE).</value>
-  </data>
-  <data name="SteamNotFound" xml:space="preserve">
-    <value>No se encontró STEAM.</value>
-  </data>
-  <data name="SteamNotFoundSpecifyManual" xml:space="preserve">
-    <value>No se encontró Steam. Por favor, especifique la carpeta de instalación manualmente (normalmente C:\Archivos de programa (x86)\Steam).</value>
-  </data>
-  <data name="UnauthorizedAccess" xml:space="preserve">
-    <value>Acceso no autorizado. Intente ejecutar el programa con Derechos de Administrador (Click derecho &gt; "Ejecutar como administrador").</value>
-  </data>
-  <data name="UnauthorizedAccessTitle" xml:space="preserve">
-    <value>Error: Acceso no autorizado</value>
-  </data>
-  <data name="UpdatingDllsDialog" xml:space="preserve">
-    <value>Actualizando ModAPI DLLs a la versión </value>
-  </data>
-  <data name="UpdatingDllsDialogTitle" xml:space="preserve">
-    <value>Actualizando ModAPI DLLs</value>
-  </data>
 </root>
