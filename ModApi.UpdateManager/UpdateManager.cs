@@ -10,6 +10,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using System.Xml;
 
 namespace ModApi.UpdateManager
 {
@@ -48,6 +49,41 @@ namespace ModApi.UpdateManager
                 else
                     return new Version(999, 999, 999, 999);
             }
+        }
+
+        /// <summary>
+        /// Core DLLs version is the one that came with the old launcher, 2.5.20
+        /// </summary>
+        public static Version OldLauncherDllsBuild = new Version(2, 5, 20, 0);
+
+        public static bool HasValidDllsVersion(XmlDocument document)
+        {
+            var modNode = document.SelectSingleNode("/mod");
+
+            if (modNode != null)
+            {
+                Version requiredDllsVersion = null;
+                if (modNode.Attributes["dllsBuild"] != null)
+                    Version.TryParse(modNode.Attributes["dllsBuild"].Value, out requiredDllsVersion);
+
+                if (requiredDllsVersion > OldLauncherDllsBuild)
+                {
+                    // Only allow these mods unless they have the newer installer version, to ensure they don't get released into old Launcher versions
+                    if (modNode.Attributes["installerSystemVersion"] == null ||
+                        !Version.TryParse(modNode.Attributes["installerSystemVersion"].Value, out Version installerSystemVersion) ||
+                        installerSystemVersion < new Version(1, 0, 1, 2))
+                    {
+                        return false;
+                    }
+                }
+
+                if (requiredDllsVersion != null &&
+                    requiredDllsVersion > CurrentDllsBuild)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static void CheckForUpdates()

@@ -198,7 +198,10 @@ namespace Spore_ModAPI_Easy_Installer
                 }*/
                 ModInfoVersion = Version.Parse(Document.SelectSingleNode("/mod").Attributes["installerSystemVersion"].Value);
 
-                if ((ModInfoVersion == new Version(1, 0, 0, 0)) || (ModInfoVersion == new Version(1, 0, 1, 0)) || (ModInfoVersion == new Version(1, 0, 1, 1)))
+                if ((ModInfoVersion == new Version(1, 0, 0, 0)) || 
+                    (ModInfoVersion == new Version(1, 0, 1, 0)) || 
+                    (ModInfoVersion == new Version(1, 0, 1, 1)) ||
+                    (ModInfoVersion == new Version(1, 0, 1, 2)))
                 {
                     if (File.Exists(Path.Combine(ModConfigPath, "Branding.png")))
                     {
@@ -224,7 +227,9 @@ namespace Spore_ModAPI_Easy_Installer
                         if (Document.SelectSingleNode("/mod").Attributes["mode"].Value == "compatOnly")
                             _installerMode = 1;
                     }
-                    else if ((ModInfoVersion == new Version(1, 0, 1, 0)) || (ModInfoVersion == new Version(1, 0, 1, 1)))
+                    else if ((ModInfoVersion == new Version(1, 0, 1, 0)) || 
+                             (ModInfoVersion == new Version(1, 0, 1, 1)) ||
+                             (ModInfoVersion == new Version(1, 0, 1, 2)))
                     {
                         _dontUseLegacyPackagePlacement = true;
                         _installerMode = 1;

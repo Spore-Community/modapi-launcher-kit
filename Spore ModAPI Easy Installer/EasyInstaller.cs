@@ -515,12 +515,8 @@ namespace Spore_ModAPI_Easy_Installer
                 {
                     var document = new XmlDocument();
                     document.Load(stream);
-                    var modNode = document.SelectSingleNode("/mod");
 
-                    if (modNode != null &&
-                        modNode.Attributes["dllsBuild"] != null &&
-                        Version.TryParse(modNode.Attributes["dllsBuild"].Value, out Version requiredDllsVersion) &&
-                        requiredDllsVersion > UpdateManager.CurrentDllsBuild)
+                    if (!UpdateManager.HasValidDllsVersion(document))
                     {
                         return false;
                     }

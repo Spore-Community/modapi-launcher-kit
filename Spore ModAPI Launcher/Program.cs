@@ -637,7 +637,6 @@ namespace SporeModAPI_Launcher
 
             var disabledMods = new List<string>();
 
-            var coreDllsVersion = UpdateManager.CurrentDllsBuild;
             foreach (var modFolder in Directory.GetDirectories(modConfigsPath))
             {
                 var xmlPath = Path.Combine(modFolder, "ModInfo.xml");
@@ -649,10 +648,7 @@ namespace SporeModAPI_Launcher
                         document.Load(xmlPath);
                         var modNode = document.SelectSingleNode("/mod");
 
-                        if (modNode != null &&
-                            modNode.Attributes["dllsBuild"] != null &&
-                            Version.TryParse(modNode.Attributes["dllsBuild"].Value, out Version requiredDllsVersion) &&
-                            requiredDllsVersion > coreDllsVersion)
+                        if (!UpdateManager.HasValidDllsVersion(document))
                         {
                             disabledMods.Add(GetModDisplayName(modNode));
 
