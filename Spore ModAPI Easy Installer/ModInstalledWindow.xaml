@@ -8,7 +8,7 @@
         xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        SizeToContent="WidthAndHeight" MaxWidth="400" ResizeMode="NoResize" Loaded="ModInstalledWindow_Loaded" Visibility="Visible" Closing="ModInstalledWindow_Closing">
+        SizeToContent="WidthAndHeight" MaxWidth="400" MaxHeight="500" ResizeMode="NoResize" Loaded="ModInstalledWindow_Loaded" Visibility="Visible" Closing="ModInstalledWindow_Closing">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -16,10 +16,13 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <StackPanel Orientation="Vertical">
-        <TextBlock x:Name="BodyTextBlock" Margin="8" FontSize="16" TextWrapping="Wrap">sample text</TextBlock>
-        <Border Style="{DynamicResource HorizontalBarBorderStyle}" BorderThickness="0,1,0,0" CornerRadius="0,0,2,2">
+    <DockPanel>
+        <TextBlock x:Name="HeaderTextBlock" FontSize="16" TextWrapping="Wrap" DockPanel.Dock="Top">Your selected mods are done installing.</TextBlock>
+        <Border Style="{DynamicResource HorizontalBarBorderStyle}" BorderThickness="0,1,0,0" CornerRadius="0,0,2,2" DockPanel.Dock="Bottom">
             <Button x:Name="AcknowledgeButton" Visibility="Visible" Margin="5" Click="AcknowledgeButton_Click">OK</Button>
         </Border>
-    </StackPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="8">
+            <TextBlock x:Name="BodyTextBlock" TextWrapping="Wrap">sample text</TextBlock>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

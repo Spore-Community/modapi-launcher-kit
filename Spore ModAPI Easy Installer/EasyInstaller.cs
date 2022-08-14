@@ -896,7 +896,7 @@ namespace Spore_ModAPI_Easy_Installer
             Thread thread = new Thread(() =>
             {
                 //ModList.Save();
-                var win = ModInstalledWindow.GetDialog("Your selected mods are done installing.\n" + outcome, Strings.InstallationCompleted);
+                var win = ModInstalledWindow.GetDialog(outcome, Strings.InstallationCompleted); //"Your selected mods are done installing.\n" + 
                 win.Closed += (snedre, rags) => Process.GetCurrentProcess().Kill();
                 win.ShowDialog();
             });
