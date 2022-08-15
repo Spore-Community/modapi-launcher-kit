@@ -1,17 +1,30 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2011
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spore ModAPI Launcher", "Spore ModAPI Launcher\Spore ModAPI Launcher.csproj", "{A55865E4-37A7-4414-8CF8-0BE06A1E3DAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63A82229-5162-4B3B-8C64-0172D3B70390} = {63A82229-5162-4B3B-8C64-0172D3B70390}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModAPI Installers", "ModAPI Installers\ModAPI Installers.csproj", "{73E87191-F4BA-4EA0-A60E-A89143EAA15C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spore ModAPI Easy Installer", "Spore ModAPI Easy Installer\Spore ModAPI Easy Installer.csproj", "{893C05C8-B6AB-4920-A98D-5640CFFE85D4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63A82229-5162-4B3B-8C64-0172D3B70390} = {63A82229-5162-4B3B-8C64-0172D3B70390}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spore ModAPI Easy Uninstaller", "Spore ModAPI Easy Uninstaller\Spore ModAPI Easy Uninstaller.csproj", "{2AEC07B2-7EDE-492A-A317-EE23BF5D2D23}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63A82229-5162-4B3B-8C64-0172D3B70390} = {63A82229-5162-4B3B-8C64-0172D3B70390}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModApi.UpdateManager", "ModApi.UpdateManager\ModApi.UpdateManager.csproj", "{B2DA8F97-4AF4-48C1-BE95-B1299912EE65}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{03F7F4AE-9714-43DE-8020-A3EDC192DA3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModApi.UI", "ModApi.UI\ModApi.UI\ModApi.UI.csproj", "{63A82229-5162-4B3B-8C64-0172D3B70390}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +52,16 @@ Global
 		{B2DA8F97-4AF4-48C1-BE95-B1299912EE65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2DA8F97-4AF4-48C1-BE95-B1299912EE65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2DA8F97-4AF4-48C1-BE95-B1299912EE65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63A82229-5162-4B3B-8C64-0172D3B70390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63A82229-5162-4B3B-8C64-0172D3B70390}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63A82229-5162-4B3B-8C64-0172D3B70390}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63A82229-5162-4B3B-8C64-0172D3B70390}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63A82229-5162-4B3B-8C64-0172D3B70390} = {03F7F4AE-9714-43DE-8020-A3EDC192DA3D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37A80163-4518-4039-BEFD-9F5F0D42DE8B}
