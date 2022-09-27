@@ -73,7 +73,12 @@ namespace ModApi.UpdateManager
                         !Version.TryParse(modNode.Attributes["installerSystemVersion"].Value, out Version installerSystemVersion) ||
                         installerSystemVersion < new Version(1, 0, 1, 2))
                     {
-                        return false;
+                        // Some mods already existed with newer DLL version but same installerSystemVersion
+                        // We make exceptions for them here
+                        string unique = modNode.Attributes["unique"] == null ? "" : modNode.Attributes["unique"].Value;
+                        if (!((unique == "AssetSharing" || unique == "CaptainVoiceDiversity") &&
+                              requiredDllsVersion.Major == 2 && requiredDllsVersion.Minor == 5 && requiredDllsVersion.Build == 179))
+                            return false;
                     }
                 }
 
