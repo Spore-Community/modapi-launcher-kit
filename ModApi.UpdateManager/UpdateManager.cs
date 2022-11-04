@@ -99,25 +99,6 @@ namespace ModApi.UpdateManager
                 Process.GetCurrentProcess().Kill();
             }
 
-            if (DllsUpdater.HasDllsUpdate(out var githubRelease))
-            {
-                var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes)
-                {
-                    var dialog = new ProgressDialog(
-                        CommonStrings.UpdatingDllsDialog + githubRelease.tag_name, 
-                        CommonStrings.UpdatingDllsDialogTitle, 
-                        (s, e) =>
-                    {
-                        DllsUpdater.UpdateDlls(githubRelease, progress =>
-                        {
-                            (s as BackgroundWorker).ReportProgress(progress);
-                        });
-                    });
-                    dialog.ShowDialog();
-                }
-            }
-
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
 
@@ -159,6 +140,25 @@ namespace ModApi.UpdateManager
                 }*/
                 try
                 {
+                    if (DllsUpdater.HasDllsUpdate(out var githubRelease))
+                    {
+                        var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            var dialog = new ProgressDialog(
+                                CommonStrings.UpdatingDllsDialog + githubRelease.tag_name,
+                                CommonStrings.UpdatingDllsDialogTitle,
+                                (s, e) =>
+                                {
+                                    DllsUpdater.UpdateDlls(githubRelease, progress =>
+                                    {
+                                        (s as BackgroundWorker).ReportProgress(progress);
+                                    });
+                                });
+                            dialog.ShowDialog();
+                        }
+                    }
+
                     if (File.Exists(MaintenancePath))
                         File.Delete(MaintenancePath);
 
