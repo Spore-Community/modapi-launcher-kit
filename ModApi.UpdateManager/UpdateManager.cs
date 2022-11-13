@@ -140,25 +140,6 @@ namespace ModApi.UpdateManager
                 }*/
                 try
                 {
-                    if (DllsUpdater.HasDllsUpdate(out var githubRelease))
-                    {
-                        var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            var dialog = new ProgressDialog(
-                                CommonStrings.UpdatingDllsDialog + githubRelease.tag_name,
-                                CommonStrings.UpdatingDllsDialogTitle,
-                                (s, e) =>
-                                {
-                                    DllsUpdater.UpdateDlls(githubRelease, progress =>
-                                    {
-                                        (s as BackgroundWorker).ReportProgress(progress);
-                                    });
-                                });
-                            dialog.ShowDialog();
-                        }
-                    }
-
                     if (File.Exists(MaintenancePath))
                         File.Delete(MaintenancePath);
 
@@ -272,6 +253,25 @@ namespace ModApi.UpdateManager
                         else
                         {
 
+                        }
+
+                        if (DllsUpdater.HasDllsUpdate(out var githubRelease))
+                        {
+                            var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                var dialog = new ProgressDialog(
+                                    CommonStrings.UpdatingDllsDialog + githubRelease.tag_name,
+                                    CommonStrings.UpdatingDllsDialogTitle,
+                                    (s, e) =>
+                                    {
+                                        DllsUpdater.UpdateDlls(githubRelease, progress =>
+                                        {
+                                            (s as BackgroundWorker).ReportProgress(progress);
+                                        });
+                                    });
+                                dialog.ShowDialog();
+                            }
                         }
                     }
                     else if (maintenance && !Development)
