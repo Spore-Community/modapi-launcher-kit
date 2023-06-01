@@ -637,31 +637,34 @@ namespace SporeModAPI_Launcher
 
             var disabledMods = new List<string>();
 
-            foreach (var modFolder in Directory.GetDirectories(modConfigsPath))
+            if (Directory.Exists(modConfigsPath))
             {
-                var xmlPath = Path.Combine(modFolder, "ModInfo.xml");
-                if (File.Exists(xmlPath))
+                foreach (var modFolder in Directory.GetDirectories(modConfigsPath))
                 {
-                    try
+                    var xmlPath = Path.Combine(modFolder, "ModInfo.xml");
+                    if (File.Exists(xmlPath))
                     {
-                        var document = new XmlDocument();
-                        document.Load(xmlPath);
-                        var modNode = document.SelectSingleNode("/mod");
-
-                        if (!UpdateManager.HasValidDllsVersion(document))
+                        try
                         {
-                            disabledMods.Add(GetModDisplayName(modNode));
+                            var document = new XmlDocument();
+                            document.Load(xmlPath);
+                            var modNode = document.SelectSingleNode("/mod");
 
-                            foreach (var file in GetModFiles(modNode))
+                            if (!UpdateManager.HasValidDllsVersion(document))
                             {
-                                if (file.EndsWith(".dll"))
+                                disabledMods.Add(GetModDisplayName(modNode));
+
+                                foreach (var file in GetModFiles(modNode))
                                 {
-                                    disabledDlls.Add(Path.GetFileName(file));
+                                    if (file.EndsWith(".dll"))
+                                    {
+                                        disabledDlls.Add(Path.GetFileName(file));
+                                    }
                                 }
                             }
                         }
+                        catch { }
                     }
-                    catch { }
                 }
             }
 
