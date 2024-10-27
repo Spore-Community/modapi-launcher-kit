@@ -13,6 +13,7 @@ namespace ModAPI_Installers
         Origin_Patched,
         Steam,
         Steam_Patched,
+        GoG_Oct24,
 
         None
     }
@@ -26,7 +27,8 @@ namespace ModAPI_Installers
                                        /* ORIGIN */ 31347984,
                                        /* ORIGIN_P */ 24898224,
                                        /* STEAM */  24888320,
-                                       /* STEAM_P */24885248};
+                                       /* STEAM_P */24885248,
+                                       /* GOG_OCT24 */24895536};
 
         public static string[] VersionNames = { 
                                                   "disk", 
@@ -34,6 +36,7 @@ namespace ModAPI_Installers
                                                   "steam_patched",  // origin uses the steam_patched one
                                                   "steam", 
                                                   "steam_patched", 
+                                                  "steam_patched",  // in GoG executable, addresses did not change in October 2024 update
                                                   null
                                               };
 
@@ -42,6 +45,7 @@ namespace ModAPI_Installers
                                                   "SporeApp.exe", 
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
+                                                  "SporeApp.exe", 
                                                   "SporeApp.exe", 
                                                   "SporeApp.exe", 
                                                   null
@@ -75,7 +79,7 @@ namespace ModAPI_Installers
         {
             if (type == GameVersionType.Disk)
                 return "SporeModAPI.disk.dll";
-            else if ((type == GameVersionType.Origin) || (type == GameVersionType.Origin_Patched) || (type == GameVersionType.Steam_Patched))
+            else if ((type == GameVersionType.Origin) || (type == GameVersionType.Origin_Patched) || (type == GameVersionType.Steam_Patched) || (type == GameVersionType.GoG_Oct24))
                 return "SporeModAPI.march2017.dll";
             else
             {
