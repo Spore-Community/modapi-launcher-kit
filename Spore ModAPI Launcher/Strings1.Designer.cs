@@ -61,6 +61,27 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not apply the Steam fix. To apply it, you can do one of these two options:
+        /// - Re-execute the Launcher with Administrator Privileges.
+        ///or
+        /// - Create a file called &apos;steam_appid.txt&apos;, with the numbers &apos;17390&apos; inside, in the folder $PATH$.
+        /// </summary>
+        public static string CannotApplySteamFix {
+            get {
+                return ResourceManager.GetString("CannotApplySteamFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not apply the Steam fix.
+        /// </summary>
+        public static string CannotApplySteamFixTitle {
+            get {
+                return ResourceManager.GetString("CannotApplySteamFixTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your game version could not be detected. Please choose your version:.
         /// </summary>
         public static string ChooseGameVersion {

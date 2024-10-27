@@ -102,8 +102,15 @@ namespace SporeModAPI_Launcher
         {
             try
             {
+                // We try a new approach for Steam users.
+                // Before, we used Steam to launch the game and tried to find the new process and inject it.
+                // However, when the injection happens the game already executed a bit, so mods fail.
+                // Instead, we create a steam_appid.txt that allows us to execute SporeApp.exe directly
+                bool forceOldSteam = LauncherSettings.ForceOldSteamMethod;
+                bool sporeIsInstalledOnSteam = SporePath.SporeIsInstalledOnSteam();
+
                 // Steam users need to do something different
-                if (!SporePath.SporeIsInstalledOnSteam())
+                if (!(sporeIsInstalledOnSteam && forceOldSteam))
                 {
                     if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath != null)
                         this.ExecutablePath = LauncherSettings.ForcedGalacticAdventuresSporeAppPath;
@@ -126,6 +133,8 @@ namespace SporeModAPI_Launcher
                     if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
                     {
                         this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
+
+                        ERROR_TESTING_MSG("2.0. Executable type: " + this.ExecutablePath);
 
                         this.ProcessExecutableType();
 
@@ -173,6 +182,23 @@ namespace SporeModAPI_Launcher
                         if (!HandleOriginUsers())
                         {
                             return;
+                        }
+                    }
+
+                    if (sporeIsInstalledOnSteam && !forceOldSteam)
+                    {
+                        ERROR_TESTING_MSG("3.5: Applying steam fix");
+                        string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
+                        if (!File.Exists(steamAppIdPath))
+                        {
+                            try
+                            {
+                                File.WriteAllText(steamAppIdPath, "17390");
+                            }
+                            catch
+                            {
+                                MessageBox.Show(Strings.CannotApplySteamFix.Replace("$PATH$", this.SporebinPath), Strings.CannotApplySteamFixTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
                         }
                     }
 
@@ -458,6 +484,7 @@ namespace SporeModAPI_Launcher
         GameVersionType ProcessExecutableType()
         {
             GameVersionType executableType = GameVersion.DetectVersion(this.ExecutablePath);
+            ERROR_TESTING_MSG("2.1. File length: " + new System.IO.FileInfo(this.ExecutablePath).Length);
 
             // for debugging purposes
             //executableType = GameVersionType.None;

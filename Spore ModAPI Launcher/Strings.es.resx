@@ -185,4 +185,13 @@
 Por favor, reinicia el launcher y permite que se actualice.
 </value>
   </data>
+  <data name="CannotApplySteamFix" xml:space="preserve">
+    <value>No se ha podido aplicar el parche para Steam. Para aplicarlo, puedes seguir una de estas dos opciones:
+ - Vuelve a ejecutar el Launcher con privilegios de administrador.
+o
+ - Crea un fichero llamado 'steam_appid.txt', con los numeros '17390' dentro, en la carpeta $PATH$</value>
+  </data>
+  <data name="CannotApplySteamFixTitle" xml:space="preserve">
+    <value>No se ha podido aplicar el parche para Steam</value>
+  </data>
 </root>

@@ -23,7 +23,14 @@ namespace ModApi.Updater
             if (File.Exists(Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher\WpfUseSoftwareRendering.info")))
                 System.Windows.Media.RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-            Start();
+            try
+            {
+                Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         void Start()

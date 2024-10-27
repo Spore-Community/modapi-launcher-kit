@@ -182,4 +182,13 @@ Please, restart the launcher and allow it to update.
   <data name="UnsupportedDllVersionTitle" xml:space="preserve">
     <value>Error: some mods could not be loaded</value>
   </data>
+  <data name="CannotApplySteamFix" xml:space="preserve">
+    <value>Could not apply the Steam fix. To apply it, you can do one of these two options:
+ - Re-execute the Launcher with Administrator Privileges.
+or
+ - Create a file called 'steam_appid.txt', with the numbers '17390' inside, in the folder $PATH$</value>
+  </data>
+  <data name="CannotApplySteamFixTitle" xml:space="preserve">
+    <value>Could not apply the Steam fix</value>
+  </data>
 </root>
