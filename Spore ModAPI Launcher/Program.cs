@@ -189,11 +189,12 @@ namespace SporeModAPI_Launcher
                     {
                         ERROR_TESTING_MSG("3.5: Applying steam fix");
                         string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
-                        if (!File.Exists(steamAppIdPath))
+                        //we have to use Spore GAs appid now, due to steam DRM :(
+                        if (!File.Exists(steamAppIdPath) || File.ReadAllText(steamAppIdPath) != "24720")
                         {
                             try
                             {
-                                File.WriteAllText(steamAppIdPath, "17390");
+                                File.WriteAllText(steamAppIdPath, "24720");
                             }
                             catch
                             {
@@ -212,8 +213,14 @@ namespace SporeModAPI_Launcher
                         return;
                     }
 
-                    InjectNormalSporeProcess(dllEnding);
-
+                    if (this._executableType == GameVersionType.Steam_Oct24)
+                    {
+                        InjectSteamOct2024SporeProcess(dllEnding);
+                    }
+                    else
+                    {
+                        InjectNormalSporeProcess(dllEnding);
+                    }
                 }
                 else
                 {
@@ -320,6 +327,33 @@ namespace SporeModAPI_Launcher
 
             CreateSporeProcess();
 
+            InjectDLLs(dllEnding, dllExceptions);
+
+            ResumeSporeProcess();
+        }
+
+        void InjectSteamOct2024SporeProcess(string dllEnding)
+        {
+            var dllExceptions = CheckOutdatedCoreDlls();
+
+            CreateSporeProcess();
+            
+            
+            const string STEAM_OCT_2024_DLL = "ModApi.SteamOct2024.dll";
+            Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(STEAM_OCT_2024_DLL)); //inject our special DLL to suspend the main thread after steam DRM does its thing.
+
+            ResumeSporeProcess(); //let steam DRM do its thing
+            
+            //this is super gross, but basically we have to check if process has been suspended via our DLL, which we can do by...
+            //suspending the process, not super ideal but realistically we shouldn't be executing this enough for it to matter.
+            bool readyToInject = false;
+            do
+            {
+                Thread.Sleep(100);
+                NativeMethods.SuspendThread(this.ProcessInfo.hThread);
+                readyToInject = NativeMethods.ResumeThread(this.ProcessInfo.hThread) == 2;
+            } while (!readyToInject);
+            
             InjectDLLs(dllEnding, dllExceptions);
 
             ResumeSporeProcess();
