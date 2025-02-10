@@ -5,11 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
+using System.CodeDom;
+using System.Threading;
 
 namespace SporeModAPI_Launcher
 {
     public class Injector
     {
+        [DllImport("kernel32.dll", SetLastError=true)]
+        public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize,
             IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
@@ -37,14 +42,10 @@ namespace SporeModAPI_Launcher
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hObject);
 
-        
-
-
         private const int WAIT_TIMEOUT = 0x102;
         private const uint MAXWAIT = 15000; //10000;
 
-
-        public static void InjectDLL(PROCESS_INFORMATION pi, string dllPath)
+        public static IntPtr InjectDLL(PROCESS_INFORMATION pi, string dllPath)
         {
             IntPtr retLib = GetProcAddress(GetModuleHandle("Kernel32.dll"), "LoadLibraryA");
 
@@ -52,10 +53,9 @@ namespace SporeModAPI_Launcher
             {
                 throw new InjectException("LoadLibrary unreachable.");
             }
-            /*IntPtr hProc;
-            if (Program.processHandle == IntPtr.Zero)*/
-                IntPtr hProc = NativeMethods.OpenProcess(NativeMethods.AccessRequired, false, pi.dwProcessId); //Open the process with all access
-            //else hProc = Program.processHandle;
+
+            IntPtr hProc = NativeMethods.OpenProcess(NativeMethods.AccessRequired, false, pi.dwProcessId); //Open the process with all access
+
             // Allocate memory to hold the path to the DLL file in the process' memory
             IntPtr objPtr = VirtualAllocEx(hProc, IntPtr.Zero, (uint)dllPath.Length + 1, AllocationType.Commit, MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
@@ -63,7 +63,6 @@ namespace SporeModAPI_Launcher
                 int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
                 System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Virtual alloc failure.");
                 throw new System.ComponentModel.Win32Exception(lastError);
-                //throw new InjectException("Virtual alloc failure.");
             }
 
             //Write the path to the DLL file in the location just created
@@ -84,8 +83,100 @@ namespace SporeModAPI_Launcher
             Program.ERROR_TESTING_MSG("WriteProcessMemory output: " + writeProcessMemoryOutput.ToString());
 
             // Create a remote thread that begins at the LoadLibrary function and is passed as memory pointer
-            IntPtr lpThreadId;
-            IntPtr hRemoteThread = CreateRemoteThread(hProc, IntPtr.Zero, 0, retLib, objPtr, 0, out lpThreadId);
+            IntPtr hRemoteThread = CreateRemoteThread(hProc, IntPtr.Zero, 0, retLib, objPtr, 0, out var lpThreadId);
+
+            // Wait for the thread to finish
+            uint thread_result;
+            if (hRemoteThread != IntPtr.Zero)
+            {
+                if (WaitForSingleObject(hRemoteThread, MAXWAIT) == WAIT_TIMEOUT)
+                {
+                    Program.ThrowWin32Exception("Wait for single object failed. This usually occurs if something has become stuck during injection, or if another error was left open for too long.");
+                }
+                while (GetExitCodeThread(hRemoteThread, out thread_result))
+                {
+                    if (thread_result != 0x103)
+                        break;
+                    
+                    Thread.Sleep(100);
+                }
+            }
+            else
+            {
+                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
+                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString(), "Create remote thread failed.");
+                throw new System.ComponentModel.Win32Exception(lastError);
+            }
+
+            VirtualFreeEx(hProc, objPtr, (uint)0, AllocationType.Release);
+
+            CloseHandle(hProc);
+
+            return new IntPtr((Int64)thread_result);
+        }
+
+        public static void SetInjectionData(PROCESS_INFORMATION pi, IntPtr hDLLInjectorHandle, bool is_disk_spore, List<string> dlls)
+        {
+            IntPtr hLocalDLLInjectorHandle = NativeMethods.LoadLibraryEx("ModAPI.DLLInjector.dll", IntPtr.Zero, LoadLibraryFlags.DONT_RESOLVE_DLL_REFERENCES);
+            IntPtr SetInjectDataPtr = GetProcAddress(hLocalDLLInjectorHandle, "SetInjectionData");
+
+            if (SetInjectDataPtr == IntPtr.Zero)
+            {
+                int lastError = Marshal.GetLastWin32Error();
+                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hDLLInjectorHandle: " + hDLLInjectorHandle.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Get proc address failure.");
+                throw new System.ComponentModel.Win32Exception(lastError);
+            }
+
+            SetInjectDataPtr = new IntPtr(hDLLInjectorHandle.ToInt64() + (SetInjectDataPtr.ToInt64() - hLocalDLLInjectorHandle.ToInt64()));
+
+            if (!NativeMethods.FreeLibrary(hLocalDLLInjectorHandle))
+            {
+                Program.ThrowWin32Exception("Free library failed.");
+            }
+
+            IntPtr hProc = NativeMethods.OpenProcess(NativeMethods.AccessRequired, false, pi.dwProcessId); //Open the process with all access
+
+            int total_alloc_size = 1 + 4; //1 byte for if we are disk spore, 4 bytes for number of strings
+            foreach (string dll in dlls)
+            {
+                total_alloc_size += 4 + Encoding.Unicode.GetByteCount(dll); //4 bytes for string length + string
+            }
+
+            IntPtr objPtr = VirtualAllocEx(hProc, IntPtr.Zero, (uint)total_alloc_size, AllocationType.Commit, MemoryProtection.ReadWrite);
+            if (objPtr == IntPtr.Zero)
+            {
+                int lastError = Marshal.GetLastWin32Error();
+                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Virtual alloc failure.");
+                throw new System.ComponentModel.Win32Exception(lastError);
+            }
+            
+            //write injection data
+            var bytes = new byte[total_alloc_size];
+            int byte_offset = 0;
+            bytes[byte_offset++] = (byte)(is_disk_spore ? 1 : 0);
+            foreach (byte b in BitConverter.GetBytes((uint)dlls.Count))
+                bytes[byte_offset++] = b;
+
+            foreach (string dll in dlls)
+            {
+                foreach (byte b in BitConverter.GetBytes((uint)dll.Length))
+                    bytes[byte_offset++] = b;
+                byte[] encoding = Encoding.Unicode.GetBytes(dll);
+                foreach (byte t in encoding)
+                    bytes[byte_offset++] = t;
+            }
+
+
+            Program.ERROR_TESTING_MSG("Beginning WriteProcessMemory");
+            bool writeProcessMemoryOutput = WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out var numBytesWritten);
+            if (!writeProcessMemoryOutput || numBytesWritten.ToUInt32() != bytes.Length)
+            {
+                Program.ThrowWin32Exception("Write process memory failed.");
+            }
+            Program.ERROR_TESTING_MSG("WriteProcessMemory output: " + writeProcessMemoryOutput.ToString());
+
+            // Create a remote thread that begins at the LoadLibrary function and is passed as memory pointer
+            IntPtr hRemoteThread = CreateRemoteThread(hProc, IntPtr.Zero, 0, SetInjectDataPtr, objPtr, 0, out var lpThreadId);
 
             // Wait for the thread to finish
             if (hRemoteThread != IntPtr.Zero)
@@ -95,18 +186,22 @@ namespace SporeModAPI_Launcher
                     //throw new InjectException("Wait for single object failed.");
                     Program.ThrowWin32Exception("Wait for single object failed. This usually occurs if something has become stuck during injection, or if another error was left open for too long.");
                 }
+                while (GetExitCodeThread(hRemoteThread, out var thread_result))
+                {
+                    if (thread_result != 0x103)
+                        break;                    
+                    Thread.Sleep(100);
+                }
             }
             else
             {
-                //throw new InjectException("Create remote thread failed.");
-                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString(), "Create remote thread failed.");
+                int lastError = Marshal.GetLastWin32Error();
+                System.Windows.Forms.MessageBox.Show("Error: " + lastError, "Create remote thread failed.");
                 throw new System.ComponentModel.Win32Exception(lastError);
             }
 
-            VirtualFreeEx(hProc, objPtr, (uint)bytes.Length, AllocationType.Release);
+            VirtualFreeEx(hProc, objPtr, (uint)0, AllocationType.Release);
 
-            //CloseHandle(pi.hProcess);
             CloseHandle(hProc);
         }
     }

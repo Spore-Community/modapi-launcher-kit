@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{03F7F4AE-9714-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModApi.UI", "ModApi.UI\ModApi.UI\ModApi.UI.csproj", "{63A82229-5162-4B3B-8C64-0172D3B70390}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModAPI.SteamOct2024", "ModAPI.SteamOct2024\ModAPI.SteamOct2024.vcxproj", "{DBD44EE4-018D-4D65-8C0C-DE4E9616ACCD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModAPI.DLLInjector", "ModAPI.DLLInjector\ModAPI.DLLInjector.vcxproj", "{DBD44EE4-018D-4D65-8C0C-DE4E9616ACCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
