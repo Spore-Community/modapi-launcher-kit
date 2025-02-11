@@ -32,7 +32,6 @@ static void __stdcall InitializeGeneralAllocator_detoured()
 static void (__stdcall* DisposeGeneralAllocator_real)() = nullptr;
 static void __stdcall DisposeGeneralAllocator_detoured()
 {
-    MessageBoxA(NULL, "debug", "debug", MB_OK | MB_ICONERROR);
     for (size_t i = dll_handles.size(); i > 0; --i)
     {
         FreeLibrary(dll_handles[i - 1]);

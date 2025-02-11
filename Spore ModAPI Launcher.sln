@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spore ModAPI Launcher", "Spore ModAPI Launcher\Spore ModAPI Launcher.csproj", "{A55865E4-37A7-4414-8CF8-0BE06A1E3DAA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{63A82229-5162-4B3B-8C64-0172D3B70390} = {63A82229-5162-4B3B-8C64-0172D3B70390}
+		{DBD44EE4-018D-4D65-8C0C-DE4E9616ACCD} = {DBD44EE4-018D-4D65-8C0C-DE4E9616ACCD}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModAPI Installers", "ModAPI Installers\ModAPI Installers.csproj", "{73E87191-F4BA-4EA0-A60E-A89143EAA15C}"

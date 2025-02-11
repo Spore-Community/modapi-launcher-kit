@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +60,7 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = VirtualAllocEx(hProc, IntPtr.Zero, (uint)dllPath.Length + 1, AllocationType.Commit, MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
+                int lastError = Marshal.GetLastWin32Error();
                 System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Virtual alloc failure.");
                 throw new System.ComponentModel.Win32Exception(lastError);
             }

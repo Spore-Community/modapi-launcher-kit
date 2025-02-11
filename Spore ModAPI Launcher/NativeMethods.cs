@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Diagnostics;
-
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace SporeModAPI_Launcher
 {
@@ -143,6 +137,9 @@ namespace SporeModAPI_Launcher
                ref STARTUPINFO lpStartupInfo,
                out PROCESS_INFORMATION lpProcessInformation);
 
+        [DllImport("kernel32.dll")]
+        public static extern bool IsDebuggerPresent();
+
         public static uint AccessRequired = 0x0002 | 0x0020 | 0x0008 | 0x0400 | 0x0010; //0x0002 | 0x0020 | 0x0008; //0xF0000 | 0x00100000 | 0xFFFF;
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -174,5 +171,11 @@ namespace SporeModAPI_Launcher
         //[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         //static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
         //    uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
+
+        [DllImport("ole32.dll")]
+        public static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable pprot);
+
+        [DllImport("ole32.dll")]
+        public static extern int CreateBindCtx(int reserved, out IBindCtx ppbc);
     }
 }
