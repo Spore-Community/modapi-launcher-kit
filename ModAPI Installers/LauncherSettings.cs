@@ -146,27 +146,6 @@ namespace ModAPI_Installers
             }
         }
 
-        public static bool ForceOldSteamMethod
-        {
-            get
-            {
-                string value;
-                _dictionary.TryGetValue("ForceOldSteamMethod", out value);
-                if (value == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    return bool.Parse(value);
-                }
-            }
-            set
-            {
-                _dictionary["ForceOldSteamMethod"] = value.ToString();
-            }
-        }
-
         private static string GetConfigPath()
         {
             var programPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);

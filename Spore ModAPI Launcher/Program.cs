@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
@@ -14,6 +13,7 @@ using ModAPI_Installers;
 using ModApi.UpdateManager;
 using System.Xml;
 using System.Reflection;
+using EnvDTE80;
 
 namespace SporeModAPI_Launcher
 {
@@ -21,23 +21,19 @@ namespace SporeModAPI_Launcher
     class Program
     {
         public static IntPtr processHandle = IntPtr.Zero;
-        private static bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
+        private static readonly bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
 
-        static string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
-        static string ModApiHelpThreadURL = "http://davoonline.com/phpBB3/viewtopic.php?f=108&t=6300";
-        static string DarkInjectionPageURL = "http://davoonline.com/sporemodder/rob55rod/DarkInjection/";
+        private const string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
+        private const string ModApiHelpThreadURL = "http://davoonline.com/phpBB3/viewtopic.php?f=108&t=6300";
+        private const string DarkInjectionPageURL = "http://davoonline.com/sporemodder/rob55rod/DarkInjection/";
 
         private string SporebinPath;
         private string ExecutablePath;
-        private string SteamPath;
         private GameVersionType _executableType;
 
         // Used for executing Spore and injecting DLLs
-        private STARTUPINFO StartupInfo = new STARTUPINFO();
-        private PROCESS_INFORMATION ProcessInfo = new PROCESS_INFORMATION();
-
-        public static int CurrentError = 0;
-
+        private STARTUPINFO StartupInfo;
+        private PROCESS_INFORMATION ProcessInfo;
 
         /// <summary>
         /// The main entry point for the application.
@@ -51,43 +47,26 @@ namespace SporeModAPI_Launcher
                 if (MessageBox.Show("For security reasons, explicitly running the Spore ModAPI Launcher as Administrator (by right-clicking and selecting \"Run as Administrator\") is not recommended. Doing so will also prevent you from being able to load creations into Spore by dragging their PNGs into the game window. Are you sure you want to proceed?", String.Empty, MessageBoxButtons.YesNo) == DialogResult.Yes)
                     proceed = true;
             }
-            if (proceed) {
-            ModApi.UpdateManager.UpdateManager.CheckForUpdates();
-            System.Windows.Forms.Application.EnableVisualStyles();
-            /*string infoFilePath = Path.Combine(ModApi.UpdateManager.UpdateManager.AppDataPath, "path.info");
-            if (Directory.Exists(ModApi.UpdateManager.UpdateManager.AppDataPath))
+            if (proceed)
             {
-                try
+                UpdateManager.CheckForUpdates();
+                Application.EnableVisualStyles();
+                LauncherSettings.Load();
+
+                if (Program.IsInstalledDarkInjectionCompatible())
                 {
-                    DeleteFolder(ModApi.UpdateManager.UpdateManager.AppDataPath);
+                    new Program().Execute();
                 }
-                catch (Exception ex)
+                else
                 {
-                    Debug.WriteLine(ex);
+                    MessageBox.Show(Strings.IncompatibleDarkInjection.Replace(@"\n", "\n"), Strings.IncompatibleMod, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    Process.Start(DarkInjectionPageURL);
                 }
             }
-            if (!Directory.Exists(ModApi.UpdateManager.UpdateManager.AppDataPath))
-                Directory.CreateDirectory(ModApi.UpdateManager.UpdateManager.AppDataPath);
-            if (!File.Exists(infoFilePath))
-                File.WriteAllText(infoFilePath, Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString());*/
-            LauncherSettings.Load();
-
-            if (Program.IsInstalledDarkInjectionCompatible())
-                new Program().Execute();
             else
             {
-                MessageBox.Show(Strings.IncompatibleDarkInjection.Replace(@"\n", "\n"), Strings.IncompatibleMod, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                Process.Start(DarkInjectionPageURL);
-            } } else Application.Exit();
-        }
-
-        static void DeleteFolder(string path)
-        {
-            foreach (string s in Directory.EnumerateFiles(path))
-                File.Delete(s);
-            foreach (string s in Directory.EnumerateDirectories(path))
-                DeleteFolder(s);
-            Directory.Delete(path);
+                Application.Exit();
+            }
         }
 
         public static void ERROR_TESTING_MSG(string message)
@@ -106,141 +85,114 @@ namespace SporeModAPI_Launcher
                 // Before, we used Steam to launch the game and tried to find the new process and inject it.
                 // However, when the injection happens the game already executed a bit, so mods fail.
                 // Instead, we create a steam_appid.txt that allows us to execute SporeApp.exe directly
-                bool forceOldSteam = LauncherSettings.ForceOldSteamMethod;
-                bool sporeIsInstalledOnSteam = SporePath.SporeIsInstalledOnSteam();
+                
+                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath != null)
+                    this.ExecutablePath = LauncherSettings.ForcedGalacticAdventuresSporeAppPath;
 
-                // Steam users need to do something different
-                if (!(sporeIsInstalledOnSteam && forceOldSteam))
+                if (LauncherSettings.ForcedSporebinEP1Path == null)
                 {
-                    if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath != null)
-                        this.ExecutablePath = LauncherSettings.ForcedGalacticAdventuresSporeAppPath;
-
-                    if (LauncherSettings.ForcedSporebinEP1Path == null)
-                    {
-                        this.ProcessSporebinPath();
-
-
-                        ERROR_TESTING_MSG("1. SporebinEP1 path: " + this.SporebinPath);
-                    }
-                    else
-                    {
-                        SporebinPath = LauncherSettings.ForcedSporebinEP1Path;
-                        ERROR_TESTING_MSG("1. SporebinEP1 path is overridden");
-                    }
-
-                    // use the default path for now (we might have to use a different one for Origin)
-
-                    if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
-                    {
-                        this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
-
-                        ERROR_TESTING_MSG("2.0. Executable type: " + this.ExecutablePath);
-
-                        this.ProcessExecutableType();
-
-                        ERROR_TESTING_MSG("2. Executable type: " + this._executableType);
-
-                        if (this._executableType == GameVersionType.None)
-                        {
-                            // don't execute the game if the user closed the dialog
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        ERROR_TESTING_MSG("2. Executable type is overridden.");
-                        this._executableType = LauncherSettings.GameVersion;
-                    }
-
-                    // get the correct executable path
-                    if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
-                    {
-                        this.ExecutablePath = this.SporebinPath + GameVersion.ExecutableNames[(int)this._executableType];
-
-                        if (!File.Exists(this.ExecutablePath))
-                        {
-                            // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
-                            if (GameVersion.RequiresModAPIFix(this._executableType))
-                            {
-                                if (!HandleOriginUsers())
-                                {
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception(CommonStrings.GalacticAdventuresNotFound);
-                            }
-                        }
-                    }
-
-                    ERROR_TESTING_MSG("3. Real executable path: " + this.ExecutablePath);
-
-                    // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
-                    if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(this.SporebinPath + "steam_api.dll"))
-                    {
-                        if (!HandleOriginUsers())
-                        {
-                            return;
-                        }
-                    }
-
-                    if (sporeIsInstalledOnSteam && !forceOldSteam)
-                    {
-                        ERROR_TESTING_MSG("3.5: Applying steam fix");
-                        string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
-                        if (!File.Exists(steamAppIdPath))
-                        {
-                            try
-                            {
-                                File.WriteAllText(steamAppIdPath, "17390");
-                            }
-                            catch
-                            {
-                                MessageBox.Show(Strings.CannotApplySteamFix.Replace("$PATH$", this.SporebinPath), Strings.CannotApplySteamFixTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            }
-                        }
-                    }
-
-                    string dllEnding = GameVersion.VersionNames[(int)this._executableType];
-
-                    ERROR_TESTING_MSG("4. DLL suffix: " + dllEnding);
-
-                    if (dllEnding == null)
-                    {
-                        MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    InjectNormalSporeProcess(dllEnding);
-
+                    this.ProcessSporebinPath();
+                    ERROR_TESTING_MSG("1. SporebinEP1 path: " + this.SporebinPath);
                 }
                 else
                 {
-                    InjectSteamSporeProcess();
+                    SporebinPath = LauncherSettings.ForcedSporebinEP1Path;
+                    ERROR_TESTING_MSG("1. SporebinEP1 path is overridden");
                 }
+
+                // use the default path for now (we might have to use a different one for Origin)
+                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
+                {
+                    this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
+
+                    ERROR_TESTING_MSG("2.0. Executable type: " + this.ExecutablePath);
+
+                    this.ProcessExecutableType();
+
+                    ERROR_TESTING_MSG("2. Executable type: " + this._executableType);
+
+                    if (this._executableType == GameVersionType.None)
+                    {
+                        // don't execute the game if the user closed the dialog
+                        return;
+                    }
+                }
+                else
+                {
+                    ERROR_TESTING_MSG("2. Executable type is overridden.");
+                    this._executableType = LauncherSettings.GameVersion;
+                }
+
+                // get the correct executable path
+                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
+                {
+                    this.ExecutablePath = this.SporebinPath + GameVersion.ExecutableNames[(int)this._executableType];
+                    if (!File.Exists(this.ExecutablePath))
+                    {
+                        // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
+                        if (GameVersion.RequiresModAPIFix(this._executableType))
+                        {
+                            if (!HandleOriginUsers())
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(CommonStrings.GalacticAdventuresNotFound);
+                        }
+                    }
+                }
+
+                ERROR_TESTING_MSG("3. Real executable path: " + this.ExecutablePath);
+
+                // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
+                if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(this.SporebinPath + "steam_api.dll"))
+                {
+                    if (!HandleOriginUsers())
+                    {
+                        return;
+                    }
+                }
+
+                if (SporePath.SporeIsInstalledOnSteam())
+                {
+                    ERROR_TESTING_MSG("3.5: Applying steam fix");
+                    string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
+                    //we have to use Spore GAs appid now, due to steam DRM :(
+                    if (!File.Exists(steamAppIdPath) || File.ReadAllText(steamAppIdPath) != "24720")
+                    {
+                        try
+                        {
+                            File.WriteAllText(steamAppIdPath, "24720");
+                        }
+                        catch
+                        {
+                            MessageBox.Show(Strings.CannotApplySteamFix.Replace("$PATH$", this.SporebinPath), Strings.CannotApplySteamFixTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                }
+
+                string dllEnding = GameVersion.VersionNames[(int)this._executableType];
+
+                ERROR_TESTING_MSG("4. DLL suffix: " + dllEnding);
+
+                if (dllEnding == null)
+                {
+                    MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                InjectSporeProcess(dllEnding);
 
                 int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-
-                if ((Program.CurrentError != 0) && (Program.CurrentError != 18) && (Program.CurrentError != 87) && (Program.CurrentError != lastError))
-                {
-                    try
-                    {
-                        ThrowWin32Exception("Something went wrong", Program.CurrentError);
-                    }
-                    catch (Exception ex)
-                    {
-                        ShowError(ex);
-                    }
-                }
                 
-                if ((lastError != 0) && (lastError != 18))
+                if (lastError != 0 && lastError != 18)
                     ThrowWin32Exception("Something went wrong", lastError);
             }
             catch (Exception ex)
             {
                 ShowError(ex);
-                return;
             }
         }
         
@@ -250,10 +202,9 @@ namespace SporeModAPI_Launcher
             if (ex is System.ComponentModel.Win32Exception)
             {
                 var exc = ex as System.ComponentModel.Win32Exception;
-                //"NativeErrorCode: " + exc.NativeErrorCode.ToString() + "\n" + 
-                MessageBox.Show("ErrorCode: " + exc.ErrorCode.ToString() + "\n" +
-                    "NativeErrorCode: " + exc.NativeErrorCode.ToString() + "\n" +
-                    "HResult: " + exc.HResult.ToString() + "\n", "Additional Win32Exception Error Info");
+                MessageBox.Show("ErrorCode: " + exc.ErrorCode + "\n" +
+                    "NativeErrorCode: " + exc.NativeErrorCode + "\n" +
+                    "HResult: " + exc.HResult + "\n", "Additional Win32Exception Error Info");
 
                 if (exc.InnerException != null)
                 {
@@ -263,8 +214,10 @@ namespace SporeModAPI_Launcher
             Process.Start(ModApiHelpThreadURL);
         }
 
-        void InjectDLLs(string dllEnding, List<string> dllExceptions)
-        { 
+        List<string> GetDLLsToInject(string dllEnding, List<string> dllExceptions)
+        {
+            List<string> dlls = new List<string>();
+
             //coreLibs and mLibs
             var baseFolder = new FileInfo(Assembly.GetEntryAssembly().Location).Directory;
             var coreFolder = Path.Combine(baseFolder.FullName, "coreLibs");
@@ -277,140 +230,68 @@ namespace SporeModAPI_Launcher
             string coreDllName = GameVersion.GetNewDLLName(_executableType);
             string coreDllOutPath = Path.Combine(mFolder, "SporeModAPI.dll");
 
-
             File.Copy(Path.Combine(coreFolder, libName), Path.Combine(mFolder, libName), true);
             File.Copy(Path.Combine(coreFolder, coreDllName), coreDllOutPath, true);
-            Injector.InjectDLL(this.ProcessInfo, coreDllOutPath);
-            //string legacyModApiDllOutPath = Path.Combine
-            Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MODAPI_DLL));
 
-            Program.CurrentError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
+            dlls.Add(coreDllOutPath);
+            dlls.Add(Path.GetFullPath(MODAPI_DLL));
+
             foreach (string s in Directory.EnumerateFiles(mFolder)
-                                    .Where(x => !Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase) && 
-                                                x.ToLowerInvariant().EndsWith(".dll") &&
-                                                !dllExceptions.Contains(Path.GetFileName(x)))
-                    )
+                .Where(x => !Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase) && 
+                    x.ToLowerInvariant().EndsWith(".dll") &&
+                    !dllExceptions.Contains(Path.GetFileName(x)) &&
+                    !dlls.Contains(x)))
             {
-                ERROR_TESTING_MSG("Now injecting: " + s);
-                Injector.InjectDLL(this.ProcessInfo, s);
+                dlls.Add(s);
             }
 
-            foreach (var file in baseFolder
-                                    .EnumerateFiles("*" + dllEnding + ".dll")
-                                    .Where(x => x.Name != MODAPI_DLL && !dllExceptions.Contains(x.Name))
-                    )
+            foreach (var file in baseFolder.EnumerateFiles("*" + dllEnding + ".dll")
+                .Where(x => x.Name != MODAPI_DLL && !dllExceptions.Contains(x.Name)))
             {
                 ERROR_TESTING_MSG("5.* Preparing " + file.Name);
                 // the ModAPI dll should already be loaded
                 if (file.Name != MODAPI_DLL)
                 {
-                    ERROR_TESTING_MSG("5.* Injecting " + file.Name);
-                    Injector.InjectDLL(this.ProcessInfo, file.FullName);
-                    Program.CurrentError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
+                    dlls.Add(file.FullName);
                 }
                 else
                     ERROR_TESTING_MSG("5.* " + file.Name + " was already injected!");
             }
 
+
+            return dlls;
         }
 
-        void InjectNormalSporeProcess(string dllEnding)
+        void InjectSporeProcess(string dllEnding)
         {
             var dllExceptions = CheckOutdatedCoreDlls();
 
             CreateSporeProcess();
 
-            InjectDLLs(dllEnding, dllExceptions);
+            const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
+            IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
 
+            List<string> dlls = GetDLLsToInject(dllEnding, dllExceptions);
+
+            Injector.SetInjectionData(this.ProcessInfo, hDLLInjectorHandle, dllEnding == "disk", dlls);
+            
+            if (NativeMethods.IsDebuggerPresent())
+            {
+                DTE2 dte = DebugHelper.GetActiveDebugger();
+                if (dte != null) {
+                    foreach (var proc in dte.Debugger.LocalProcesses.Cast<EnvDTE.Process>().Where(proc => proc.ProcessID == ProcessInfo.dwProcessId))
+                    {
+                        ResumeSporeProcess();
+                        proc.Attach();
+                        return;
+                    }
+                }
+            }
             ResumeSporeProcess();
         }
 
-        private const int WAIT_ABANDONED = 0x00000080;
-
-        // Steam spore needs special treatment: the game will close if not executed through Steam
-        void InjectSteamSporeProcess()
-        {
-            var dllExceptions = CheckOutdatedCoreDlls();
-
-            string steamPath = ProcessSteamPath();
-            string sporeAppName = "SporeApp";
-            steamPath = Path.Combine(steamPath, "Steam.exe");
-
-            System.Diagnostics.Process.Start(steamPath, "-applaunch " + SporePath.GalacticAdventuresSteamID.ToString());
-
-            //Thread.Sleep(50);
-            
-            Process[] processes = Process.GetProcessesByName(sporeAppName);
-            while (processes.Length == 0)
-            {
-                // Just wait and try again
-                //Thread.Sleep(50);
-                //continue;
-                processes = Process.GetProcessesByName(sporeAppName);
-            }
-            /*else
-            {*/
-
-            var process = processes[0];
-
-            var pOpenThreads = new List<IntPtr>();
-            // now pause all threads so we can inject; it's the equivalent to running in suspended state
-            foreach (ProcessThread pT in process.Threads)
-            {
-                IntPtr pOpenThread = NativeMethods.OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
-                if (pOpenThread != IntPtr.Zero) //((pOpenThread != IntPtr.Zero) && (Injector.WaitForSingleObject(pOpenThread, 0) != WAIT_ABANDONED))
-                {
-                    NativeMethods.SuspendThread(pOpenThread); //     r/therewasanattempt
-                    pOpenThreads.Add(pOpenThread);
-                }
-            }
-            this.ProcessInfo.dwProcessId = (uint)process.Id;
-            this.ProcessInfo.hProcess = process.Handle; //NativeMethods.OpenProcess(NativeMethods.AccessRequired, false, ProcessInfo.dwProcessId);
-            processHandle = this.ProcessInfo.hProcess;
-            // We must detect the executable type now
-            /*this.ProcessExecutableType();
-            if (this.ExecutableType == GameVersionType.None)
-            {
-                // don't execute the game if the user closed the dialog
-                return;
-            }
-            // get the corerct executable path
-            if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
-                this.ExecutablePath = process.MainModule.FileName;
-
-            this.ProcessExecutableType();*/
-            _executableType = GameVersionType.Steam_Patched;
-            string dllEnding = GameVersion.VersionNames[(int)_executableType]; //string dllEnding = GameVersion.VersionNames[(int)this.ExecutableType];
-
-            InjectDLLs(dllEnding, dllExceptions);
-
-            // Resume the process again
-            foreach (IntPtr pOpenThread in pOpenThreads)
-            {
-                if (pOpenThread == IntPtr.Zero)
-                {
-                    continue;
-                }
-
-                uint suspendCount = 0;
-                do
-                {
-                    suspendCount = NativeMethods.ResumeThread(pOpenThread);
-                } while (suspendCount > 0);
-
-                NativeMethods.CloseHandle(pOpenThread);
-
-            }
-
-            return;
-            //}
-            //}
-        }
-
-
         void CreateSporeProcess()
         {
-
             var sb = new StringBuilder();
             int i = 0;
             foreach (string arg in Environment.GetCommandLineArgs())
@@ -432,12 +313,12 @@ namespace SporeModAPI_Launcher
 
             ERROR_TESTING_MSG("currentSporebinPath: " + currentSporebinPath + "\nExecutablePath: " + ExecutablePath);
 
-            if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb.ToString(),
+            if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
                     IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, currentSporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
                 //throw new InjectException(Strings.ProcessNotStarted);
                 int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString(), Strings.ProcessNotStarted);
+                System.Windows.Forms.MessageBox.Show("Error: " + lastError, Strings.ProcessNotStarted);
                 throw new System.ComponentModel.Win32Exception(lastError);
             }
         }
@@ -462,21 +343,6 @@ namespace SporeModAPI_Launcher
             }
 
             this.SporebinPath = path;
-
-            return path;
-        }
-
-        string ProcessSteamPath()
-        {
-            string path = PathDialogs.ProcessSteam();
-
-            if (path == null || !Directory.Exists(path))
-            {
-
-                throw new InjectException(CommonStrings.SteamNotFound);
-            }
-
-            this.SteamPath = path;
 
             return path;
         }
@@ -614,7 +480,7 @@ namespace SporeModAPI_Launcher
         {
             if ((error != 0) && (error != 18))
             {
-                System.Windows.Forms.MessageBox.Show("Error: " + error.ToString(), info);
+                System.Windows.Forms.MessageBox.Show("Error: " + error, info);
                 throw new System.ComponentModel.Win32Exception(error);
             }
         }
@@ -705,7 +571,7 @@ namespace SporeModAPI_Launcher
                     sb.Append("\n");
                 }
 
-                MessageBox.Show(Strings.UnsupportedDllVersion + sb.ToString(), Strings.UnsupportedDllVersionTitle);
+                MessageBox.Show(Strings.UnsupportedDllVersion + sb, Strings.UnsupportedDllVersionTitle);
             }
 
             return disabledDlls;
