@@ -299,14 +299,7 @@ namespace ModApi.UpdateManager
 
         static void ShowUnrecognizedUpdateInfoVersionMessage()
         {
-            MessageBox.Show("This update to the Spore ModAPI Launcher Kit must be downloaded manually. Closing this dialog box will open a website from which you may do so.");
-            try
-            {
-                Process.Start("https://sporemodder.wordpress.com/spore-modapi/");
-            }
-            catch (Exception)
-            {
-            }
+            MessageBox.Show("This update to the Spore ModAPI Launcher Kit must be downloaded manually.");
         }
     }
 }
