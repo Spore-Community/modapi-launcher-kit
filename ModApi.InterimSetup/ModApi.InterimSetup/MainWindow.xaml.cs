@@ -1,29 +1,16 @@
-﻿using ModApi.UI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.IO.Compression;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Panel = System.Windows.Controls.Panel;
-using Path = System.IO.Path;
-using ModApi.Updater;
 using IWshRuntimeLibrary;
+
+using Panel = System.Windows.Controls.Panel;
 using File = System.IO.File;
-using System.Diagnostics;
-using System.IO.Compression;
 
 namespace ModApi.InterimSetup
 {
@@ -34,7 +21,7 @@ namespace ModApi.InterimSetup
     {
         bool _isUpgradeInstall = false;
         int _currentPage = 0;
-        bool _createShortcuts = true;
+        bool _createDesktopShortcuts = true;
 
         CircleEase _ease = new CircleEase()
         {
@@ -87,22 +74,22 @@ namespace ModApi.InterimSetup
                 string unm = Environment.ExpandEnvironmentVariables(@"%appdata%\ModAPITemp.zip");
                 if (File.Exists(unm))
                     File.Delete(unm);
-                using (var file = File.Create(unm))// ;
+
+                using (var file = File.Create(unm))
                 {
                     unmStream.Seek(0, SeekOrigin.Begin);
                     unmStream.CopyTo(file);
                 }
-                //file.Close()
-                //var stream = File.Create(unm);
-                using (ZipArchive archive = ZipFile.Open(unm, ZipArchiveMode.Update)) //(ZipStorer archive = ZipStorer.Open(unmStream, FileAccess.Read, true))
+
+
+                using (ZipArchive archive = ZipFile.Open(unm, ZipArchiveMode.Update))
                 {
                     Dispatcher.BeginInvoke(new Action(() => InstallProgressBar.Maximum = archive.Entries.Count));
-                    //MessageBox.Show(InstallProgressBar.Maximum.ToString(), "InstallProgressBar.Maximum");
 
                     foreach (var s in archive.Entries)
                     {
                         string fileOutPath = Path.Combine(path, s.FullName);
-                        //MessageBox.Show(fileOutPath, "fileOutPath");
+
                         if (File.Exists(fileOutPath))
                             File.Delete(fileOutPath);
 
@@ -111,7 +98,7 @@ namespace ModApi.InterimSetup
                             Directory.CreateDirectory(extractDir);
 
 
-                        s.ExtractToFile(fileOutPath);// archive.ExtractFile(s, fileOutPath);
+                        s.ExtractToFile(fileOutPath);
 
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
@@ -126,8 +113,6 @@ namespace ModApi.InterimSetup
             }
         }
 
-        int _unzipAttemptCount = 0;
-
         private void BeginInstallation()
         {
             string path = PathTextBox.Text;
@@ -140,79 +125,34 @@ namespace ModApi.InterimSetup
                     path = Path.Combine(path, _pathSuffix);
             }
 
-            /*await Task.Run(new Action(() =>
-            {*/
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-                /*while (_unzipAttemptCount < 4)
-                {
-                    try
-                    {*/
                 UnzipLauncherKit(path);
-                /*}
-                catch
-                {
-                    _unzipAttemptCount++;
-                }
-            }*/
 
-                string launcherAddress = "Spore ModAPI Launcher.bat";
+                string launcherShortcutPath = "Spore ModAPI Launcher.lnk";
                 string launcherDesc = "Open Spore through the Spore ModAPI Launcher";
-                string easyInstallerAddress = "Spore ModAPI Easy Installer.bat";
+                string easyInstallerShortcutPath = "Spore ModAPI Easy Installer.lnk";
                 string easyInstallerDesc = "Quickly and easily install mods for Spore";
-                string easyUninstallerAddress = "Spore ModAPI Easy Uninstaller.bat";
+                string easyUninstallerShortcutPath = "Spore ModAPI Easy Uninstaller.lnk";
                 string easyUninstallerDesc = "Quickly and easily configure and remove mods for Spore";
 
-                //string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "Spore ModAPI Launcher Kit");
                 string startPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Spore ModAPI Launcher Kit");
                 if (!Directory.Exists(startPath))
                     Directory.CreateDirectory(startPath);
 
-                string launcherShortcutPathStart = Path.Combine(startPath, "Spore ModAPI Launcher.lnk");
-                if (File.Exists(launcherShortcutPathStart))
-                    File.Delete(launcherShortcutPathStart);
+                CreateShortcut(launcherShortcutPath, launcherDesc, Path.Combine(path, "Spore ModAPI Launcher.exe"), true);
+                CreateShortcut(easyInstallerShortcutPath, easyInstallerDesc, Path.Combine(path, "Spore ModAPI Easy Installer.exe"), true);
+                CreateShortcut(easyUninstallerShortcutPath, easyUninstallerDesc, Path.Combine(path, "Spore ModAPI Easy Uninstaller.exe"), true);
 
-                string easyInstallerShortcutPathStart = Path.Combine(startPath, "Spore ModAPI Easy Installer.lnk");
-                if (File.Exists(easyInstallerShortcutPathStart))
-                    File.Delete(easyInstallerShortcutPathStart);
-
-                string easyUninstallerShortcutPathStart = Path.Combine(startPath, "Spore ModAPI Easy Uninstaller.lnk");
-                if (File.Exists(easyUninstallerShortcutPathStart))
-                    File.Delete(easyUninstallerShortcutPathStart);
-
-                CreateShortcut(launcherAddress, launcherDesc, Path.Combine(path, "Spore ModAPI Launcher.exe"), true);
-                CreateShortcut(easyInstallerAddress, easyInstallerDesc, Path.Combine(path, "Spore ModAPI Easy Installer.exe"), true);
-                CreateShortcut(easyUninstallerAddress, easyUninstallerDesc, Path.Combine(path, "Spore ModAPI Easy Uninstaller.exe"), true);
-
-                if (_createShortcuts || (Environment.OSVersion.Version >= new Version(6, 2, 8400, 0)))
+                if (_createDesktopShortcuts)
                 {
-                    try
-                    {
-                        string desktop = Environment.ExpandEnvironmentVariables(@"%userprofile%\Desktop");
-
-                        string launcherShortcutPath = Path.Combine(desktop, "Spore ModAPI Launcher.lnk");
-                        if (File.Exists(launcherShortcutPath))
-                            File.Delete(launcherShortcutPath);
-
-                        string easyInstallerShortcutPath = Path.Combine(desktop, "Spore ModAPI Easy Installer.lnk");
-                        if (File.Exists(easyInstallerShortcutPath))
-                            File.Delete(easyInstallerShortcutPath);
-
-                        string easyUninstallerShortcutPath = Path.Combine(desktop, "Spore ModAPI Easy Uninstaller.lnk");
-                        if (File.Exists(easyUninstallerShortcutPath))
-                            File.Delete(easyUninstallerShortcutPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                    }
-                    CreateShortcut(launcherAddress, launcherDesc, Path.Combine(path, "Spore ModAPI Launcher.exe"));
-                    CreateShortcut(easyInstallerAddress, easyInstallerDesc, Path.Combine(path, "Spore ModAPI Easy Installer.exe"));
-                    CreateShortcut(easyUninstallerAddress, easyUninstallerDesc, Path.Combine(path, "Spore ModAPI Easy Uninstaller.exe"));
+                    CreateShortcut(launcherShortcutPath, launcherDesc, Path.Combine(path, "Spore ModAPI Launcher.exe"));
+                    CreateShortcut(easyInstallerShortcutPath, easyInstallerDesc, Path.Combine(path, "Spore ModAPI Easy Installer.exe"));
+                    CreateShortcut(easyUninstallerShortcutPath, easyUninstallerDesc, Path.Combine(path, "Spore ModAPI Easy Uninstaller.exe"));
 
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -232,7 +172,6 @@ namespace ModApi.InterimSetup
                     CyclePage(3);
                 }));
             }).Start();
-            //}));
         }
 
         private void UpgradeInstallButton_Click(object sender, RoutedEventArgs e)
@@ -413,7 +352,7 @@ namespace ModApi.InterimSetup
                     isValid = Path.IsPathRooted(path);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 isValid = false;
             }
@@ -461,39 +400,33 @@ namespace ModApi.InterimSetup
             Close();
         }
 
-        private void CreateShortcut(string shortcutAddressName, string description, string targetPath)
+        private void CreateShortcut(string shortcutFileName, string description, string executablePath, bool inStartMenu = false)
         {
-            CreateShortcut(shortcutAddressName, description, targetPath, false);
-        }
-
-        private void CreateShortcut(string shortcutAddressName, string description, string targetPath, bool inStartMenu)
-        {
-            object shDesktop = (object)"Desktop";
-            WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\" + shortcutAddressName;
-
+            string shortcutPath;
             if (inStartMenu)
-                shortcutAddress = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Spore ModAPI Launcher Kit", shortcutAddressName);
-            //shortcutAddress = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), @"Programs\Spore ModAPI Launcher Kit", shortcutAddressName);
+            {
+                shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), shortcutFileName);
+            }
+            else
+            { // fallback to desktop
+                shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), shortcutFileName);
+            }
 
-            /*IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(shortcutPath);
             shortcut.Description = description;
-            shortcut.TargetPath = targetPath;
-            shortcut.Save();*/
-            if (File.Exists(shortcutAddress))
-                File.Delete(shortcutAddress);
-
-            File.WriteAllText(shortcutAddress, "cd \"" + Directory.GetParent(targetPath) + "\"\n\"" + targetPath + "\"");
+            shortcut.TargetPath = executablePath;
+            shortcut.WorkingDirectory = Path.GetDirectoryName(executablePath);
+            shortcut.Save();
         }
 
         private void ShortcutsCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            _createShortcuts = true;
+            _createDesktopShortcuts = true;
         }
 
         private void ShortcutsCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            _createShortcuts = false;
+            _createDesktopShortcuts = false;
         }
     }
 }
