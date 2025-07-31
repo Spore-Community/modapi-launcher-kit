@@ -97,8 +97,11 @@ namespace ModApi.InterimSetup
                         if (!Directory.Exists(extractDir))
                             Directory.CreateDirectory(extractDir);
 
-
-                        s.ExtractToFile(fileOutPath);
+                        if (!s.FullName.EndsWith("/") &&
+                            !s.FullName.EndsWith("\\"))
+                        {
+                            s.ExtractToFile(fileOutPath);
+                        }
 
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
