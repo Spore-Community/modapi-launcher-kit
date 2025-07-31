@@ -304,9 +304,8 @@ namespace ModApi.UpdateManager
             {
                 Process.Start("https://sporemodder.wordpress.com/spore-modapi/");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
         }
     }

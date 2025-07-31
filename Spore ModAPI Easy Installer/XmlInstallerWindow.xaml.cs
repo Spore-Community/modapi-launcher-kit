@@ -43,7 +43,6 @@ namespace Spore_ModAPI_Easy_Installer
                     InstallCancelled?.Invoke(this, null);
             }
         }*/
-        public event EventHandler<EventArgs> InstallCancelled;
         public static bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
         public static List<XmlInstallerWindow> installerWindows = new List<XmlInstallerWindow>();
         string ModSettingsStoragePath = string.Empty;

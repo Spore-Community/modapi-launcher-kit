@@ -65,7 +65,6 @@ namespace Spore_ModAPI_Easy_Installer
 
         public static InstalledMods ModList = new InstalledMods();
         static ProgressWindow ProgressDialog = new ProgressWindow(Strings.InstallingModTitle);
-        public static Form Form1;// = new Form();
         public static string outcome = string.Empty;
 
         /// <summary>
@@ -529,8 +528,6 @@ namespace Spore_ModAPI_Easy_Installer
 
         static ResultType TryExecuteInstaller(string inputFile, string modName)
         {
-            string tempFile = null;
-
             using (ZipArchive archive = ZipFile.Open(inputFile, ZipArchiveMode.Read))
             {
                 var entry = archive.GetEntry("Installer.exe");
