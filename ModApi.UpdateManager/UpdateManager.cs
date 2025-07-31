@@ -1,5 +1,4 @@
 ﻿using ModAPI_Installers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Windows;
 using System.Xml;
 
@@ -17,7 +15,7 @@ namespace ModApi.UpdateManager
     public static class UpdateManager
     {
         public static bool Development = false;
-        public static string PathPrefix = "http://davoonline.com/sporemodder/rob55rod/ModAPI";
+        public static string PathPrefix = "http://update.launcherkit.sporecommunity.com/";
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string CurrentInfoDestPath = Path.Combine(AppDataPath, "current.info");
@@ -109,6 +107,7 @@ namespace ModApi.UpdateManager
 
             if (File.Exists(UpdaterOverridePath))
                 PathPrefix = File.ReadAllText(UpdaterOverridePath);
+
             if (!File.Exists(UpdaterBlockPath))
             {
                 bool maintenance = false;
@@ -120,24 +119,14 @@ namespace ModApi.UpdateManager
                         maintenanceClient.DownloadFile(Path.Combine(PathPrefix, "maintenance.info"), MaintenancePath);
                         maintenance = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                 }
 
                 if (Development)
                     maintenance = false;
-                /*WebRequest webRequest = WebRequest.Create(PathPrefix + "/maintenance.info");
-                webRequest.Timeout = 1200; // miliseconds
-                webRequest.Method = "HEAD";
-                try
-                {
-                    webRequest.GetResponse();
-                }
-                catch
-                {
-                    maintenance = true;
-                }*/
+
                 try
                 {
                     if (File.Exists(MaintenancePath))
@@ -146,8 +135,6 @@ namespace ModApi.UpdateManager
 
                     if (!maintenance)
                     {
-                        //client.DownloadProgressChanged += DownloadProgressChanged;
-                        //client.DownloadDataCompleted += DownloadDataCompleted;
                         using (var infoClient = new WebClient())
                         {
                             try
@@ -164,14 +151,15 @@ namespace ModApi.UpdateManager
 
                         if (!File.Exists(CurrentInfoDestPath))
                         {
-                            //File.Copy(UpdateInfoDestPath, CurrentInfoDestPath);
-                            File.WriteAllLines(CurrentInfoDestPath, new List<string>()
-                        {
-                            new Version(1, 0, 0, 0).ToString(),
-                            CurrentVersion.ToString(),
-                            false.ToString(),
-                            "http://davoonline.com/sporemodder/rob55rod/ModAPI/ModAPIUpdateSetup.exe"
-                        }.ToArray());
+                            string[] currentInfoLines = new string[]
+                            {
+                                new Version(1, 0, 0, 0).ToString(),
+                                CurrentVersion.ToString(),
+                                false.ToString(),
+                                Path.Combine(PathPrefix, "ModAPIUpdateSetup.exe")
+                            };
+
+                            File.WriteAllLines(CurrentInfoDestPath, currentInfoLines);
                         }
 
                         if (File.Exists(UpdateInfoDestPath))
