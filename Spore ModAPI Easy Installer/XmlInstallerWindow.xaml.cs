@@ -1238,7 +1238,11 @@ namespace Spore_ModAPI_Easy_Installer
                         File.Delete(outputPath);
 
                     if (copy)
-                        File.Copy(Path.Combine(ModConfigPath, p.ComponentFileNames[index]), outputPath);
+                    {
+                        string inPath = Path.Combine(ModConfigPath, p.ComponentFileNames[index]);
+                        if (File.Exists(inPath))
+                            File.Copy(inPath, outputPath);
+                    }
                 }
                 else
                 {
@@ -1322,7 +1326,11 @@ namespace Spore_ModAPI_Easy_Installer
                     File.Delete(targetPath);
 
                 if (copy)
-                    File.Copy(Path.Combine(ModConfigPath, p.ComponentFileNames[index]), targetPath);
+                {
+                    string inPath = Path.Combine(ModConfigPath, p.ComponentFileNames[index]);
+                    if (File.Exists(inPath))
+                        File.Copy(inPath, targetPath);
+                }
             }
         }
 
