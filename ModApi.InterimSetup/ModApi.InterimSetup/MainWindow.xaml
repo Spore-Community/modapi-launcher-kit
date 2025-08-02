@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:ModApi.InterimSetup"
         xmlns:ui="clr-namespace:ModApi.UI"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="ModAPI Launcher Kit Setup" Height="450" Width="800" ResizeMode="NoResize" Background="{DynamicResource WindowBackgroundBrush}" Closing="Window_Closing">
     <DockPanel>
         <StackPanel x:Name="FooterUniformGrid" Orientation="Vertical" DockPanel.Dock="Bottom">

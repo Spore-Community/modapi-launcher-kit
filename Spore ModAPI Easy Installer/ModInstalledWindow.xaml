@@ -8,6 +8,7 @@
         xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight" MaxWidth="400" MaxHeight="500" ResizeMode="NoResize" Loaded="ModInstalledWindow_Loaded" Visibility="Visible" Closing="ModInstalledWindow_Closing">
     <Window.Resources>
         <ResourceDictionary>

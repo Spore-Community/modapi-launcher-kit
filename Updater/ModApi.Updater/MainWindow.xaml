@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ModApi.Updater"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Spore ModAPI Launcher Kit Updater" Width="520" Height="100" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Topmost="True" Loaded="MainWindow_Loaded" Closing="Window_Closing">
     <Window.Resources>
         <Style x:Key="BorderThumb" TargetType="Thumb">

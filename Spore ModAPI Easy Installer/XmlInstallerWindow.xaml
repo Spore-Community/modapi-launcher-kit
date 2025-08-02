@@ -8,6 +8,7 @@
         xmlns:win="clr-namespace:ModApi.UI.Windows;assembly=ModApi.UI"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="XmlInstallerWindow" Width="600" Height="450" ResizeMode="NoResize" Closing="XmlInstallerWindow_Closing" Closed="XmlInstallerWindow_Closed"><!--Activated="XmlInstallerWindow_ActivatedDeactivated" Deactivated="XmlInstallerWindow_ActivatedDeactivated"-->
     <win:DecoratableWindow.Resources>
         <ResourceDictionary>
