@@ -145,6 +145,9 @@ namespace SporeModAPI_Launcher
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
+        [DllImport("kernel32.dll", SetLastError = false)]
+        public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 

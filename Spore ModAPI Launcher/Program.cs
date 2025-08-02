@@ -268,26 +268,37 @@ namespace SporeModAPI_Launcher
 
             CreateSporeProcess();
 
-            const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
-            IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
-
-            List<string> dlls = GetDLLsToInject(dllEnding, dllExceptions);
-
-            Injector.SetInjectionData(this.ProcessInfo, hDLLInjectorHandle, dllEnding == "disk", dlls);
-            
-            if (NativeMethods.IsDebuggerPresent())
+            try
             {
-                DTE2 dte = DebugHelper.GetActiveDebugger();
-                if (dte != null) {
-                    foreach (var proc in dte.Debugger.LocalProcesses.Cast<EnvDTE.Process>().Where(proc => proc.ProcessID == ProcessInfo.dwProcessId))
+                const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
+                IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
+
+                List<string> dlls = GetDLLsToInject(dllEnding, dllExceptions);
+
+                Injector.SetInjectionData(this.ProcessInfo, hDLLInjectorHandle, dllEnding == "disk", dlls);
+
+                if (NativeMethods.IsDebuggerPresent())
+                {
+                    DTE2 dte = DebugHelper.GetActiveDebugger();
+                    if (dte != null)
                     {
-                        ResumeSporeProcess();
-                        proc.Attach();
-                        return;
+                        foreach (var proc in dte.Debugger.LocalProcesses.Cast<EnvDTE.Process>().Where(proc => proc.ProcessID == ProcessInfo.dwProcessId))
+                        {
+                            ResumeSporeProcess();
+                            proc.Attach();
+                            return;
+                        }
                     }
                 }
+
+                ResumeSporeProcess();
             }
-            ResumeSporeProcess();
+            catch (Exception e)
+            {
+                // always terminate suspended Spore process on failure
+                NativeMethods.TerminateProcess(this.ProcessInfo.hProcess, 0);
+                throw e;
+            }
         }
 
         void CreateSporeProcess()
