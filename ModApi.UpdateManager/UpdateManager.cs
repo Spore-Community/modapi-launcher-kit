@@ -15,7 +15,7 @@ namespace ModApi.UpdateManager
     public static class UpdateManager
     {
         public static bool Development = false;
-        public static string PathPrefix = "http://update.launcherkit.sporecommunity.com/";
+        public static string PathPrefix = "https://update.launcherkit.sporecommunity.com/";
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string CurrentInfoDestPath = Path.Combine(AppDataPath, "current.info");
