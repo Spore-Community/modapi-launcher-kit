@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace ModApi.Updater
 {
@@ -30,57 +21,54 @@ namespace ModApi.Updater
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (args.Length > 1)
+            if (args.Length < 2)
             {
-                string path = args[1];
-                bool hasLauncher = false;
+                Hide();
+                launcherExists = false;
+                MessageBox.Show("Please launch the updater with the directory where Spore ModAPI Launcher Kit is installed as first commandline argument");
+                Close();
+                return;
+            }
 
-                //MessageBox.Show(args[1], "args[1]");
+            string path = args[1];
 
-                if (File.Exists(path))
-                    hasLauncher = true;
-                else if (File.Exists(Path.Combine(path, "Spore ModAPI Launcher.exe")))
-                    hasLauncher = true;
-
-                if (hasLauncher)
+            bool foundLauncher = File.Exists(Path.Combine(path, "Spore ModAPI Launcher.exe"));
+            if (foundLauncher)
+            {
+                using (MemoryStream unmStream = new MemoryStream(ModApi.Updater.Properties.Resources.ModApiUpdate))
                 {
-                    //byte[] zipObject = (byte[]);
-                    using (MemoryStream unmStream = new MemoryStream(ModApi.Updater.Properties.Resources.ModApiUpdate))
+                    using (ZipStorer archive = ZipStorer.Open(unmStream, FileAccess.Read, true))
                     {
-                        using (ZipStorer archive = ZipStorer.Open(unmStream, FileAccess.Read, true))
+                        InstallProgressBar.Maximum = archive.ReadCentralDir().Count;
+
+                        foreach (ZipStorer.ZipFileEntry s in archive.ReadCentralDir())
                         {
-                            InstallProgressBar.Maximum = archive.ReadCentralDir().Count;
-                            //MessageBox.Show(InstallProgressBar.Maximum.ToString(), "InstallProgressBar.Maximum");
+                            string fileOutPath = Path.Combine(path, s.FilenameInZip);
 
-                            foreach (ZipStorer.ZipFileEntry s in archive.ReadCentralDir())
-                            {
-                                string fileOutPath = Path.Combine(path, s.FilenameInZip);
-                                //MessageBox.Show(fileOutPath, "fileOutPath");
-                                if (File.Exists(fileOutPath))
-                                    File.Delete(fileOutPath);
+                            if (File.Exists(fileOutPath))
+                                File.Delete(fileOutPath);
 
-                                if (IsPathNotPartOfConfiguration(fileOutPath))
-                                    archive.ExtractFile(s, fileOutPath);
+                            if (IsPathNotPartOfConfiguration(fileOutPath))
+                                archive.ExtractFile(s, fileOutPath);
 
-                                if (InstallProgressBar.Value < InstallProgressBar.Maximum)
-                                    InstallProgressBar.Value++;
-                            }
-                            string noUpdateFilePath = Path.Combine(path, "noUpdateCheck.info");
-                            if (File.Exists(noUpdateFilePath))
-                                File.Delete(noUpdateFilePath);
-
-                            StateTextBlock.Text = "Updates were installed successfully.";
-                            InstallProgressBar.Visibility = Visibility.Collapsed;
-                            AcknowledgeButton.Visibility = Visibility.Visible;
+                            if (InstallProgressBar.Value < InstallProgressBar.Maximum)
+                                InstallProgressBar.Value++;
                         }
+                        string noUpdateFilePath = Path.Combine(path, "noUpdateCheck.info");
+                        if (File.Exists(noUpdateFilePath))
+                            File.Delete(noUpdateFilePath);
+
+                        StateTextBlock.Text = "Updates were installed successfully.";
+                        InstallProgressBar.Visibility = Visibility.Collapsed;
+                        AcknowledgeButton.Visibility = Visibility.Visible;
                     }
                 }
-                else
-                {
-                    launcherExists = false;
-                    MessageBox.Show("No Spore ModAPI Launcher Kit could be found in the following directory:\n" + Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString());
-                    Close();
-                }
+            }
+            else
+            {
+                Hide();
+                MessageBox.Show("No Spore ModAPI Launcher Kit could be found in the following directory:\n" + path);
+                Close();
             }
         }
 
@@ -128,48 +116,32 @@ namespace ModApi.Updater
 
         private void PreCloseWindowActions()
         {
-            /*for (int i = 0; i < args.Length; i++)
+            if (launcherExists && args.Length > 2)
             {
-                MessageBox.Show(args[i], "args[" + i.ToString() + "]");
-            }*/
+                string pathArg = args[2];
+                string exeArgs = string.Empty;
 
-            if (launcherExists)
-            {
-                //MessageBox.Show(Environment.CommandLine, "Environment.CommandLine");
-                if (args.Length > 2)
+                if (args.Length > 3)
                 {
-                    /*int index = 0;
-                    foreach (string s in args)
+                    for (int i = 3; i < args.Length; i++)
                     {
-                        MessageBox.Show(s, "args[" + index.ToString() + "]");
-                        index++;
-                    }*/
-                    string pathArg = args[2];
-                    string exeArgs = string.Empty;
+                        string currentArg = args[i];
 
-                    if (args.Length > 3)
-                    {
-                        for (int i = 3; i < args.Length; i++)
-                        {
-                            string currentArg = args[i];
+                        if (!(currentArg.StartsWith("\"")))
+                            currentArg = "\"" + currentArg;
 
-                            if (!(currentArg.StartsWith("\"")))
-                                currentArg = "\"" + currentArg;
+                        if (!(currentArg.EndsWith("\"")))
+                            currentArg = currentArg + "\"";
 
-                            if (!(currentArg.EndsWith("\"")))
-                                currentArg = currentArg + "\"";
-
-                            exeArgs += currentArg + " ";
-                        }
+                        exeArgs += currentArg + " ";
                     }
-                    //MessageBox.Show(args[2], "value of args[2]");
-                    //MessageBox.Show(exeArgs, "value of exeArgs");
-                    if (Permissions.IsAdministrator() && Path.GetFileName(pathArg).ToLowerInvariant().Contains("modapi launcher"))
-                    {
-                        MessageBox.Show("Please note that in order to drag creation PNGs into the game window after an update to the Spore ModAPI Launcher Kit, you will have to exit Spore and run the ModAPI Launcher yourself.");
-                    }
-                    Process.Start(pathArg/*Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), pathArg)*/, exeArgs);
                 }
+                    
+                if (Permissions.IsAdministrator() && Path.GetFileName(pathArg).ToLowerInvariant().Contains("modapi launcher"))
+                {
+                    MessageBox.Show("Please note that in order to drag creation PNGs into the game window after an update to the Spore ModAPI Launcher Kit, you will have to exit Spore and run the ModAPI Launcher yourself.");
+                }
+                Process.Start(pathArg, exeArgs);
             }
         }
     }
