@@ -22,13 +22,12 @@ namespace ModApi.UpdateManager
         public static string UpdaterDestPath = Path.Combine(AppDataPath, "updater.exe");
         public static string UpdaterBlockPath = Path.Combine(AppDataPath, "noUpdateCheck.info");
         public static string UpdaterOverridePath = Path.Combine(AppDataPath, "overrideUpdatePath.info");
-        public static string MaintenancePath = Path.Combine(AppDataPath, "maintenance.info");
-        public static Version CurrentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;// new Version(1, 1, 0, 0);
+        public static Version CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version;
         public static Version CurrentDllsBuild
         {
             get
             {
-                string path = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "coreLibs");
+                string path = Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "coreLibs");
                 List<Version> versions = new List<Version>();
                 if (Directory.Exists(path))
                 {
@@ -110,185 +109,117 @@ namespace ModApi.UpdateManager
 
             if (!File.Exists(UpdaterBlockPath))
             {
-                bool maintenance = false;
-
-                using (var maintenanceClient = new WebClient())
-                {
-                    try
-                    {
-                        maintenanceClient.DownloadFile(Path.Combine(PathPrefix, "maintenance.info"), MaintenancePath);
-                        maintenance = true;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                if (Development)
-                    maintenance = false;
-
                 try
                 {
-                    if (File.Exists(MaintenancePath))
-                        File.Delete(MaintenancePath);
-
-
-                    if (!maintenance)
+                    using (var infoClient = new WebClient())
                     {
-                        using (var infoClient = new WebClient())
+                        try
                         {
-                            try
-                            {
-                                infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
-                            }
-                            catch (Exception ex)
-                            {
-                                ShowUpdateCheckFailedMessage(ex);
-                            }
+                            infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
                         }
-
-
-
-                        if (!File.Exists(CurrentInfoDestPath))
+                        catch (Exception ex)
                         {
-                            string[] currentInfoLines = new string[]
-                            {
-                                new Version(1, 0, 0, 0).ToString(),
-                                CurrentVersion.ToString(),
-                                false.ToString(),
-                                Path.Combine(PathPrefix, "ModAPIUpdateSetup.exe")
-                            };
-
-                            File.WriteAllLines(CurrentInfoDestPath, currentInfoLines);
+                            ShowUpdateCheckFailedMessage(ex);
                         }
+                    }
 
-                        if (File.Exists(UpdateInfoDestPath))
+                    if (!File.Exists(CurrentInfoDestPath))
+                    {
+                        string[] currentInfoLines = new string[]
                         {
-                            if (File.ReadAllText(CurrentInfoDestPath) != File.ReadAllText(UpdateInfoDestPath))
+                            new Version(1, 0, 0, 0).ToString(),
+                            CurrentVersion.ToString(),
+                            false.ToString(),
+                            Path.Combine(PathPrefix, "ModAPIUpdateSetup.exe")
+                        };
+
+                        File.WriteAllLines(CurrentInfoDestPath, currentInfoLines);
+                    }
+
+                    if (File.Exists(UpdateInfoDestPath))
+                    {
+                        if (File.ReadAllText(CurrentInfoDestPath) != File.ReadAllText(UpdateInfoDestPath))
+                        {
+                            var updateInfoLines = File.ReadAllLines(UpdateInfoDestPath);
+                            if (Version.TryParse(updateInfoLines[0], out Version ModApiSetupVersion) &&
+                                ModApiSetupVersion == new Version(1, 0, 0, 0))
                             {
-                                var updateInfoLines = File.ReadAllLines(UpdateInfoDestPath);
-                                if (Version.TryParse(updateInfoLines[0], out Version ModApiSetupVersion))
+                                if (Version.Parse(updateInfoLines[1]) > CurrentVersion)
                                 {
-                                    if (ModApiSetupVersion == new Version(1, 0, 0, 0))
+                                    if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?", "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                     {
-                                        if (Version.Parse(updateInfoLines[1]) > CurrentVersion)
+                                        if (bool.Parse(updateInfoLines[2]))
                                         {
-                                            if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?", "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                            Process.Start(updateInfoLines[3]);
+                                        }
+                                        else
+                                        {
+                                            var installerClient = new WebClient();
+
+                                            if (File.Exists(UpdaterDestPath))
+                                                File.Delete(UpdaterDestPath);
+
+                                            installerClient.DownloadFile(updateInfoLines[3], UpdaterDestPath);
+
+                                            if (File.Exists(UpdaterDestPath))
                                             {
-                                                if (bool.Parse(updateInfoLines[2]))
+                                                if (new FileInfo(UpdaterDestPath).Length > 0)
                                                 {
-                                                    Process.Start(updateInfoLines[3]);
+                                                    var args = Environment.GetCommandLineArgs().ToList();
+
+                                                    string currentArgs = string.Empty;
+                                                    foreach (string s in args)
+                                                        currentArgs += "\"" + s.TrimEnd('\\') + "\" ";
+
+                                                    string argOnePath = Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString().TrimEnd('\\');
+                                                    if (!argOnePath.EndsWith(" "))
+                                                        argOnePath = argOnePath + " ";
+
+                                                    Process.Start(UpdaterDestPath, "\"" + argOnePath + "\" " + currentArgs);
+                                                    Process.GetCurrentProcess().Kill();
                                                 }
                                                 else
                                                 {
-                                                    var installerClient = new WebClient();
-
-                                                    if (File.Exists(UpdaterDestPath))
-                                                        File.Delete(UpdaterDestPath);
-
-                                                    installerClient.DownloadFile(/*new Uri(*/updateInfoLines[3]/*)*/, UpdaterDestPath);
-                                                    /*installerClient.DownloadFileCompleted += (sneder, args) =>
-                                                    {*/
-                                                    if (File.Exists(UpdaterDestPath))
-                                                    {
-                                                        if (new FileInfo(UpdaterDestPath).Length > 0)
-                                                        {
-                                                            var args = Environment.GetCommandLineArgs().ToList();
-                                                            //args.RemoveAt(0);
-                                                            string currentArgs = string.Empty;
-                                                            foreach (string s in args)
-                                                                currentArgs += "\"" + s.TrimEnd('\\') + "\" "; //currentArgs = currentArgs + "\"" + s + "\" ";
-                                                                                                               /*foreach (string s in args)
-                                                                                                               {
-                                                                                                                   MessageBox.Show(s, "args[" + args.IndexOf(s) + "]");
-                                                                                                                   currentArgs = currentArgs + "\"" + s/*ConvertToArgument(s)* / + "\" ";
-                                                                                                               }*/
-
-                                                            string argOnePath = Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString().TrimEnd('\\');
-                                                            if (!argOnePath.EndsWith(" "))
-                                                                argOnePath = argOnePath + " ";
-                                                            //MessageBox.Show(argOnePath, "argOnePath");
-
-                                                            Process.Start(UpdaterDestPath, "\"" + argOnePath + "\" " + /*"\" \"" + Environment.GetCommandLineArgs()[0] + "\" " + */currentArgs);
-                                                            Process.GetCurrentProcess().Kill();
-                                                        }
-                                                        else
-                                                        {
-                                                            File.Delete(UpdaterDestPath);
-                                                        }
-                                                    }
-                                                    //};
+                                                    File.Delete(UpdaterDestPath);
                                                 }
                                             }
                                         }
-                                        /*}
-                                        catch (Exception ex)
-                                        {
-                                            MessageBox.Show(ex.ToString(), "Something broke");
-                                        }*/
                                     }
-                                    else
-                                        ShowUnrecognizedUpdateInfoVersionMessage();
+                                    
                                 }
-                                else
-                                    ShowUnrecognizedUpdateInfoVersionMessage();
                             }
                             else
-                            {
-                                File.Delete(UpdateInfoDestPath);
-                            }
+                                ShowUnrecognizedUpdateInfoVersionMessage();
                         }
                         else
                         {
-
+                            File.Delete(UpdateInfoDestPath);
                         }
+                    }
 
-                        if (DllsUpdater.HasDllsUpdate(out var githubRelease))
+                    if (DllsUpdater.HasDllsUpdate(out var githubRelease))
+                    {
+                        var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
                         {
-                            var result = MessageBox.Show(CommonStrings.DllsUpdateAvailable, CommonStrings.DllsUpdateAvailableTitle, MessageBoxButton.YesNo);
-                            if (result == MessageBoxResult.Yes)
-                            {
-                                var dialog = new ProgressDialog(
-                                    CommonStrings.UpdatingDllsDialog + githubRelease.tag_name,
-                                    CommonStrings.UpdatingDllsDialogTitle,
-                                    (s, e) =>
+                            var dialog = new ProgressDialog(
+                                CommonStrings.UpdatingDllsDialog + githubRelease.tag_name,
+                                CommonStrings.UpdatingDllsDialogTitle,
+                                (s, e) =>
+                                {
+                                    DllsUpdater.UpdateDlls(githubRelease, progress =>
                                     {
-                                        DllsUpdater.UpdateDlls(githubRelease, progress =>
-                                        {
-                                            (s as BackgroundWorker).ReportProgress(progress);
-                                        });
+                                        (s as BackgroundWorker).ReportProgress(progress);
                                     });
-                                dialog.ShowDialog();
-                            }
+                                });
+                            dialog.ShowDialog();
                         }
                     }
-                    else if (maintenance && !Development)
-                    {
-                        MessageBox.Show("The ModAPI Launcher Kit's automatic update functionality is currently down for maintenance. Offline usage may continue as normal.");
-                    }
-
-                    /*if (File.Exists(UpdaterDestPath))
-                    {
-                        if (new FileInfo(UpdaterDestPath).Length == 0)
-                            File.Delete(UpdaterDestPath);
-                    }*/
                 }
                 catch (Exception ex)
                 {
                     ShowUpdateCheckFailedMessage(ex);
                 }
-            }
-        }
-
-        static string ConvertToArgument(string path)
-        {
-            if (path == null)
-            {
-                return "null";
-            }
-            else
-            {
-                return "\"" + path + "\"";
             }
         }
 
