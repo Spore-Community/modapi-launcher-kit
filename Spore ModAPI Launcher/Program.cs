@@ -211,7 +211,6 @@ namespace SporeModAPI_Launcher
                     MessageBox.Show("ErrorCode: " + exc.InnerException.GetType() + "\n\n" + exc.InnerException.Message + "\n\n" + exc.InnerException.StackTrace, "Win32Exception InnerException Error Info");
                 }
             }
-            Process.Start(ModApiHelpThreadURL);
         }
 
         List<string> GetDLLsToInject(string dllEnding, List<string> dllExceptions)
