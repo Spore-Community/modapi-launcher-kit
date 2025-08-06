@@ -503,26 +503,6 @@ namespace Spore_ModAPI_Easy_Installer
             if ((ComponentInfoStackPanel.ActualHeight + ComponentInfoStackPanel.Margin.Top + ComponentInfoStackPanel.Margin.Bottom) > ComponentInfoScrollViewer.ScrollableHeight)
             {
                 ComponentInfoScrollViewer.ScrollToVerticalOffset(0);
-                //int timeCounter = 0;
-                System.Timers.Timer timer = new System.Timers.Timer(25);
-                timer.Elapsed += (sneder, args) =>
-                {
-                    Dispatcher.Invoke(new Action(() =>
-                    {
-                        Debug.WriteLine("VerticalOffset: " + ComponentInfoScrollViewer.VerticalOffset.ToString());
-                        //double targetVertOffset = ComponentInfoScrollViewer.VerticalOffset;
-                        if (ComponentInfoScrollViewer.VerticalOffset < ComponentInfoScrollViewer.ScrollableHeight)
-                            ComponentInfoScrollViewer.ScrollToVerticalOffset(ComponentInfoScrollViewer.VerticalOffset + 1);
-                        /*else if (timeCounter < 100)
-                            timeCounter++;
-                        else
-                        {
-                            ComponentInfoScrollViewer.ScrollToVerticalOffset(0);
-                            timeCounter = 0;
-                        }*/
-                    }));
-                };
-                timer.Start();
             }
         }
 
