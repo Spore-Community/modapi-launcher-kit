@@ -11,6 +11,7 @@ namespace ModAPI_Installers
         Disk,
         Origin,
         Origin_Patched,
+        EA_Oct24,
         Steam,
         Steam_Patched,
         GoG_Oct24,
@@ -27,6 +28,7 @@ namespace ModAPI_Installers
                                        /* DISK*/    24909584,
                                        /* ORIGIN */ 31347984,
                                        /* ORIGIN_P */ 24898224,
+                                       /* EA_OCT24 */ 24906040,
                                        /* STEAM */  24888320,
                                        /* STEAM_P */24885248,
                                        /* GOG_OCT24 */24895536,
@@ -36,6 +38,7 @@ namespace ModAPI_Installers
                                                   "disk", 
                                                   "steam_patched",  // origin uses the steam_patched one
                                                   "steam_patched",  // origin uses the steam_patched one
+                                                  "steam_patched",  // EA app uses the steam_patched one
                                                   "steam", 
                                                   "steam_patched", 
                                                   "steam_patched",  // in GoG executable, addresses did not change in October 2024 update
@@ -48,6 +51,7 @@ namespace ModAPI_Installers
                                                   "SporeApp.exe", 
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
+                                                  "SporeApp_ModAPIFix.exe",  // EA app uses a different one
                                                   "SporeApp.exe", 
                                                   "SporeApp.exe", 
                                                   "SporeApp.exe", 
@@ -57,7 +61,9 @@ namespace ModAPI_Installers
 
         public static bool RequiresModAPIFix(GameVersionType versionType)
         {
-            return versionType == GameVersionType.Origin || versionType == GameVersionType.Origin_Patched;
+            return versionType == GameVersionType.Origin || 
+                    versionType == GameVersionType.Origin_Patched ||
+                    versionType == GameVersionType.EA_Oct24;
         }
 
         public static GameVersionType DetectVersion(string path)
@@ -83,7 +89,12 @@ namespace ModAPI_Installers
         {
             if (type == GameVersionType.Disk)
                 return "SporeModAPI.disk.dll";
-            else if ((type == GameVersionType.Origin) || (type == GameVersionType.Origin_Patched) || (type == GameVersionType.Steam_Patched) || (type == GameVersionType.GoG_Oct24) || (type == GameVersionType.Steam_Oct24))
+            else if ((type == GameVersionType.Origin)         || 
+                     (type == GameVersionType.Origin_Patched) ||
+                     (type == GameVersionType.EA_Oct24)       ||
+                     (type == GameVersionType.Steam_Patched)  ||
+                     (type == GameVersionType.GoG_Oct24)      ||
+                     (type == GameVersionType.Steam_Oct24))
                 return "SporeModAPI.march2017.dll";
             else
             {
