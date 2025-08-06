@@ -96,7 +96,6 @@ namespace Spore_ModAPI_Easy_Installer
             if (_isConfigurator)
             {
                 LoadingPanel.Visibility = Visibility.Collapsed;
-                LoadTheme();
                 RevealInstaller();
             }
             else
@@ -108,45 +107,21 @@ namespace Spore_ModAPI_Easy_Installer
         void WaitForCue()
         {
             string indicatorPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "RevealXmlInstaller.info");
-            string themeIndicatorPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "LoadTheme.info");
+
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
             {
-                Interval = 10
+                Interval = 250
             };
             timer.Tick += (sneder, args) =>
             {
-                if (File.Exists(themeIndicatorPath))
-                {
-                    LoadTheme();
-                    File.Delete(themeIndicatorPath);
-                }
-                /*Dispatcher.Invoke(new Action(() =>
-                {
-                    while (IsVisible)
-                    {*/
-                if (File.Exists(indicatorPath))//EasyInstaller.RevealXmlInstaller)
+                if (File.Exists(indicatorPath))
                 {
                     RevealInstaller();
                     File.Delete(indicatorPath);
                     timer.Stop();
                 }
-                //break;
-                //}
-                //}));
             };
             timer.Start();
-        }
-
-        public void LoadTheme()
-        {
-            /*string themePath = Path.Combine(ModConfigPath, "Theme.xaml");
-            if (File.Exists(themePath))
-            {
-                Resources.MergedDictionaries.Add(new ResourceDictionary()
-                {
-                    Source = new Uri(themePath, UriKind.RelativeOrAbsolute)
-                });
-            }*/
         }
 
         public void RevealInstaller()
