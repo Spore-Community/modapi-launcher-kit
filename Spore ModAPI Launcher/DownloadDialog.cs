@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
+using ModApi.UpdateManager;
 
 namespace SporeModAPI_Launcher
 {
@@ -47,6 +48,7 @@ namespace SporeModAPI_Launcher
         private void DownloadDialog_Shown(object sender, EventArgs e)
         {
             WebClient client = new WebClient();
+            client.Headers.Add("User-Agent", UpdateManager.HttpUserAgent);
             client.DownloadProgressChanged += DownloadProgressChanged;
             client.DownloadDataCompleted += DownloadDataCompleted;
 

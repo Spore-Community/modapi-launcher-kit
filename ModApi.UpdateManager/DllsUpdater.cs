@@ -122,6 +122,7 @@ namespace ModApi.UpdateManager
             }
             using (var client = new WebClient())
             {
+                client.Headers.Add("User-Agent", UpdateManager.HttpUserAgent);
                 client.DownloadProgressChanged += (s, e) =>
                 {
                     if (progressHandler != null) 

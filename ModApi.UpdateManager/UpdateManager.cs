@@ -47,6 +47,7 @@ namespace ModApi.UpdateManager
                     return new Version(999, 999, 999, 999);
             }
         }
+        public static string HttpUserAgent = "Spore-ModAPI-Launcher-Kit/" + CurrentVersion.ToString();
 
         /// <summary>
         /// Core DLLs version is the one that came with the old launcher, 2.5.20
@@ -113,6 +114,7 @@ namespace ModApi.UpdateManager
                 {
                     using (var infoClient = new WebClient())
                     {
+                        infoClient.Headers.Add("User-Agent", HttpUserAgent);
                         try
                         {
                             infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
@@ -155,6 +157,7 @@ namespace ModApi.UpdateManager
                                         else
                                         {
                                             var installerClient = new WebClient();
+                                            installerClient.Headers.Add("User-Agent", HttpUserAgent);
 
                                             if (File.Exists(UpdaterDestPath))
                                                 File.Delete(UpdaterDestPath);
