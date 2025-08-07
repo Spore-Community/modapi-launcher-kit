@@ -98,7 +98,7 @@ namespace ModAPI_Installers
                 return "SporeModAPI.march2017.dll";
             else
             {
-                System.Windows.Forms.MessageBox.Show("If you're using the Steam version of Spore or the GOG version of Spore, please update to version 3.1.0.22 to proceed. If you're using Origin Spore and you see this message, or if you're already using a higher version of Spore, please inform rob55rod or emd4600 immediately.", "Unsupported Game Version");
+                System.Windows.Forms.MessageBox.Show("Your current Spore game version is not compatible with this Launcher Kit version. If you downloaded the game from EA App, Steam, or GOG, please update to version 3.1.0.29 to proceed. If you're using a higher version of Spore, please see https://launcherkit.sporecommunity.com/support.", "Unsupported Game Version");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
                 return string.Empty;
             }
