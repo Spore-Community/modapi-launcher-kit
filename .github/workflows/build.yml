@@ -7,9 +7,6 @@ jobs:
     runs-on: windows-2022
 
     env:
-      net40SdkUrl: 'https://www.nuget.org/api/v2/package/Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3'
-      net45SdkUrl: 'https://www.nuget.org/api/v2/package/Microsoft.NETFramework.ReferenceAssemblies.net45/1.0.3'
-      sdkSystemPath: 'C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework'
       nugetUrl: 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
       modApiUrl: 'https://github.com/emd4600/Spore-ModAPI/releases/latest/download/SporeModAPIdlls.zip'
 
@@ -18,21 +15,6 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x86
-      # taken from https://github.com/vrnobody/net45action
-      - name: Install .NET Framework 4.0 SDK
-        run: |
-          Invoke-WebRequest -Uri "${env:net40SdkUrl}" -OutFile "${env:temp}\net40sdk.zip"
-          Expand-Archive -Force -LiteralPath "${env:temp}\net40sdk.zip" -DestinationPath "${env:temp}\net40sdk"
-          [IO.Directory]::Delete("${env:sdkSystemPath}\v4.0", $True)
-          Move-Item -Force -LiteralPath "${env:temp}\net40sdk\build\.NETFramework\v4.0" -Destination "${env:sdkSystemPath}"
-        shell: pwsh
-      - name: Install .NET Framework 4.5 SDK
-        run: |
-          Invoke-WebRequest -Uri "${env:net45SdkUrl}" -OutFile "${env:temp}\net45sdk.zip"
-          Expand-Archive -Force -LiteralPath "${env:temp}\net45sdk.zip" -DestinationPath "${env:temp}\net45sdk"
-          [IO.Directory]::Delete("${env:sdkSystemPath}\v4.5", $True)
-          Move-Item -Force -LiteralPath "${env:temp}\net45sdk\build\.NETFramework\v4.5" -Destination "${env:sdkSystemPath}"
-        shell: pwsh
       - name: Install Nuget
         run: |
           Invoke-WebRequest "${env:nugetUrl}" -OutFile nuget.exe
