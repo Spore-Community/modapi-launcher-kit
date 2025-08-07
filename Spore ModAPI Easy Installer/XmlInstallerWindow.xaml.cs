@@ -96,7 +96,6 @@ namespace Spore_ModAPI_Easy_Installer
             if (_isConfigurator)
             {
                 LoadingPanel.Visibility = Visibility.Collapsed;
-                LoadTheme();
                 RevealInstaller();
             }
             else
@@ -108,45 +107,21 @@ namespace Spore_ModAPI_Easy_Installer
         void WaitForCue()
         {
             string indicatorPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "RevealXmlInstaller.info");
-            string themeIndicatorPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "LoadTheme.info");
+
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
             {
-                Interval = 10
+                Interval = 250
             };
             timer.Tick += (sneder, args) =>
             {
-                if (File.Exists(themeIndicatorPath))
-                {
-                    LoadTheme();
-                    File.Delete(themeIndicatorPath);
-                }
-                /*Dispatcher.Invoke(new Action(() =>
-                {
-                    while (IsVisible)
-                    {*/
-                if (File.Exists(indicatorPath))//EasyInstaller.RevealXmlInstaller)
+                if (File.Exists(indicatorPath))
                 {
                     RevealInstaller();
                     File.Delete(indicatorPath);
                     timer.Stop();
                 }
-                //break;
-                //}
-                //}));
             };
             timer.Start();
-        }
-
-        public void LoadTheme()
-        {
-            /*string themePath = Path.Combine(ModConfigPath, "Theme.xaml");
-            if (File.Exists(themePath))
-            {
-                Resources.MergedDictionaries.Add(new ResourceDictionary()
-                {
-                    Source = new Uri(themePath, UriKind.RelativeOrAbsolute)
-                });
-            }*/
         }
 
         public void RevealInstaller()
@@ -528,26 +503,6 @@ namespace Spore_ModAPI_Easy_Installer
             if ((ComponentInfoStackPanel.ActualHeight + ComponentInfoStackPanel.Margin.Top + ComponentInfoStackPanel.Margin.Bottom) > ComponentInfoScrollViewer.ScrollableHeight)
             {
                 ComponentInfoScrollViewer.ScrollToVerticalOffset(0);
-                //int timeCounter = 0;
-                System.Timers.Timer timer = new System.Timers.Timer(25);
-                timer.Elapsed += (sneder, args) =>
-                {
-                    Dispatcher.Invoke(new Action(() =>
-                    {
-                        Debug.WriteLine("VerticalOffset: " + ComponentInfoScrollViewer.VerticalOffset.ToString());
-                        //double targetVertOffset = ComponentInfoScrollViewer.VerticalOffset;
-                        if (ComponentInfoScrollViewer.VerticalOffset < ComponentInfoScrollViewer.ScrollableHeight)
-                            ComponentInfoScrollViewer.ScrollToVerticalOffset(ComponentInfoScrollViewer.VerticalOffset + 1);
-                        /*else if (timeCounter < 100)
-                            timeCounter++;
-                        else
-                        {
-                            ComponentInfoScrollViewer.ScrollToVerticalOffset(0);
-                            timeCounter = 0;
-                        }*/
-                    }));
-                };
-                timer.Start();
             }
         }
 

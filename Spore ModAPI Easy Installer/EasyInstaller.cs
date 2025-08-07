@@ -552,9 +552,6 @@ namespace Spore_ModAPI_Easy_Installer
 
                     Directory.CreateDirectory(modPath);
 
-                    string themeInfoPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "LoadTheme.info");
-                    if (File.Exists(themeInfoPath))
-                        File.Delete(themeInfoPath);
                     string revealInstallerInfoPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "RevealXmlInstaller.info");
                     if (File.Exists(revealInstallerInfoPath))
                         File.Delete(revealInstallerInfoPath);
