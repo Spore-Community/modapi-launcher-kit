@@ -85,9 +85,6 @@ namespace ModApi.UpdateManager
         /// <returns></returns>
         public static bool HasDllsUpdate(out GithubRelease release)
         {
-            // Necessary to stablish SSL connection with Github API
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
             release = GetLatestGithubRelease("emd4600", "Spore-ModAPI");
             var updateVersion = ParseGithubVersion(release.tag_name);
 
