@@ -196,9 +196,14 @@ namespace SporeModAPI_Launcher
             }
         }
         
-        public static void ShowError(Exception ex)
+        public void ShowError(Exception ex)
         {
-            MessageBox.Show(Strings.GalacticAdventuresNotExecuted + "\n" + ModApiHelpThreadURL + "\n\n" + ex.GetType() + "\n\n" + ex.Message + "\n\n" + ex.StackTrace, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            string versionInfo = "Launcher Kit version: " + UpdateManager.CurrentVersion + "\nModAPI DLLs version: " + UpdateManager.CurrentDllsBuild + "\nLauncher Kit path: " + Assembly.GetEntryAssembly().Location;
+            if(this.ExecutablePath != null && File.Exists(this.ExecutablePath))
+            {
+                versionInfo += "\n\nSpore version: " + FileVersionInfo.GetVersionInfo(this.ExecutablePath).FileVersion + " - " + this._executableType + "\nSpore path: " + this.ExecutablePath;
+            }
+            MessageBox.Show(Strings.GalacticAdventuresNotExecuted + "\n" + ModApiHelpThreadURL + "\n\n" + ex.GetType() + "\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n\n" + versionInfo, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             if (ex is System.ComponentModel.Win32Exception)
             {
                 var exc = ex as System.ComponentModel.Win32Exception;
