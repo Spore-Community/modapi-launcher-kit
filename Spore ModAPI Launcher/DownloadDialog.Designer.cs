@@ -60,6 +60,7 @@
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "DownloadDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Text = title;
             this.Shown += new System.EventHandler(this.DownloadDialog_Shown);

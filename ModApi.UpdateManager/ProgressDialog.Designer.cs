@@ -35,7 +35,7 @@
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(9, 41);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(2);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(464, 37);
             this.progressBar.TabIndex = 0;
@@ -58,8 +58,9 @@
             this.ClientSize = new System.Drawing.Size(484, 92);
             this.Controls.Add(this.label);
             this.Controls.Add(this.progressBar);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "ProgressDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ModAPI DLLs Updating";
             this.Load += new System.EventHandler(this.ProgressDialog_Load);
             this.ResumeLayout(false);

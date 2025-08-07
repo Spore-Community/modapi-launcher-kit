@@ -69,6 +69,7 @@
             this.Controls.Add(this.lblModIsInstalling);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ProgressWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Installing mod...";
             this.ResumeLayout(false);
             this.PerformLayout();
