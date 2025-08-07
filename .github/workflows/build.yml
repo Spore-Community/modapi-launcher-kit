@@ -12,12 +12,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x86
       - name: Install Nuget
         run: |
           Invoke-WebRequest "${env:nugetUrl}" -OutFile nuget.exe
+      - name: Prepare Environment
+        run: |
+          $env:revision = git describe --tags --always
+          echo "GIT_REVISION=$env:revision" >> $env:GITHUB_ENV
+        shell: pwsh
       - name: Restore Packages
         run: |
           nuget restore
@@ -55,12 +62,12 @@ jobs:
       - name: Upload ModApi.InterimSetup
         uses: actions/upload-artifact@v4
         with:
-          name: ModApi.InterimSetup
+          name: ModApi.InterimSetup-${{ env.GIT_REVISION }}
           path: ModApi.InterimSetup/ModApi.InterimSetup/bin/Release/*.exe
       - name: Upload ModApi.Updater
         uses: actions/upload-artifact@v4
         with:
-          name: ModApi.Updater
+          name: ModApi.Updater-${{ env.GIT_REVISION }}
           path: Updater/ModApi.Updater/bin/Release/*.exe
 
 
