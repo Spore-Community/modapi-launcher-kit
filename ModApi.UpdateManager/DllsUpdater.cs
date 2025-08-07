@@ -37,7 +37,7 @@ namespace ModApi.UpdateManager
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Method = "GET";
             request.Accept = "application/vnd.github.v3+json";
-            request.UserAgent = "request";
+            request.UserAgent = UpdateManager.HttpUserAgent;
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             using (Stream stream = response.GetResponseStream())
