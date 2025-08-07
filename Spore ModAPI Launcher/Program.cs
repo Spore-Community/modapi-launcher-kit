@@ -24,7 +24,7 @@ namespace SporeModAPI_Launcher
         private static readonly bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
 
         private const string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
-        private const string ModApiHelpThreadURL = "http://davoonline.com/phpBB3/viewtopic.php?f=108&t=6300";
+        private const string ModApiHelpThreadURL = "https://launcherkit.sporecommunity.com/support";
         private const string DarkInjectionPageURL = "http://davoonline.com/sporemodder/rob55rod/DarkInjection/";
 
         private string SporebinPath;

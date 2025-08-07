@@ -136,7 +136,7 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Origin users need to download an additional file in order for ModAPI to work. If you press OK, the launcher will download and apply this additional file..
+        ///   Looks up a localized string similar to EA App and Origin users need to download an additional file in order for mods to work. If you press OK, the launcher will download and apply this additional file..
         /// </summary>
         public static string DownloadOriginFix {
             get {
@@ -163,7 +163,7 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Something went wrong while starting or injecting your mods into Spore Galactic Adventures. The game may start, but some mods will not work correctly.\nIf you see this message, please report the issue, along with a screenshot of this MessageBox. A forum thread where you may do so should open once this MessageBox is closed, but if this does not occur, you can also find the thread at:.
+        ///   Looks up a localized string similar to Something went wrong while starting or injecting your mods into Spore. The game may start, but some mods will not work correctly. Please report the issue, along with a screenshot of this error, using the instructions at the following website:.
         /// </summary>
         public static string GalacticAdventuresNotExecuted {
             get {
@@ -190,7 +190,7 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ModAPI needs Galactic Adventures and (at least) Spore patch 1.5.1 to work correctly. If your game crashes or ModAPI mods do not work, install Galactic Adventures and download the latest patch from spore.com.
+        ///   Looks up a localized string similar to The Launcher Kit requires Galactic Adventures and one of the following three game versions: 3.0.0.2818 (disc only), 3.1.0.22, or 3.1.0.29. If your game crashes or mods do not work, download the latest version of Spore and Galactic Adventures. Disc users must instead manually install patch 1.5.1 after installing Galactic Adventures..
         /// </summary>
         public static string MightNotWork {
             get {
