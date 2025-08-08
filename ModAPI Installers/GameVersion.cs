@@ -8,13 +8,21 @@ namespace ModAPI_Installers
 {
     public enum GameVersionType
     {
+        /// <summary>3.0.0.2818 (July 2009) installed from disc, with patch 5.1</summary>
         Disk,
+        /// <summary>3.0.0.2818 (July 2009) installed from Origin, with patch 5.1, requires ModAPI Fix</summary>
         Origin,
+        /// <summary>3.1.0.22 (March 2017) installed from Origin, requires ModAPI Fix</summary>
         Origin_Patched,
+        /// <summary>3.1.0.29 (October 2024) installed from EA App or Origin, requires ModAPI Fix</summary>
         EA_Oct24,
+        /// <summary>3.0.0.2818 (July 2009) installed from GOG or Steam, with patch 5.1</summary>
         Steam,
+        /// <summary>3.1.0.22 (March 2017) installed from GOG or Steam</summary>
         Steam_Patched,
+        /// <summary>3.1.0.29 (October 2024) installed from GOG</summary>
         GoG_Oct24,
+        /// <summary>3.1.0.29 (October 2024) installed from Steam, has steamstub DRM</summary>
         Steam_Oct24,
 
         None
