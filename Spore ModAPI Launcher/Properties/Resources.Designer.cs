@@ -73,59 +73,9 @@ namespace SporeModAPI_Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Valve_Steam_Logo {
-            get {
-                object obj = ResourceManager.GetObject("Valve_Steam_Logo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Disk {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Disk", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Disk_Pirated {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Disk_Pirated", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Disk2 {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Disk2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap VersionButton_Disk3 {
             get {
                 object obj = ResourceManager.GetObject("VersionButton_Disk3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Origin {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Origin", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
