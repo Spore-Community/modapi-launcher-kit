@@ -129,6 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="lH5AxkU.ico" />
+    <None Include="Resources\VersionButton_EAApp_Icon.png" />
+    <None Include="Resources\VersionButton_Steam_GoG_Icon.png" />
+    <None Include="Resources\VersionButton_Disc_Icon.png" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\VersionButton_Disk.png" />

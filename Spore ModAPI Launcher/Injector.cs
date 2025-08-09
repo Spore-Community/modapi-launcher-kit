@@ -113,7 +113,7 @@ namespace SporeModAPI_Launcher
             return new IntPtr((Int64)thread_result);
         }
 
-        public static void SetInjectionData(PROCESS_INFORMATION pi, IntPtr hDLLInjectorHandle, bool is_disk_spore, List<string> dlls)
+        public static void SetInjectionData(PROCESS_INFORMATION pi, IntPtr hDLLInjectorHandle, bool is_disc_spore, List<string> dlls)
         {
             IntPtr hLocalDLLInjectorHandle = NativeMethods.LoadLibraryEx("ModAPI.DLLInjector.dll", IntPtr.Zero, LoadLibraryFlags.DONT_RESOLVE_DLL_REFERENCES);
             IntPtr SetInjectDataPtr = GetProcAddress(hLocalDLLInjectorHandle, "SetInjectionData");
@@ -134,7 +134,7 @@ namespace SporeModAPI_Launcher
 
             IntPtr hProc = NativeMethods.OpenProcess(NativeMethods.AccessRequired, false, pi.dwProcessId); //Open the process with all access
 
-            int total_alloc_size = 1 + 4; //1 byte for if we are disk spore, 4 bytes for number of strings
+            int total_alloc_size = 1 + 4; //1 byte for if we are disc spore, 4 bytes for number of strings
             foreach (string dll in dlls)
             {
                 total_alloc_size += 4 + Encoding.Unicode.GetByteCount(dll); //4 bytes for string length + string
@@ -151,7 +151,7 @@ namespace SporeModAPI_Launcher
             //write injection data
             var bytes = new byte[total_alloc_size];
             int byte_offset = 0;
-            bytes[byte_offset++] = (byte)(is_disk_spore ? 1 : 0);
+            bytes[byte_offset++] = (byte)(is_disc_spore ? 1 : 0);
             foreach (byte b in BitConverter.GetBytes((uint)dlls.Count))
                 bytes[byte_offset++] = b;
 

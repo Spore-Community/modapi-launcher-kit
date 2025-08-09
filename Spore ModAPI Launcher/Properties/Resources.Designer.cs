@@ -73,9 +73,9 @@ namespace SporeModAPI_Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Disk3 {
+        internal static System.Drawing.Bitmap VersionButton_Disc_Icon {
             get {
-                object obj = ResourceManager.GetObject("VersionButton_Disk3", resourceCulture);
+                object obj = ResourceManager.GetObject("VersionButton_Disc_Icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace SporeModAPI_Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Origin1 {
+        internal static System.Drawing.Bitmap VersionButton_EAApp_Icon {
             get {
-                object obj = ResourceManager.GetObject("VersionButton_Origin1", resourceCulture);
+                object obj = ResourceManager.GetObject("VersionButton_EAApp_Icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace SporeModAPI_Launcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Steam_GoG1 {
+        internal static System.Drawing.Bitmap VersionButton_Steam_GOG_Icon {
             get {
-                object obj = ResourceManager.GetObject("VersionButton_Steam_GoG1", resourceCulture);
+                object obj = ResourceManager.GetObject("VersionButton_Steam_GOG_Icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
