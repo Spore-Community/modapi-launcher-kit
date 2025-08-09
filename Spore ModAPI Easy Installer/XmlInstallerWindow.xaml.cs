@@ -31,19 +31,7 @@ namespace Spore_ModAPI_Easy_Installer
     {
         public static string GameSporeString = "Spore";
         public static string GameGaString = "GalacticAdventures";
-        //public bool cancelled = false;
-        /*bool _cancelled = false;
-        public bool cancelled
-        {
-            get => _cancelled;
-            set
-            {
-                _cancelled = value;
-                if (!_cancelled)
-                    InstallCancelled?.Invoke(this, null);
-            }
-        }*/
-        public static bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
+
         public static List<XmlInstallerWindow> installerWindows = new List<XmlInstallerWindow>();
         string ModSettingsStoragePath = string.Empty;
         string ModConfigPath = string.Empty;
@@ -68,7 +56,6 @@ namespace Spore_ModAPI_Easy_Installer
         Version ModInfoVersion = null;// new Version(1, 0, 0, 0);
         int _installerState = 0; //0 = waiting, 1 = installing
         int _installerMode = 0; //0 = show components list, 1 = don't show components list
-        bool _isModUnique = true;
         bool _isModMatched = false;
         bool _dontUseLegacyPackagePlacement = false;
         public static string GaDataPath = SporePath.MoveToData(SporePath.Game.GalacticAdventures, SporePath.GetRealParent(PathDialogs.ProcessGalacticAdventures()));
@@ -80,8 +67,6 @@ namespace Spore_ModAPI_Easy_Installer
             InitializeComponent();
             //LauncherSettings.Load();
             installerWindows.Add(this);
-            if (ERROR_TESTING)
-                MessageBox.Show("Core Spore Data: " + SporeDataPath + "\nGA Data: " + GaDataPath, "Data paths");
 
             if ((LauncherSettings.ForcedCoreSporeDataPath == null) && (!Directory.Exists(SporeDataPath)))
                 PathDialogs.ProcessSpore();
@@ -235,10 +220,8 @@ namespace Spore_ModAPI_Easy_Installer
                     {
                         if (mod.Unique == ModUnique)
                         {
-                            _isModUnique = false;
                             if (mod.Name == ModName)
                             {
-                                //MessageBox.Show(mod.Name + "\n\n" + ModName, "mod.Name and ModName");
                                 _isModMatched = true;
                                 break;
                             }
@@ -1026,9 +1009,6 @@ namespace Spore_ModAPI_Easy_Installer
                             else if (p.ComponentGames[i] == GameSporeString)
                                 targetPath = Path.Combine(SporeDataPath, p.ComponentFileNames[i]);
 
-                            if (ERROR_TESTING)
-                                MessageBox.Show(targetPath, "UNINSTALLING");
-
                             if (File.Exists(targetPath))
                                 File.Delete(targetPath);
                         }
@@ -1178,7 +1158,6 @@ namespace Spore_ModAPI_Easy_Installer
                 targetFolderPath = SporeDataPath; //Path.Combine(SporeDataPath, p.ComponentFileNames[index]);
             else
             {
-                ShowMessageBox(p.ComponentGames[index] + "\n\n" + p.ComponentFileNames[index]);
                 isDll = true;
                 if (_dontUseLegacyPackagePlacement)
                 {
@@ -1186,8 +1165,6 @@ namespace Spore_ModAPI_Easy_Installer
                     if (!Directory.Exists(dllFolderPath))
                         Directory.CreateDirectory(dllFolderPath);
                     string outputPath = Path.Combine(dllFolderPath, p.ComponentFileNames[index]);
-
-                    ShowMessageBox(outputPath);
 
                     if (File.Exists(outputPath))
                         File.Delete(outputPath);
@@ -1208,7 +1185,6 @@ namespace Spore_ModAPI_Easy_Installer
                             Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
                             , p.ComponentFileNames[index]);
 
-                        ShowMessageBox(outputPath);
 
                         if (File.Exists(outputPath))
                         {
@@ -1223,8 +1199,6 @@ namespace Spore_ModAPI_Easy_Installer
                         string outputPath = Path.Combine(
                             Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
                             , p.ComponentFileNames[index].Replace(".dll", "-disk.dll"));
-
-                        ShowMessageBox(outputPath);
 
                         if (File.Exists(outputPath))
                         {
@@ -1274,8 +1248,6 @@ namespace Spore_ModAPI_Easy_Installer
             if (!isDll)
             {
                 targetPath = Path.Combine(targetFolderPath, p.ComponentFileNames[index]);
-
-                ShowMessageBox("targetPath: " + targetPath);
 
                 if (File.Exists(targetPath))
                     File.Delete(targetPath);
@@ -1486,11 +1458,7 @@ namespace Spore_ModAPI_Easy_Installer
         {
             DragMove();
         }
-        public static void ShowMessageBox(string text)
-        {
-            if (ERROR_TESTING)
-                MessageBox.Show(text, "Debug Info");
-        }
+
         private void FinishButton_Click(object sender, RoutedEventArgs e)
         {
             Close();

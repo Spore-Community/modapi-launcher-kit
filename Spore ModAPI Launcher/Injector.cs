@@ -73,14 +73,12 @@ namespace SporeModAPI_Launcher
             bytes[dllPath.Length] = 0;
 
             UIntPtr numBytesWritten;
-            Program.ERROR_TESTING_MSG("Beginning WriteProcessMemory");
             bool writeProcessMemoryOutput = WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out numBytesWritten);
             if (!writeProcessMemoryOutput || numBytesWritten.ToUInt32() != bytes.Length)
             {
                 /*throw new InjectException("Write process memory failed.");*/
                 Program.ThrowWin32Exception("Write process memory failed.");
             }
-            Program.ERROR_TESTING_MSG("WriteProcessMemory output: " + writeProcessMemoryOutput.ToString());
 
             // Create a remote thread that begins at the LoadLibrary function and is passed as memory pointer
             IntPtr hRemoteThread = CreateRemoteThread(hProc, IntPtr.Zero, 0, retLib, objPtr, 0, out var lpThreadId);
@@ -167,13 +165,11 @@ namespace SporeModAPI_Launcher
             }
 
 
-            Program.ERROR_TESTING_MSG("Beginning WriteProcessMemory");
             bool writeProcessMemoryOutput = WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out var numBytesWritten);
             if (!writeProcessMemoryOutput || numBytesWritten.ToUInt32() != bytes.Length)
             {
                 Program.ThrowWin32Exception("Write process memory failed.");
             }
-            Program.ERROR_TESTING_MSG("WriteProcessMemory output: " + writeProcessMemoryOutput.ToString());
 
             // Create a remote thread that begins at the LoadLibrary function and is passed as memory pointer
             IntPtr hRemoteThread = CreateRemoteThread(hProc, IntPtr.Zero, 0, SetInjectDataPtr, objPtr, 0, out var lpThreadId);

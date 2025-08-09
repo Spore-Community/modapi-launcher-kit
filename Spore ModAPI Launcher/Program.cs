@@ -21,7 +21,6 @@ namespace SporeModAPI_Launcher
     class Program
     {
         public static IntPtr processHandle = IntPtr.Zero;
-        private static readonly bool ERROR_TESTING = File.Exists(Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
 
         private const string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
         private const string ModApiHelpThreadURL = "https://launcherkit.sporecommunity.com/support";
@@ -61,14 +60,6 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        public static void ERROR_TESTING_MSG(string message)
-        {
-            if (ERROR_TESTING)
-            {
-                MessageBox.Show(message, "Error testing");
-            }
-        }
-
         void Execute()
         {
             try
@@ -84,12 +75,10 @@ namespace SporeModAPI_Launcher
                 if (LauncherSettings.ForcedSporebinEP1Path == null)
                 {
                     this.ProcessSporebinPath();
-                    ERROR_TESTING_MSG("1. SporebinEP1 path: " + this.SporebinPath);
                 }
                 else
                 {
                     SporebinPath = LauncherSettings.ForcedSporebinEP1Path;
-                    ERROR_TESTING_MSG("1. SporebinEP1 path is overridden");
                 }
 
                 // use the default path for now (we might have to use a different one for Origin)
@@ -97,11 +86,8 @@ namespace SporeModAPI_Launcher
                 {
                     this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
 
-                    ERROR_TESTING_MSG("2.0. Executable type: " + this.ExecutablePath);
-
                     this.ProcessExecutableType();
 
-                    ERROR_TESTING_MSG("2. Executable type: " + this._executableType);
 
                     if (this._executableType == GameVersionType.None)
                     {
@@ -111,7 +97,6 @@ namespace SporeModAPI_Launcher
                 }
                 else
                 {
-                    ERROR_TESTING_MSG("2. Executable type is overridden.");
                     this._executableType = LauncherSettings.GameVersion;
                 }
 
@@ -136,8 +121,6 @@ namespace SporeModAPI_Launcher
                     }
                 }
 
-                ERROR_TESTING_MSG("3. Real executable path: " + this.ExecutablePath);
-
                 // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
                 if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(this.SporebinPath + "steam_api.dll"))
                 {
@@ -149,7 +132,6 @@ namespace SporeModAPI_Launcher
 
                 if (SporePath.SporeIsInstalledOnSteam())
                 {
-                    ERROR_TESTING_MSG("3.5: Applying steam fix");
                     string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
                     //we have to use Spore GAs appid now, due to steam DRM :(
                     if (!File.Exists(steamAppIdPath) || File.ReadAllText(steamAppIdPath) != "24720")
@@ -166,9 +148,6 @@ namespace SporeModAPI_Launcher
                 }
 
                 string dllEnding = GameVersion.VersionNames[(int)this._executableType];
-
-                ERROR_TESTING_MSG("4. DLL suffix: " + dllEnding);
-
                 if (dllEnding == null)
                 {
                     MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -244,14 +223,11 @@ namespace SporeModAPI_Launcher
             foreach (var file in baseFolder.EnumerateFiles("*" + dllEnding + ".dll")
                 .Where(x => x.Name != MODAPI_DLL && !dllExceptions.Contains(x.Name)))
             {
-                ERROR_TESTING_MSG("5.* Preparing " + file.Name);
                 // the ModAPI dll should already be loaded
                 if (file.Name != MODAPI_DLL)
                 {
                     dlls.Add(file.FullName);
                 }
-                else
-                    ERROR_TESTING_MSG("5.* " + file.Name + " was already injected!");
             }
 
 
@@ -318,8 +294,6 @@ namespace SporeModAPI_Launcher
             else
                 currentSporebinPath = this.SporebinPath;
 
-            ERROR_TESTING_MSG("currentSporebinPath: " + currentSporebinPath + "\nExecutablePath: " + ExecutablePath);
-
             if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
                     IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, currentSporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
@@ -357,7 +331,6 @@ namespace SporeModAPI_Launcher
         GameVersionType ProcessExecutableType()
         {
             GameVersionType executableType = GameVersion.DetectVersion(this.ExecutablePath);
-            ERROR_TESTING_MSG("2.1. File length: " + new System.IO.FileInfo(this.ExecutablePath).Length);
 
             // for debugging purposes
             //executableType = GameVersionType.None;

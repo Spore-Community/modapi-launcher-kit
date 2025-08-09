@@ -473,12 +473,12 @@ namespace Spore_ModAPI_Easy_Installer
                     {
                         mod.AddFile(entry.Name, GetGameFromFileType(type));
                         string configOutPath = Path.Combine(modPath, entry.Name);
-                        DebugShowMessageBox(configOutPath, "configOutPath");
+
                         entry.ExtractToFile(configOutPath, true);
                         if (outputPath != null)
                         {
                             string fileOutPath = Path.Combine(outputPath, entry.Name);
-                            DebugShowMessageBox(fileOutPath, "fileOutPath");
+
                             File.Copy(configOutPath, fileOutPath);
                         }
                     }
@@ -897,13 +897,6 @@ namespace Spore_ModAPI_Easy_Installer
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
-        }
-
-        private static bool ErrorTesting = File.Exists(Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "debug.txt"));
-        static void DebugShowMessageBox(string text, string caption)
-        {
-            if (ErrorTesting)
-                MessageBox.Show(text, caption);
         }
     }
 }
