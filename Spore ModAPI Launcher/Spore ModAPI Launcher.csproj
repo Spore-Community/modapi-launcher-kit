@@ -135,7 +135,6 @@
     <None Include="Resources\VersionButton_Disk2.png" />
     <None Include="Resources\VersionButton_Steam_GoG1.png" />
     <None Include="Resources\VersionButton_Disk.png" />
-    <None Include="Resources\VersionButton_Steam_GoG.png" />
     <None Include="Resources\VersionButton_Disk_Pirated.png" />
     <None Include="Resources\VersionButton_Origin1.png" />
     <None Include="Resources\VersionButton_Origin.png" />
