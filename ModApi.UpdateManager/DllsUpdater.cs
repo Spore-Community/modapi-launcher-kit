@@ -91,7 +91,7 @@ namespace ModApi.UpdateManager
             return updateVersion > UpdateManager.CurrentDllsBuild;
         }
 
-        static readonly string[] DLL_NAMES = { "SporeModAPI.disk.dll", "SporeModAPI.march2017.dll", "SporeModAPI.lib" };
+        static readonly string[] DLL_NAMES = { "SporeModAPI.combined.dll", "SporeModAPI.disk.dll", "SporeModAPI.march2017.dll", "SporeModAPI.lib" };
 
         public class UpdateProgressEventArgs : EventArgs
         {
