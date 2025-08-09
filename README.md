@@ -28,15 +28,15 @@ You can open the solution in Visual Studio 2022. Make sure you have the .NET des
 The main Spore ModAPI Launcher solution includes the three apps and their dependencies, and is where the bulk of the code is. There are separate solutions for the Setup app and Updater app, which are used to initially install and update the Launcher Kit, respectively.
 
 ### Building and running
-The main solution can be built using Build Solution in Visual Studio, or by using msbuild in the repo's folder. The Launcher Kit will be installed to an Output folder in the repo's folder. To use the Launcher, you will additionally need to copy the two files inside LegacyLibs to the Output folder, and download and place the ModAPI Core DLLs in a coreLibs folder in the Output folder. The structure should look as follows:
+The main solution can be built using Build Solution in Visual Studio, or by using msbuild in the repo's folder. The Launcher Kit will be installed to an Output folder in the repo's folder. To use the Launcher, you will additionally need to download the ModAPI Legacy Core DLLs and place them inside the Output folder, and download and place the ModAPI Core DLLs in a coreLibs folder in the Output folder. The structure should look as follows:
 - Spore ModAPI Launcher.sln and other files and folders
 - Output folder
   - coreLibs folder
     - SporeModAPI.disk.dll (downloaded from ModAPI releases)
     - SporeModAPI.lib (downloaded from ModAPI releases)
     - SporeModAPI.march2017.dll (downloaded from ModAPI releases)
-  - SporeModAPI-disk.dll (copied from LegacyLibs folder)
-  - SporeModAPI-steam_patched.dll (copied from LegacyLibs folder)
+  - SporeModAPI-disk.dll (downloaded from ModAPI releases)
+  - SporeModAPI-steam_patched.dll (downloaded from ModAPI releases)
   - Spore ModAPI Easy Installer.exe
   - Spore ModAPI Easy Uninstaller.exe
   - Spore ModAPI Launcher.exe
