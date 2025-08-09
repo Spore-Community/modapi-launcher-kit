@@ -168,9 +168,6 @@
   <data name="DownloadCompleteTitle" xml:space="preserve">
     <value>Download complete</value>
   </data>
-  <data name="IncompatibleDarkInjection" xml:space="preserve">
-    <value>The version of Dark Injection you have installed (Dark Injection 9.r Public Beta 2.3.0) is not compatible with this update to the ModAPI Launcher Kit. Please update to a later version of Dark Injection. We don't believe in forcing updates onto anyone, but unfortunately, this was the price to pay to resolve some of the rampant issues some users have faced when using the ModAPI Launcher Kit.\n\nUpon closing this MessageBox, the Dark Injection webpage will open in your default internet browser. You'll be able to obtain the latest version of Dark Injection from there.</value>
-  </data>
   <data name="IncompatibleMod" xml:space="preserve">
     <value>Incompatible Mod Detected</value>
   </data>

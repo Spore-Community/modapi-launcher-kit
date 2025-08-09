@@ -171,9 +171,6 @@
   <data name="DownloadCompleteTitle" xml:space="preserve">
     <value>Descarga completada</value>
   </data>
-  <data name="IncompatibleDarkInjection" xml:space="preserve">
-    <value>placeholder</value>
-  </data>
   <data name="IncompatibleMod" xml:space="preserve">
     <value>placeholder</value>
   </data>

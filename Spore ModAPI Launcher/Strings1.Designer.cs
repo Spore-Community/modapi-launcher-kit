@@ -170,25 +170,7 @@ namespace SporeModAPI_Launcher {
                 return ResourceManager.GetString("GalacticAdventuresNotExecuted", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The version of Dark Injection you have installed (Dark Injection 9.r Public Beta 2.3.0) is not compatible with this update to the ModAPI Launcher Kit. Please update to a later version of Dark Injection. We don&apos;t believe in forcing updates onto anyone, but unfortunately, this was the price to pay to resolve some of the rampant issues some users have faced when using the ModAPI Launcher Kit.\n\nUpon closing this MessageBox, the Dark Injection webpage will open in your default internet browser. You&apos;ll be able  [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string IncompatibleDarkInjection {
-            get {
-                return ResourceManager.GetString("IncompatibleDarkInjection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Incompatible Mod Detected.
-        /// </summary>
-        public static string IncompatibleMod {
-            get {
-                return ResourceManager.GetString("IncompatibleMod", resourceCulture);
-            }
-        }
-        
+                
         /// <summary>
         ///   Looks up a localized string similar to The Launcher Kit requires Galactic Adventures and one of the following three game versions: 3.0.0.2818 (disc only), 3.1.0.22, or 3.1.0.29. If your game crashes or mods do not work, download the latest version of Spore and Galactic Adventures. Disc users must instead manually install patch 1.5.1 after installing Galactic Adventures..
         /// </summary>

@@ -25,7 +25,6 @@ namespace SporeModAPI_Launcher
 
         private const string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
         private const string ModApiHelpThreadURL = "https://launcherkit.sporecommunity.com/support";
-        private const string DarkInjectionPageURL = "http://davoonline.com/sporemodder/rob55rod/DarkInjection/";
 
         private string SporebinPath;
         private string ExecutablePath;
@@ -47,21 +46,14 @@ namespace SporeModAPI_Launcher
                 if (MessageBox.Show("For security reasons, explicitly running the Spore ModAPI Launcher as Administrator (by right-clicking and selecting \"Run as Administrator\") is not recommended. Doing so will also prevent you from being able to load creations into Spore by dragging their PNGs into the game window. Are you sure you want to proceed?", String.Empty, MessageBoxButtons.YesNo) == DialogResult.Yes)
                     proceed = true;
             }
+
             if (proceed)
             {
                 UpdateManager.CheckForUpdates();
                 Application.EnableVisualStyles();
                 LauncherSettings.Load();
 
-                if (Program.IsInstalledDarkInjectionCompatible())
-                {
-                    new Program().Execute();
-                }
-                else
-                {
-                    MessageBox.Show(Strings.IncompatibleDarkInjection.Replace(@"\n", "\n"), Strings.IncompatibleMod, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Process.Start(DarkInjectionPageURL);
-                }
+                new Program().Execute();
             }
             else
             {
@@ -497,34 +489,6 @@ namespace SporeModAPI_Launcher
             {
                 System.Windows.Forms.MessageBox.Show("Error: " + error, info);
                 throw new System.ComponentModel.Win32Exception(error);
-            }
-        }
-
-        static bool IsInstalledDarkInjectionCompatible()
-        {
-            string di230 = "di_9_r_beta2-3-0".ToLowerInvariant();
-            try
-            {
-                bool returnValue = true;
-                InstalledMods mods = new InstalledMods();
-                mods.Load();
-                ERROR_TESTING_MSG("BEGIN MOD CONFIGURATION NAMES");
-                foreach (ModConfiguration configuration in mods.ModConfigurations)
-                {
-                    ERROR_TESTING_MSG(configuration.Name);
-                    if (configuration.Name.ToLowerInvariant().Contains(di230))
-                    {
-                        returnValue = false;
-                        break;
-                    }
-                }
-                ERROR_TESTING_MSG("END MOD CONFIGURATION NAMES");
-                return returnValue;
-            }
-            catch (Exception ex)
-            {
-                ERROR_TESTING_MSG("FAILED TO INSPECT MOD CONFIGURATION NAMES\n" + ex);
-                return true;
             }
         }
 
