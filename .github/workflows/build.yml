@@ -9,6 +9,7 @@ jobs:
     env:
       nugetUrl: 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
       modApiUrl: 'https://github.com/emd4600/Spore-ModAPI/releases/latest/download/SporeModAPIdlls.zip'
+      legacyModApiUrl: 'https://github.com/emd4600/Spore-ModAPI/releases/latest/download/SporeModAPIlegacydlls.zip'
 
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +33,7 @@ jobs:
       - name: Download latest Spore-ModAPI
         run: |
           Invoke-WebRequest "${env:modApiUrl}" -OutFile SporeModAPIdlls.zip
+          Invoke-WebRequest "${env:legacyModApiUrl}" -OutFile SporeModAPIlegacydlls.zip
         shell: pwsh
       - name: Build modapi-launcher-kit
         run: |
@@ -40,7 +42,8 @@ jobs:
       - name: Package ModApiUpdate.zip
         run: |
           "C:\Program Files\7-Zip\7z.exe" e -y SporeModAPIdlls.zip -oOutput\coreLibs
-          
+          "C:\Program Files\7-Zip\7z.exe" e -y SporeModAPIlegacydlls.zip -oOutput\
+
           copy LegacyLibs\SporeModAPI-disk.dll Output\SporeModAPI-disk.dll
           copy LegacyLibs\SporeModAPI-steam_patched.dll Output\SporeModAPI-steam_patched.dll
 
