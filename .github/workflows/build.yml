@@ -62,5 +62,49 @@ jobs:
         with:
           name: ModApi.Updater-${{ env.GIT_REVISION }}
           path: Updater/ModApi.Updater/bin/Release/*.exe
+  create-draft-release:
+    runs-on: windows-2022
+    needs: [ build ]
+    if: github.ref_type == 'tag'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare Environment
+        run: |
+          $env:revision = git describe --tags --always
+          echo "GIT_REVISION=$env:revision" >> $env:GITHUB_ENV
+      - name: Download ModApi.InterimSetup
+        uses: actions/download-artifact@v4
+        with:
+          name: ModApi.InterimSetup-${{ env.GIT_REVISION }}
+          path: artifact
+      - name: Download ModApi.Updater
+        uses: actions/download-artifact@v4
+        with:
+          name: ModApi.Updater-${{ env.GIT_REVISION }}
+          path: artifact
+      - name: Generate update.info
+        run: |
+          $updaterVersion = "1.0.0.0"
+          $version = (($env:GIT_REVISION -split '\.')[0] -split 'v')[1] + "." `
+                      + (($env:GIT_REVISION -split '\.')[1]) + "." `
+                      + (($env:GIT_REVISION -split '\.')[2] -split '-')[0] + ".0"
+          $downloadUrl = $env:GITHUB_SERVER_URL + "/" + $env:GITHUB_REPOSITORY `
+                          + "/releases/latest/download/ModAPIUpdateSetup.exe"
 
+          echo $updaterVersion > update.info
+          echo $version >> update.info
+          echo "false" >> update.info
+          echo $downloadUrl >> update.info
+
+          Copy update.info artifact/update.info
+      - name: Create Draft Release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          makeLatest: true
+          tag: ${{ env.GIT_REVISION }}
+          artifacts: |
+            artifact/*
 
