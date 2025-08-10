@@ -21,9 +21,15 @@ namespace SporeModAPI_Launcher
             InitializeComponent();
         }
 
-        private void btnDisc_Click(object sender, EventArgs e)
+        private void btnDisk_Click(object sender, EventArgs e)
         {
-            SelectedVersion = GameVersionType.Disc;
+            SelectedVersion = GameVersionType.Disk;
+            this.Close();
+        }
+
+        private void btnOrigin_Click(object sender, EventArgs e)
+        {
+            SelectedVersion = GameVersionType.Origin;
             this.Close();
         }
 
@@ -34,12 +40,6 @@ namespace SporeModAPI_Launcher
 
             SelectedVersion = result == DialogResult.Yes ? GameVersionType.Steam_Patched : GameVersionType.Steam;
 
-            this.Close();
-        }
-
-        private void btnEAApp_Click(object sender, EventArgs e)
-        {
-            SelectedVersion = GameVersionType.Origin;
             this.Close();
         }
     }

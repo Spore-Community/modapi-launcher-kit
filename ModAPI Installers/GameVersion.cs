@@ -9,7 +9,7 @@ namespace ModAPI_Installers
     public enum GameVersionType
     {
         /// <summary>3.0.0.2818 (July 2009) installed from disc, with patch 5.1</summary>
-        Disc,
+        Disk,
         /// <summary>3.0.0.2818 (July 2009) installed from Origin, with patch 5.1, requires ModAPI Fix</summary>
         Origin,
         /// <summary>3.1.0.22 (March 2017) installed from Origin, requires ModAPI Fix</summary>
@@ -33,7 +33,7 @@ namespace ModAPI_Installers
   
 
         public static int[] ExecutableSizes = { 
-                                       /* DISC*/    24909584,
+                                       /* DISK*/    24909584,
                                        /* ORIGIN */ 31347984,
                                        /* ORIGIN_P */ 24898224,
                                        /* EA_OCT24 */ 24906040,
@@ -95,7 +95,7 @@ namespace ModAPI_Installers
 
         public static string GetNewDLLName(GameVersionType type)
         {
-            if (type == GameVersionType.Disc)
+            if (type == GameVersionType.Disk)
                 return "SporeModAPI.disk.dll";
             else if ((type == GameVersionType.Origin)         || 
                      (type == GameVersionType.Origin_Patched) ||
