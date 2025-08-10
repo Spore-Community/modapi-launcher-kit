@@ -71,20 +71,10 @@ namespace ModApi.InterimSetup
         {
             using (MemoryStream unmStream = new MemoryStream(ModApi.InterimSetup.Properties.Resources.ModApiUpdate))
             {
-                string unm = Environment.ExpandEnvironmentVariables(@"%appdata%\ModAPITemp.zip");
-                if (File.Exists(unm))
-                    File.Delete(unm);
-
-                using (var file = File.Create(unm))
+                using (ZipArchive archive = new ZipArchive(unmStream, ZipArchiveMode.Read))
                 {
-                    unmStream.Seek(0, SeekOrigin.Begin);
-                    unmStream.CopyTo(file);
-                }
-
-
-                using (ZipArchive archive = ZipFile.Open(unm, ZipArchiveMode.Update))
-                {
-                    Dispatcher.BeginInvoke(new Action(() => InstallProgressBar.Maximum = archive.Entries.Count));
+                    int archiveEntryCount = archive.Entries.Count;
+                    Dispatcher.BeginInvoke(new Action(() => InstallProgressBar.Maximum = archiveEntryCount));
 
                     foreach (var s in archive.Entries)
                     {
