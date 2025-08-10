@@ -30,7 +30,9 @@ namespace ModApi.Updater
                 return;
             }
 
-            string path = args[1];
+            // trim is required here because for some reason the launcher kit
+            // adds an empty space at the end of the installed path
+            string path = args[1].TrimEnd();
 
             bool foundLauncher = File.Exists(Path.Combine(path, "Spore ModAPI Launcher.exe"));
             if (foundLauncher)
