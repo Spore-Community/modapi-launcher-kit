@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Input;
 
@@ -39,19 +40,33 @@ namespace ModApi.Updater
             {
                 using (MemoryStream unmStream = new MemoryStream(ModApi.Updater.Properties.Resources.ModApiUpdate))
                 {
-                    using (ZipStorer archive = ZipStorer.Open(unmStream, FileAccess.Read, true))
-                    {
-                        InstallProgressBar.Maximum = archive.ReadCentralDir().Count;
+                    string unm = Environment.ExpandEnvironmentVariables(@"%appdata%\ModAPITemp.zip");
+                    if (File.Exists(unm))
+                        File.Delete(unm);
 
-                        foreach (ZipStorer.ZipFileEntry s in archive.ReadCentralDir())
+                    using (var file = File.Create(unm))
+                    {
+                        unmStream.Seek(0, SeekOrigin.Begin);
+                        unmStream.CopyTo(file);
+                    }
+
+                    using (ZipArchive archive = ZipFile.Open(unm, ZipArchiveMode.Update))
+                    {
+                        InstallProgressBar.Maximum = archive.Entries.Count;
+
+                        foreach (var s in archive.Entries)
                         {
-                            string fileOutPath = Path.Combine(path, s.FilenameInZip);
+                            string fileOutPath = Path.Combine(path, s.FullName);
 
                             if (File.Exists(fileOutPath))
                                 File.Delete(fileOutPath);
 
-                            if (IsPathNotPartOfConfiguration(fileOutPath))
-                                archive.ExtractFile(s, fileOutPath);
+                            if (!s.FullName.EndsWith("/") &&
+                                !s.FullName.EndsWith("\\") &&
+                                IsPathNotPartOfConfiguration(fileOutPath))
+                            {
+                                s.ExtractToFile(fileOutPath);
+                            }
 
                             if (InstallProgressBar.Value < InstallProgressBar.Maximum)
                                 InstallProgressBar.Value++;
