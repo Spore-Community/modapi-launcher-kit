@@ -40,17 +40,7 @@ namespace ModApi.Updater
             {
                 using (MemoryStream unmStream = new MemoryStream(ModApi.Updater.Properties.Resources.ModApiUpdate))
                 {
-                    string unm = Environment.ExpandEnvironmentVariables(@"%appdata%\ModAPITemp.zip");
-                    if (File.Exists(unm))
-                        File.Delete(unm);
-
-                    using (var file = File.Create(unm))
-                    {
-                        unmStream.Seek(0, SeekOrigin.Begin);
-                        unmStream.CopyTo(file);
-                    }
-
-                    using (ZipArchive archive = ZipFile.Open(unm, ZipArchiveMode.Update))
+                    using (ZipArchive archive = new ZipArchive(unmStream, ZipArchiveMode.Read))
                     {
                         InstallProgressBar.Maximum = archive.Entries.Count;
 
