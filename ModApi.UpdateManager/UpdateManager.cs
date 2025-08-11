@@ -27,7 +27,6 @@ namespace ModApi.UpdateManager
         public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
-        public static string CurrentInfoDestPath = Path.Combine(AppDataPath, "current.info");
         public static string UpdaterDestPath = Path.Combine(AppDataPath, "updater.exe");
         public static string UpdaterBlockPath = Path.Combine(AppDataPath, "noUpdateCheck.info");
         public static string UpdaterOverridePath = Path.Combine(AppDataPath, "overrideUpdatePath.info");
@@ -183,81 +182,65 @@ namespace ModApi.UpdateManager
                         }
                     }
 
-                    if (!File.Exists(CurrentInfoDestPath))
-                    {
-                        string[] currentInfoLines = new string[]
-                        {
-                            new Version(1, 0, 0, 0).ToString(),
-                            CurrentVersion.ToString(),
-                            false.ToString(),
-                            Path.Combine(PathPrefix, "ModAPIUpdateSetup.exe")
-                        };
-
-                        File.WriteAllLines(CurrentInfoDestPath, currentInfoLines);
-                    }
-
                     if (File.Exists(UpdateInfoDestPath))
                     {
-                        if (File.ReadAllText(CurrentInfoDestPath) != File.ReadAllText(UpdateInfoDestPath))
+                        var updateInfoLines = File.ReadAllLines(UpdateInfoDestPath);
+                        if (Version.TryParse(updateInfoLines[0], out Version ModApiSetupVersion) &&
+                            ModApiSetupVersion == new Version(1, 0, 0, 0))
                         {
-                            var updateInfoLines = File.ReadAllLines(UpdateInfoDestPath);
-                            if (Version.TryParse(updateInfoLines[0], out Version ModApiSetupVersion) &&
-                                ModApiSetupVersion == new Version(1, 0, 0, 0))
+                            if (Version.Parse(updateInfoLines[1]) > CurrentVersion)
                             {
-                                if (Version.Parse(updateInfoLines[1]) > CurrentVersion)
+                                string versionString = "Current version: " + CurrentVersion + "\nNew version: " + updateInfoLines[1];
+
+                                if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?\n\n" + versionString, "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                 {
-                                    string versionString = "Current version: " + CurrentVersion + "\nNew version: " + updateInfoLines[1];
-
-                                    if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?\n\n" + versionString, "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                    if (bool.Parse(updateInfoLines[2]))
                                     {
-                                        if (bool.Parse(updateInfoLines[2]))
+                                        Process.Start(updateInfoLines[3]);
+                                    }
+                                    else
+                                    {
+                                        var installerClient = new WebClient();
+                                        installerClient.Headers.Add("User-Agent", HttpUserAgent);
+
+                                        if (File.Exists(UpdaterDestPath))
+                                            File.Delete(UpdaterDestPath);
+
+                                        installerClient.DownloadFile(updateInfoLines[3], UpdaterDestPath);
+
+                                        if (File.Exists(UpdaterDestPath))
                                         {
-                                            Process.Start(updateInfoLines[3]);
-                                        }
-                                        else
-                                        {
-                                            var installerClient = new WebClient();
-                                            installerClient.Headers.Add("User-Agent", HttpUserAgent);
-
-                                            if (File.Exists(UpdaterDestPath))
-                                                File.Delete(UpdaterDestPath);
-
-                                            installerClient.DownloadFile(updateInfoLines[3], UpdaterDestPath);
-
-                                            if (File.Exists(UpdaterDestPath))
+                                            if (new FileInfo(UpdaterDestPath).Length > 0)
                                             {
-                                                if (new FileInfo(UpdaterDestPath).Length > 0)
-                                                {
-                                                    var args = Environment.GetCommandLineArgs().ToList();
+                                                var args = Environment.GetCommandLineArgs().ToList();
 
-                                                    string currentArgs = string.Empty;
-                                                    foreach (string s in args)
-                                                        currentArgs += "\"" + s.TrimEnd('\\') + "\" ";
+                                                string currentArgs = string.Empty;
+                                                foreach (string s in args)
+                                                    currentArgs += "\"" + s.TrimEnd('\\') + "\" ";
 
-                                                    string argOnePath = Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString().TrimEnd('\\');
-                                                    if (!argOnePath.EndsWith(" "))
-                                                        argOnePath = argOnePath + " ";
+                                                string argOnePath = Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString().TrimEnd('\\');
+                                                if (!argOnePath.EndsWith(" "))
+                                                    argOnePath = argOnePath + " ";
 
-                                                    Process.Start(UpdaterDestPath, "\"" + argOnePath + "\" " + currentArgs);
-                                                    Process.GetCurrentProcess().Kill();
-                                                }
-                                                else
-                                                {
-                                                    File.Delete(UpdaterDestPath);
-                                                }
+                                                Process.Start(UpdaterDestPath, "\"" + argOnePath + "\" " + currentArgs);
+                                                Process.GetCurrentProcess().Kill();
+                                            }
+                                            else
+                                            {
+                                                File.Delete(UpdaterDestPath);
                                             }
                                         }
                                     }
-                                    
                                 }
+                                    
                             }
-                            else
-                                ShowUnrecognizedUpdateInfoVersionMessage();
                         }
                         else
-                        {
-                            File.Delete(UpdateInfoDestPath);
-                        }
+                            ShowUnrecognizedUpdateInfoVersionMessage();
+                    }
+                    else
+                    {
+                        File.Delete(UpdateInfoDestPath);
                     }
 
                     if (DllsUpdater.HasDllsUpdate(out var githubRelease))
