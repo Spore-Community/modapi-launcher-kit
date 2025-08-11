@@ -55,7 +55,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>lH5AxkU.ico</ApplicationIcon>
+    <ApplicationIcon>SporeModAPISetup.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -148,7 +148,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="lH5AxkU.ico" />
+    <Resource Include="SporeModAPISetup.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

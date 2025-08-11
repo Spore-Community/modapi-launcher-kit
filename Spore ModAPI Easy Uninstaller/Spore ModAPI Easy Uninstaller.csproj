@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Easy Uninstaller Icon Red.ico</ApplicationIcon>
+    <ApplicationIcon>SporeModAPIEasyUninstaller.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -101,8 +101,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Easy Uninstaller Icon Red.ico" />
-    <Content Include="Easy Uninstaller Icon.ico" />
+    <Content Include="SporeModAPIEasyUninstaller.ico" />
     <Content Include="Resources\no-config.png" />
     <None Include="Resources\config_24.png" />
   </ItemGroup>
