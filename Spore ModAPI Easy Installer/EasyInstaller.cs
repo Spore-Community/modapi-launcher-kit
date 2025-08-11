@@ -106,14 +106,14 @@ namespace Spore_ModAPI_Easy_Installer
 
 
                 var cmdArgs = Environment.GetCommandLineArgs();
-                if ((cmdArgs.Length == 3) && bool.TryParse(cmdArgs[2], out bool configResult))
+                if ((cmdArgs.Length == 4) && bool.TryParse(cmdArgs[2], out bool configResult) && bool.TryParse(cmdArgs[3], out bool uninstall))
                 {
                     string modName = cmdArgs[1];
                     //MessageBox.Show(modName, "modName");
 
                     if (configResult)
                     {
-                        Thread thread = GetXmlInstaller(modName, configResult, true, out XmlInstallerWindow win);
+                        Thread thread = GetXmlInstaller(modName, configResult, uninstall, true, out XmlInstallerWindow win);
                         thread.Join();
                     }
                 }
@@ -558,7 +558,7 @@ namespace Spore_ModAPI_Easy_Installer
 
                     /*XmlInstallerWindow win = */
                     //bool installCancelled = false;
-                    Thread installerThread = GetXmlInstaller(modName, false, true, out XmlInstallerWindow win);
+                    Thread installerThread = GetXmlInstaller(modName, false, false, true, out XmlInstallerWindow win);
                     //_showXmlInstaller = true;//Thread showThread = new Thread(() => xmlWin.Show());// xmlWin.Dispatcher.Invoke(new Action(() => xmlWin.Show())));
                     /*showThread.SetApartmentState(ApartmentState.STA);
                     showThread.Start();
@@ -664,13 +664,13 @@ namespace Spore_ModAPI_Easy_Installer
         public static bool RevealXmlInstaller = false;
 
         //[STAThread]
-        static Thread GetXmlInstaller(string modName, bool configure, bool show, out XmlInstallerWindow win)
+        static Thread GetXmlInstaller(string modName, bool configure, bool uninstall, bool show, out XmlInstallerWindow win)
         {
             XmlInstallerWindow xmlWin = null;
             Thread thread = new Thread(() =>
             {
                 //MessageBox.Show(modName, "modName");
-                xmlWin = new XmlInstallerWindow(modName, configure);
+                xmlWin = new XmlInstallerWindow(modName, configure, uninstall);
                 if (show)// && (!xmlWin.IsVisible))
                 {
                     xmlWin.ShowDialog(); //.Show();

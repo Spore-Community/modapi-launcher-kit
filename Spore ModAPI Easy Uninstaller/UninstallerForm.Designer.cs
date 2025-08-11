@@ -35,10 +35,11 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnUninstall = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.label2 = new System.Windows.Forms.Label();
             this.MainColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModNames = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ModDisplayNames = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label2 = new System.Windows.Forms.Label();
+            this.ModConfiguration = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,7 +97,8 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MainColumn,
             this.ModNames,
-            this.ModDisplayNames});
+            this.ModDisplayNames,
+            this.ModConfiguration});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -112,6 +114,16 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(464, 311);
             this.dataGridView1.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 382);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Version ";
             // 
             // MainColumn
             // 
@@ -138,15 +150,11 @@
             this.ModDisplayNames.Name = "ModDisplayNames";
             this.ModDisplayNames.ReadOnly = true;
             // 
-            // label2
+            // ModConfiguration
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 382);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Version ";
+            this.ModConfiguration.HeaderText = "Mod Configuration";
+            this.ModConfiguration.Name = "ModConfiguration";
+            this.ModConfiguration.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // UninstallerForm
             // 
@@ -178,6 +186,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn MainColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn ModNames;
         private System.Windows.Forms.DataGridViewTextBoxColumn ModDisplayNames;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ModConfiguration;
     }
 }
 

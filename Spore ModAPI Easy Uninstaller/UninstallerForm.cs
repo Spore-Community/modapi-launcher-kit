@@ -22,7 +22,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
             // create header row
 
-            this.dataGridView1.Rows.Add(new object[] { false, "Installed Mods"});
+            this.dataGridView1.Rows.Add(new object[] { false, "Installed Mods" });
             this.dataGridView1.Rows[0].DefaultCellStyle.ApplyStyle(dataGridView1.ColumnHeadersDefaultCellStyle);
             this.dataGridView1.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             this.dataGridView1.Rows[0].Cells[2].Value = Strings.InstalledMods;
@@ -47,10 +47,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
             int index = this.dataGridView1.Rows.Add(new object[] { false, mod, mod.DisplayName });
 
             if (GetConfiguratorPath(index) != null)
-                this.dataGridView1.Rows[index].Cells[0].ReadOnly = true;
-            //this.dataGridView1.Rows[index].Cells[2].Value = mod.DisplayName;
-            
-            //this.dataGridView1.Rows[index].Cells[0].Tag = mod;
+                this.dataGridView1.Rows[index].Cells[3].ReadOnly = true;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -60,7 +57,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
         private void dataGridView_CellDoubleClick(Object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex != 0 && GetConfiguratorPath(e.RowIndex) != null)
+            if (e.RowIndex != 0 && e.ColumnIndex == 3 && GetConfiguratorPath(e.RowIndex) != null)
             {
                 // execute configurator and close uninstaller
                 ExecuteConfigurator(GetModConfiguration(e.RowIndex));
@@ -73,7 +70,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
         private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex != 0 && GetConfiguratorPath(e.RowIndex) != null && e.ColumnIndex == 0)
+            if (e.RowIndex != 0 && e.ColumnIndex == 3 && GetConfiguratorPath(e.RowIndex) != null)
             {
                 // execute configurator and close uninstaller
                 ExecuteConfigurator(GetModConfiguration(e.RowIndex));
@@ -96,10 +93,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
                     bool value = (bool)this.dataGridView1.Rows[0].Cells[0].Value;
                     for (int i = 1; i < this.dataGridView1.RowCount; i++)
                     {
-                        if (GetConfiguratorPath(i) == null)
-                        {
-                            this.dataGridView1.Rows[i].Cells[0].Value = value;
-                        }
+                        this.dataGridView1.Rows[i].Cells[0].Value = value;
                     }
                 }
                 else
@@ -126,15 +120,15 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
         private void btnUninstall_Click(object sender, EventArgs e)
         {
-            var list = new List<ModConfiguration>();
+            var list = new Dictionary<ModConfiguration, bool>();
 
             foreach (DataGridViewRow row in this.dataGridView1.Rows)
             {
                 if (((bool)row.Cells[0].Value) && (row.Cells[1].Value is ModConfiguration conf))
-                    list.Add(conf);
-                /*else
-                    MessageBox.Show("COULD NOT READ MOD FROM DATAGRID CELL THING");*/
-            }//list.Add(new ModConfiguration(row.Cells[1].Value.ToString()));
+                {
+                    list.Add(conf, (GetConfiguratorPath(row.Index) != null));
+                }
+            }
 
             if (list.Count > 0)
             {
@@ -143,31 +137,47 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 if (result == DialogResult.Yes)
                 {
                     EasyUninstaller.UninstallMods(list);
-
                     this.Close();
-
                 }
             }
-
         }
 
         private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             // if (e.ColumnIndex == this.dataGridView1.Columns["ConfiguratorColumn"].Index)
-            if (e.ColumnIndex == 0 && e.RowIndex > 0)
+            if (e.ColumnIndex == 3)
             {
-                if (GetConfiguratorPath(e.RowIndex) != null)
+                if (e.RowIndex > 0)
                 {
-                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
-
                     var w = Properties.Resources.ConfigIcon.Width;
                     var h = Properties.Resources.ConfigIcon.Height;
                     var x = e.CellBounds.Left + (e.CellBounds.Width - w) / 2;
                     var y = e.CellBounds.Top + (e.CellBounds.Height - h) / 2;
 
-                    e.Graphics.DrawImage(Properties.Resources.ConfigIcon, new Rectangle(x, y, w, h));
-                    e.Handled = true;
+                    Bitmap image = Properties.Resources.NoConfigIcon;
+                    if (GetConfiguratorPath(e.RowIndex) != null)
+                    {
+                        image = Properties.Resources.ConfigIcon;
+                    }
 
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+                    e.Graphics.DrawImage(image, new Rectangle(x, y, w, h));
+                    e.Handled = true;
+                }
+                else
+                {
+                    SolidBrush brush = new SolidBrush(e.CellStyle.BackColor);
+                    foreach (DataGridViewRow selectedRow in this.dataGridView1.SelectedRows)
+                    {
+                        if (selectedRow.Index == 0)
+                        {
+                            brush = new SolidBrush(e.CellStyle.SelectionBackColor);
+                        }
+                    }
+
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+                    e.Graphics.FillRectangle(brush, e.CellBounds);
+                    e.Handled = true;
                 }
             }
         }
@@ -186,7 +196,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
         {
             try
             {
-                EasyUninstaller.ExecuteConfigurator(mod);
+                EasyUninstaller.ExecuteConfigurator(mod, false);
                 this.Close();
             }
             catch (Exception ex)

@@ -47,6 +47,7 @@ namespace Spore_ModAPI_Easy_Installer
         List<string> enabledList = new List<string>();
         string enabledListPath = string.Empty;
         bool _isConfigurator = false;
+        bool _isUninstallingOnly = false;
         int _activeComponentCount = 0;
         CircleEase _ease = new CircleEase()
         {
@@ -62,7 +63,7 @@ namespace Spore_ModAPI_Easy_Installer
 
         public static string SporeDataPath = SporePath.MoveToData(SporePath.Game.Spore, SporePath.GetRealParent(PathDialogs.ProcessSpore()));
 
-        public XmlInstallerWindow(string modName, bool configure)
+        public XmlInstallerWindow(string modName, bool configure, bool uninstall)
         {
             InitializeComponent();
             //LauncherSettings.Load();
@@ -78,10 +79,19 @@ namespace Spore_ModAPI_Easy_Installer
             ModConfigPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "ModConfigs", ModName); // Settings.ProgramDataPath + @"\ModConfig\" + modName + @"\";
             //if (!Directory.Exists())
             _isConfigurator = configure;
+            _isUninstallingOnly = uninstall;
             if (_isConfigurator)
             {
                 LoadingPanel.Visibility = Visibility.Collapsed;
                 RevealInstaller();
+
+                if (_isUninstallingOnly)
+                {
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        StartUninstallationButton_Click(StartUninstallationButton, null);
+                    }));
+                }
             }
             else
             {
@@ -1037,6 +1047,11 @@ namespace Spore_ModAPI_Easy_Installer
                 await Task.Run(() => DeleteFolder(ModConfigPath));
                 CyclePage(0, 1);
                 _installerState = 2;
+
+                if (_isUninstallingOnly)
+                {
+                    Close();
+                }
                 //Process.GetCurrentProcess().Kill();
             }
             catch (Exception ex)

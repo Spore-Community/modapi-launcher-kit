@@ -69,5 +69,15 @@ namespace Spore_ModAPI_Easy_Uninstaller.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NoConfigIcon {
+            get {
+                object obj = ResourceManager.GetObject("NoConfigIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

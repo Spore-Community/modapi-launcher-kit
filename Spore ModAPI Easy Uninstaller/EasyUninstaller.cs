@@ -58,19 +58,26 @@ namespace Spore_ModAPI_Easy_Uninstaller
             }
         }
 
-        public static void UninstallMods(List<ModConfiguration> mods)
+        public static void UninstallMods(Dictionary<ModConfiguration, bool> mods)
         {
             List<ModConfiguration> successfulMods = new List<ModConfiguration>();
 
             try
             {
-                foreach (ModConfiguration mod in mods)
+                foreach (var mod in mods)
                 {
-                    RemoveModFiles(mod);
+                    if (mod.Value)
+                    {
+                        ExecuteConfigurator(mod.Key, true);
+                    }
+                    else
+                    {
+                        RemoveModFiles(mod.Key);
+                    }
 
-                    Mods.RemoveMod(mod);
+                    Mods.RemoveMod(mod.Key);
 
-                    successfulMods.Add(mod);
+                    successfulMods.Add(mod.Key);
                 }
             }
             catch (UnauthorizedAccessException)
@@ -193,21 +200,20 @@ namespace Spore_ModAPI_Easy_Uninstaller
             }
         }
 
-        public static void ExecuteConfigurator(ModConfiguration mod)
+        public static void ExecuteConfigurator(ModConfiguration mod, bool uninstall)
         {
-            
-            
-            
-            
-
             if (mod.ConfiguratorPath.ToLowerInvariant().EndsWith("xml"))
             {
                 string path = Path.Combine(
                         Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
                         , "Spore ModAPI Easy Installer.exe");
-                string args = "\"" + mod.Name + "\"" + " true";
+                string args = "\"" + mod.Name + "\"" + " true " + uninstall.ToString();
                 //MessageBox.Show(path + "\n\n" + args, "process information");
                 var process = Process.Start(path, args);
+                if (uninstall)
+                {
+                    process.WaitForExit();
+                }
             }
             else
             {
@@ -215,12 +221,6 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 {
                     throw new Exception(Strings.ConfiguratorDoesNotExist);
                 }
-
-
-                
-                
-                
-                
 
                 var process = Process.Start(new ProcessStartInfo()
                 {

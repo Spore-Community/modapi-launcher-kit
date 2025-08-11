@@ -103,6 +103,7 @@
   <ItemGroup>
     <Content Include="Easy Uninstaller Icon Red.ico" />
     <Content Include="Easy Uninstaller Icon.ico" />
+    <Content Include="Resources\no-config.png" />
     <None Include="Resources\config_24.png" />
   </ItemGroup>
   <ItemGroup>
