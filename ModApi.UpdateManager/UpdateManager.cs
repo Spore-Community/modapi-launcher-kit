@@ -148,7 +148,9 @@ namespace ModApi.UpdateManager
                             {
                                 if (Version.Parse(updateInfoLines[1]) > CurrentVersion)
                                 {
-                                    if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?", "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                    string versionString = "Current version: " + CurrentVersion + "\nNew version: " + updateInfoLines[1];
+
+                                    if (MessageBox.Show("An update to the Spore ModAPI Launcher Kit is now available. Would you like to install it now?\n\n" + versionString, "Update Available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                     {
                                         if (bool.Parse(updateInfoLines[2]))
                                         {
@@ -228,7 +230,7 @@ namespace ModApi.UpdateManager
 
         static void ShowUpdateCheckFailedMessage(Exception ex)
         {
-            MessageBox.Show("Update Check Failed. This may be due to the update service being down, or due to lack of a working internet connection.\n\n" + ex.ToString());
+            MessageBox.Show("The Launcher Kit could not connect to the update service. Try again in a few minutes, or check https://launcherkit.sporecommunity.com/support for help.\n\nCurrent version: "+ CurrentVersion + "\n\n" + ex.ToString());
         }
 
         static void ShowUnrecognizedUpdateInfoVersionMessage()
