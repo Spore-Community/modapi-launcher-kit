@@ -1,0 +1,211 @@
+@import "spore.css";
+
+:root {
+    --lk-launcher: #4fb1d3;
+    --lk-launcher-gradient: linear-gradient(#71dee5, #729bd2);
+    --lk-installer: #fcdb7c;
+    --lk-installer-gradient: linear-gradient(#fcd46f, #feb44b);
+    --lk-uninstaller: #ff4f5c;
+    --lk-uninstaller-gradient: linear-gradient(#f44361, #c7613e);
+}
+
+html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+    background: var(--spore-glyphic-bg);
+    color: var(--spore-text-color);
+}
+
+body {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#site-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--lk-launcher-gradient);
+    background-clip: text;
+    color: transparent;
+
+    text-decoration: none;
+}
+
+#site-logo {
+    width: 64px;
+    height: 64px;
+    margin-right: 16px;
+}
+
+#nav-bar {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 16px 64px;
+    font-family: var(--spore-font);
+}
+
+#nav-bar li {
+    flex: 1;
+    text-align: center;
+    border-bottom: 4px solid transparent;
+    display: flex;
+}
+
+#nav-bar li a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 16px 0;
+    width: 100%;
+    height: 100%;
+}
+
+#nav-bar li.active {
+    border-bottom-color: var(--lk-launcher);
+}
+
+#nav-bar li:hover {
+    border-bottom-color: rgba(79, 177, 211, 0.6);
+    transition: 0.2s;
+}
+
+article {
+    background: var(--spore-flat-bg);
+    padding: 32px;
+    margin-bottom: 32px;
+}
+
+footer {
+    font-size: 12px;
+}
+
+#intro {
+    display: flex;
+    gap: 64px;
+}
+
+#intro #useful-links button {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+#lk-apps {
+    display: flex;
+    gap: 64px;
+}
+
+#lk-apps > div {
+    flex: 1;
+}
+
+.lk-app-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lk-app-heading img {
+    width: 32px;
+    height: 32px;
+    margin-right: 16px;
+}
+
+#lk-apps .screenshot {
+    width: 100%;
+}
+
+#easy-installer .lk-app-heading {
+    background: var(--lk-installer-gradient);
+    background-clip: text;
+    color: transparent;
+}
+
+#easy-uninstaller .lk-app-heading {
+    background: var(--lk-uninstaller-gradient);
+    background-clip: text;
+    color: transparent;
+}
+
+#launcher .lk-app-heading {
+    background: var(--lk-launcher-gradient);
+    background-clip: text;
+    color: transparent;
+}
+
+.support-page {
+    display: flex;
+    gap: 32px;
+}
+
+.support-page #side-nav {
+    min-width: 200px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--spore-font);
+}
+
+a {
+    color: var(--spore-light-space);
+}
+
+hr {
+    border: 2px solid var(--spore-mid-space);
+    margin: 32px 0;
+}
+
+td, th {
+    border-top: 1px solid var(--spore-mid-space);
+    border-bottom: 1px solid var(--spore-mid-space);
+    padding: 4px;
+}
+
+input {
+    background: var(--spore-cool);
+    font-size: 16px;
+    padding: 5px 13px;
+    border: 3px var(--spore-neutral) solid;
+    border-radius: 32px;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--spore-light-space);
+}
+
+input:invalid:focus {
+    border-color: #A42433;
+}
+
+button {
+    background: var(--spore-mid-space);
+    color: var(--spore-white);
+    font-family: var(--spore-font);
+    font-size: 18px;
+    padding: 5px 13px;
+    border: 3px transparent solid;
+    border-radius: 32px;
+    transition: 0.1s;
+}
+
+button:hover {
+    border-color: var(--spore-light-space);
+}
+
+button:active {
+    background: var(--spore-deep-space-gradient);
+}
+
+button:disabled {
+    color: var(--spore-neutral);
+}
+
+pre {
+    white-space: pre-wrap;
+}

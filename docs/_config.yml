@@ -1,0 +1,48 @@
+defaults:
+  # Default variables applied to all pages
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+      # Add or change reusable variables here
+      lk_download_url: "https://github.com/Spore-Community/modapi-launcher-kit/releases/latest/download/ModApi.InterimSetup.exe"
+      smc_discord_url: "https://discord.gg/spore-modding"
+      license_name: "MIT License"
+      license_url: "https://github.com/Spore-Community/modapi-launcher-kit/blob/main/LICENSE"
+      modbrowser_url: "https://mods.sporecommunity.com"
+      patch151_url: ""
+      fixonline_mod_url: "https://mods.sporecommunity.com/?search=SporeFixOnline"
+      multiplesaves_mod_url: "https://mods.sporecommunity.com/?search=Spore-MultipleSaveFiles"
+      crashfix_mod_url: "https://mods.sporecommunity.com/?search=SporeCrashFix"
+      4gb_patch_url: "https://ntcore.com/?page_id=371"
+      modapi_url: "https://emd4600.github.io/Spore-ModAPI/index.html"
+      smfx_url: "https://emd4600.github.io/SporeModder-FX/"
+      sporemodloader_url: "https://github.com/Rosalie241/SporeModLoader"
+      gog_url: "https://www.gog.com/game/spore_collection"
+  # Use "page.html" layout for markdown files
+  - scope:
+      path: "*.md"
+    values:
+      layout: "page"
+  # Use "support-page.html" sidebar layout for info pages
+  - scope:
+      type: "info"
+    values:
+      layout: "support-page"
+  # Use "support-page.html" sidebar layout for common error pages
+  - scope:
+      type: "common-errors"
+    values:
+      layout: "support-page"
+
+collections:
+  # Add additional categories here
+  info:
+    output: true
+    permalink: /support/:name
+  common-errors:
+    output: true
+    permalink: /support/:name
+
+# Prevents README files from being part of the actual website
+exclude: ["README.md", "**/README.md"]
