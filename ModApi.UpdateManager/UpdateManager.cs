@@ -15,7 +15,16 @@ namespace ModApi.UpdateManager
     public static class UpdateManager
     {
         public static bool Development = false;
-        public static string PathPrefix = "https://update.launcherkit.sporecommunity.com/";
+        public static List<string> LauncherKitUpdateUrls = new List<string>
+        {
+            // Cloudflare R2 + Cache
+            "https://update.launcherkit.sporecommunity.com/",
+            // GitHub Releases
+            "https://github.com/Spore-Community/modapi-launcher-kit/releases/latest/download/",
+            // DavoOnline (might not work due to anti-bot firewall)
+            "http://davoonline.com/sporemodder/rob55rod/ModAPI/"
+        };
+        public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string CurrentInfoDestPath = Path.Combine(AppDataPath, "current.info");
@@ -105,23 +114,72 @@ namespace ModApi.UpdateManager
             if (File.Exists(UpdaterDestPath))
                 File.Delete(UpdaterDestPath);
 
-            if (File.Exists(UpdaterOverridePath))
-                PathPrefix = File.ReadAllText(UpdaterOverridePath);
-
-            if (!File.Exists(UpdaterBlockPath))
+            if (!File.Exists(UpdaterBlockPath) && HasInternetConnection())
             {
                 try
                 {
                     using (var infoClient = new WebClient())
                     {
                         infoClient.Headers.Add("User-Agent", HttpUserAgent);
-                        try
+
+                        List<Exception> exceptions = new List<Exception>();
+                        bool didDownload = false;
+                        
+                        // Try to download the update info file from the override path first
+                        if (File.Exists(UpdaterOverridePath))
                         {
-                            infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
+                            PathPrefix = File.ReadAllText(UpdaterOverridePath);
+
+                            // remove override if the URL is in our URL list
+                            foreach (string url in LauncherKitUpdateUrls)
+                            {
+                                if (url == PathPrefix)
+                                {
+                                    File.Delete(UpdaterOverridePath);
+                                    break;
+                                }
+                            }
+
+                            try
+                            {
+                                infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
+
+                                // Hides exceptions if the download was successful
+                                didDownload = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                exceptions.Add(ex);
+                            }
                         }
-                        catch (Exception ex)
+                        // Try to download the update info file from each URL in the list
+                        else
                         {
-                            ShowUpdateCheckFailedMessage(ex);
+                            foreach (string url in LauncherKitUpdateUrls)
+                            {
+                                try
+                                {
+                                    infoClient.DownloadFile(Path.Combine(url, "update.info"), UpdateInfoDestPath);
+
+                                    // Hides exceptions if the download was successful
+                                    didDownload = true;
+                                    PathPrefix = url;
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    exceptions.Add(ex);
+                                }
+                            }
+                        }
+
+                        // If no download was successful, show all exceptions, one at a time
+                        if (!didDownload)
+                        {
+                            foreach (var ex in exceptions)
+                            {
+                                ShowUpdateCheckFailedMessage(ex);
+                            }
                         }
                     }
 
@@ -236,6 +294,24 @@ namespace ModApi.UpdateManager
         static void ShowUnrecognizedUpdateInfoVersionMessage()
         {
             MessageBox.Show("This update to the Spore ModAPI Launcher Kit must be downloaded manually.");
+        }
+
+        static bool HasInternetConnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add("User-Agent", HttpUserAgent);
+                    client.DownloadString("https://1.1.1.1");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("The Launcher Kit could not connect to the internet to check for updates. The Launcher Kit will still work, but you may be missing the latest features and improvements.\n\nCurrent version: " + CurrentVersion + "\n\n" + ex.ToString());
+                return false;
+            }
         }
     }
 }
