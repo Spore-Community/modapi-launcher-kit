@@ -48,7 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>lH5AxkU.ico</ApplicationIcon>
+    <ApplicationIcon>SporeModAPILauncher.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
@@ -128,7 +128,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lH5AxkU.ico" />
+    <Content Include="SporeModAPILauncher.ico" />
     <None Include="Resources\VersionButton_EAApp_Icon.png" />
     <None Include="Resources\VersionButton_Steam_GOG_Icon.png" />
     <None Include="Resources\VersionButton_Disc_Icon.png" />

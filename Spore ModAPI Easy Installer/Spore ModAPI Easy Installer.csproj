@@ -48,7 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Easy Installer Icon.ico</ApplicationIcon>
+    <ApplicationIcon>SporeModAPIEasyInstaller.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Spore_ModAPI_Easy_Installer.EasyInstaller</StartupObject>
@@ -141,7 +141,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Easy Installer Icon.ico" />
+    <Content Include="SporeModAPIEasyInstaller.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModAPI Installers\ModAPI Installers.csproj">
