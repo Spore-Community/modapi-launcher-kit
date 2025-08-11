@@ -80,6 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\..\VersionInfo\AssemblyVersionInfo.cs" />
     <Compile Include="EmbeddedAssembly.cs" />
     <Compile Include="Permissions.cs" />
     <Page Include="MainWindow.xaml">

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VersionInfo\AssemblyVersionInfo.cs" />
     <Compile Include="Strings.es.Designer.cs">
       <DependentUpon>Strings.es.resx</DependentUpon>
       <AutoGen>True</AutoGen>

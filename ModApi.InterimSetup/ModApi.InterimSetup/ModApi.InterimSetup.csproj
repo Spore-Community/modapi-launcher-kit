@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\..\VersionInfo\AssemblyVersionInfo.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="SystemScaling.cs" />
     <Page Include="MainWindow.xaml">
