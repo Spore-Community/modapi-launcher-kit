@@ -63,6 +63,8 @@ namespace Spore_ModAPI_Easy_Installer
 
         public static string SporeDataPath = SporePath.MoveToData(SporePath.Game.Spore, SporePath.GetRealParent(PathDialogs.ProcessSpore()));
 
+        private EasyInstaller.ResultType _result = EasyInstaller.ResultType.ModNotInstalled;
+
         public XmlInstallerWindow(string modName, bool configure, bool uninstall)
         {
             InitializeComponent();
@@ -93,6 +95,11 @@ namespace Spore_ModAPI_Easy_Installer
                     }));
                 }
             }
+        }
+
+        public EasyInstaller.ResultType GetResult()
+        {
+            return _result;
         }
 
         public void SignalRevealInstaller()
@@ -409,10 +416,6 @@ namespace Spore_ModAPI_Easy_Installer
                         RemovalGames = game
                     });
                 }
-                else
-                {
-                    Debug.WriteLine("u w0t");
-                }
             }
 
             int _activeComponentCount = GetComponentCount();
@@ -688,6 +691,7 @@ namespace Spore_ModAPI_Easy_Installer
                     XmlInstallerCancellation.Cancellation[ModName] = true;
                     _installerState = 2;
                     _installerMode = 1;
+                    _result = EasyInstaller.ResultType.ModNotInstalled;
                     Close();
                 }
 
@@ -870,16 +874,19 @@ namespace Spore_ModAPI_Easy_Installer
                 if (_installerMode == 1)
                 {
                     _installerState = 2;
+                    _result = EasyInstaller.ResultType.Success;
                     Close();
                 }
                 else
                 {
                     CyclePage(0, 1);
+                    _result = EasyInstaller.ResultType.Success;
                     _installerState = 2;
                 }
             }
             catch (Exception ex)
             {
+                _result = EasyInstaller.ResultType.ModNotInstalled;
                 ErrorInfoTextBlock.Text = ex.ToString();
                 CyclePage(0, 3);
             }

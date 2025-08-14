@@ -133,10 +133,10 @@
     <value>Choose the mod to be installed</value>
   </data>
   <data name="InstallationCancelled" xml:space="preserve">
-    <value>Installation cancelled</value>
+    <value>" cancelled installation</value>
   </data>
   <data name="InstallationCompleted" xml:space="preserve">
-    <value>Installation completed</value>
+    <value>" completed installation</value>
   </data>
   <data name="InstallingModTitle" xml:space="preserve">
     <value>Installing mod...</value>

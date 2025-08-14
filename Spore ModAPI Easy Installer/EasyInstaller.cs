@@ -20,7 +20,7 @@ using ModApi.UpdateManager;
 
 namespace Spore_ModAPI_Easy_Installer
 {
-    static class EasyInstaller
+    public static class EasyInstaller
     {
         enum FileChooserType
         {
@@ -38,7 +38,7 @@ namespace Spore_ModAPI_Easy_Installer
             Spore_Package // a .package that goes to the Spore data folder instead of the EP1 one
         }
 
-        enum ResultType
+        public enum ResultType
         {
             Success,
             InstallerExecuted,  // we have found a custom installer, close Easy installer and execute that one
@@ -46,7 +46,8 @@ namespace Spore_ModAPI_Easy_Installer
             GalacticAdventuresNotFound,
             UnauthorizedAccess,
             InvalidPath,
-            ModNotInstalled
+            ModNotInstalled,
+            NoInstallerFound
         }
         //// Show a file chooser and returns the path selected. It can ask for files or directories.
         //static string ShowFileChooser(FileChooserType type, string title, string filter);
@@ -140,7 +141,6 @@ namespace Spore_ModAPI_Easy_Installer
                         catch (Exception ex)
                         {
                             errorStrings[i] = ex.Message; results.Add(ResultType.UnsupportedFile);
-                            MessageBox.Show(ex.ToString() + "\n" + ex.StackTrace, "AAA");
                         }
                     }
                     for (int i = 0; i < results.Count; i++) //foreach (ResultType type in results)
@@ -149,7 +149,9 @@ namespace Spore_ModAPI_Easy_Installer
                         ResultType type = results[i];
                         outcome += GetResultText(type, Path.GetFileNameWithoutExtension(inputPaths[i]), errorStrings[i]) + "\n";
                     }
-                    WaitForExit();
+
+                    ModList.Save();
+                    ShowExitMessageBox();
                 }
             }
         }
@@ -467,9 +469,6 @@ namespace Spore_ModAPI_Easy_Installer
             return ResultType.Success;
         }
 
-        [DllImport("user32.dll", ExactSpelling = true)]
-        static extern bool IsWindow(IntPtr hWnd);
-
         private static bool CheckModCoreDllsVersion(ZipArchiveEntry xmlEntry)
         {
             try
@@ -524,9 +523,9 @@ namespace Spore_ModAPI_Easy_Installer
                     win.SignalRevealInstaller();
 
                     installerThread.Join();
-                    
+
                     if (!XmlInstallerCancellation.Cancellation[modName.Trim('"')])
-                        return ResultType.InstallerExecuted;
+                        return win.GetResult();
                     else
                         return ResultType.ModNotInstalled;
                 }
@@ -536,7 +535,7 @@ namespace Spore_ModAPI_Easy_Installer
                 }
                 else
                 {
-                    return ResultType.Success;
+                    return ResultType.NoInstallerFound;
                 }
             }
         }
@@ -580,12 +579,7 @@ namespace Spore_ModAPI_Easy_Installer
         {
             var result = TryExecuteInstaller(inputFile, modName);
 
-            if ((result == ResultType.InstallerExecuted) || (result == ResultType.ModNotInstalled))
-            {
-                // the custom installer executed, we don't need to do anything else
-                return ResultType.InstallerExecuted;
-            }
-            else if (result == ResultType.Success)
+            if (result == ResultType.NoInstallerFound)
             {
                 // the custom installer just didn't exist, extract as ZIP file
 
@@ -728,8 +722,6 @@ namespace Spore_ModAPI_Easy_Installer
                 // show message to the user
                 return Strings.ModInstalled1 + modName + Strings.ModInstalled2;
             }
-            else if (result == ResultType.InstallerExecuted)
-                return string.Empty;
             else if (result == ResultType.ModNotInstalled)
             {
                 return Strings.ModInstalled1 + modName + Strings.InstallationCancelled;
@@ -744,25 +736,6 @@ namespace Spore_ModAPI_Easy_Installer
                 //MessageBox.Show(Strings.ModNotInstalled1 + modName + Strings.ModNotInstalled2 + " " + errorString, Strings.InstallationCancelled);
                 return Strings.ModNotInstalled1 + modName + Strings.ModNotInstalled2 + " " + errorString;
             }
-        }
-
-        static void WaitForExit()
-        {
-            int counter = 0;
-            System.Timers.Timer timer = new System.Timers.Timer(10);
-            timer.Elapsed += (sneder, args) =>
-            {
-                if ((counter > 5) && (XmlInstallerWindow.installerWindows.Count == 0))
-                {
-                    timer.Stop();
-                    ModList.Save();
-                    ShowExitMessageBox();
-                }
-                else
-                    counter++;
-            };
-            timer.Start();
-            Application.Run();
         }
 
         static void ShowExitMessageBox()
