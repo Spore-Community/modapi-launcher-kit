@@ -132,11 +132,8 @@
   <data name="FileChooserTitle" xml:space="preserve">
     <value>Choose the mod to be installed</value>
   </data>
-  <data name="InstallationCancelled" xml:space="preserve">
+  <data name="CancelledInstallation" xml:space="preserve">
     <value>" cancelled installation</value>
-  </data>
-  <data name="InstallationCompleted" xml:space="preserve">
-    <value>" completed installation</value>
   </data>
   <data name="InstallingModTitle" xml:space="preserve">
     <value>Installing mod...</value>
@@ -165,5 +162,8 @@ Please, restart the launcher and allow it to update.</value>
   </data>
   <data name="UnsupportedDllVersionTitle" xml:space="preserve">
     <value>Error: mod cannot be installed</value>
+  </data>
+  <data name="InstallationCompleted" xml:space="preserve">
+    <value>Installation completed</value>
   </data>
 </root>

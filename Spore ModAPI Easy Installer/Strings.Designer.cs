@@ -61,6 +61,15 @@ namespace Spore_ModAPI_Easy_Installer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot; cancelled installation.
+        /// </summary>
+        internal static string CancelledInstallation {
+            get {
+                return ResourceManager.GetString("CancelledInstallation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copying file.
         /// </summary>
         internal static string CopyingFile {
@@ -106,16 +115,7 @@ namespace Spore_ModAPI_Easy_Installer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot; cancelled installation.
-        /// </summary>
-        internal static string InstallationCancelled {
-            get {
-                return ResourceManager.GetString("InstallationCancelled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &quot; completed installation.
+        ///   Looks up a localized string similar to Installation completed.
         /// </summary>
         internal static string InstallationCompleted {
             get {

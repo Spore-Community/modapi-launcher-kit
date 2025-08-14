@@ -207,11 +207,6 @@ namespace Spore_ModAPI_Easy_Installer
             return paths;
         }
 
-        static string ShowDirectoryChooser()
-        {string[] dirs = ShowFileChooser(FileChooserType.Directory, null, null, 0);
-            if (dirs.Length > 0) return dirs[0]; else return null;
-        }
-
         static FileType GetFileType(string fileName)
         {
             if (fileName == null) return FileType.None;
@@ -724,7 +719,7 @@ namespace Spore_ModAPI_Easy_Installer
             }
             else if (result == ResultType.ModNotInstalled)
             {
-                return Strings.ModInstalled1 + modName + Strings.InstallationCancelled;
+                return Strings.ModInstalled1 + modName + Strings.CancelledInstallation;
             }
             else
             {
