@@ -27,7 +27,8 @@ namespace ModApi.UpdateManager
         };
         public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
-        public static string UpdaterDateTimePath = Path.Combine(AppDataPath, "lastUpdateDateTime.info");
+        public static string LastUpdateCheckTimePath = Path.Combine(AppDataPath, "lastUpdateCheckTime.info");
+        public static string LastUpdateDateTimeFormat = "yyyy-MM-dd HH:mm";
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string UpdaterDestPath = Path.Combine(AppDataPath, "updater.exe");
         public static string UpdaterBlockPath = Path.Combine(AppDataPath, "noUpdateCheck.info");
@@ -115,23 +116,23 @@ namespace ModApi.UpdateManager
             if (File.Exists(UpdaterDestPath))
                 File.Delete(UpdaterDestPath);
 
-            if (File.Exists(UpdaterDateTimePath))
+            if (File.Exists(LastUpdateCheckTimePath))
             {
                 try
                 {
-                    string lastUpdateDateTimeString = File.ReadAllText(UpdaterDateTimePath);
-                    DateTime lastUpdateDateTime = DateTime.ParseExact(lastUpdateDateTimeString, 
-                                                                        "yyyy-MM-dd HH:mm",
+                    string lastUpdateCheckDateTimeString = File.ReadAllText(LastUpdateCheckTimePath);
+                    DateTime lastUpdateCheckDateTime = DateTime.ParseExact(lastUpdateCheckDateTimeString,
+                                                                        LastUpdateDateTimeFormat,
                                                                         CultureInfo.InvariantCulture);
 
-                    if ((DateTime.Now - lastUpdateDateTime).TotalHours < 1)
+                    if ((DateTime.Now - lastUpdateCheckDateTime).TotalHours < 1)
                     {
                         return;
                     }
                 }
                 catch (Exception)
                 {
-                    File.Delete(UpdaterDateTimePath);
+                    File.Delete(LastUpdateCheckTimePath);
                 }
             }
 
@@ -284,7 +285,7 @@ namespace ModApi.UpdateManager
                         }
                     }
 
-                    File.WriteAllText(UpdaterDateTimePath, DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+                    File.WriteAllText(LastUpdateCheckTimePath, DateTime.Now.ToString(LastUpdateDateTimeFormat));
                 }
                 catch (Exception ex)
                 {
