@@ -218,7 +218,7 @@
         <Setter Property="BorderThickness" Value="0,24,0,0"/>
         <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
-        <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Ubuntu"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="ShadowOffsetThickness" Value="25,15,25,40"/>
         <Setter Property="Padding" Value="0"/>

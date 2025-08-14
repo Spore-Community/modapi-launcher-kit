@@ -83,15 +83,5 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Fonts\Ubuntu-Bold.ttf" />
-    <Resource Include="Fonts\Ubuntu-BoldItalic.ttf" />
-    <Resource Include="Fonts\Ubuntu-Italic.ttf" />
-    <Resource Include="Fonts\Ubuntu-Light.ttf" />
-    <Resource Include="Fonts\Ubuntu-LightItalic.ttf" />
-    <Resource Include="Fonts\Ubuntu-Medium.ttf" />
-    <Resource Include="Fonts\Ubuntu-MediumItalic.ttf" />
-    <Resource Include="Fonts\Ubuntu-Regular.ttf" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
