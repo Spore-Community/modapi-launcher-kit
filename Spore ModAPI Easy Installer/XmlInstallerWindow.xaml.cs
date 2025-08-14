@@ -1387,7 +1387,7 @@ namespace Spore_ModAPI_Easy_Installer
             if ((targetPage != 0) && (targetPage != 3))
             {
                 double initialHeight = Height;
-                double targetHeight = BorderThickness.Top + BorderThickness.Bottom + ((WindowBodyRootGrid.Children[targetPage]) as FrameworkElement).ActualHeight + 100;
+                double targetHeight = BorderThickness.Top + BorderThickness.Bottom + ((WindowBodyRootGrid.Children[targetPage]) as FrameworkElement).ActualHeight + 115;
                 DoubleAnimation WindowHeightAnimation = new DoubleAnimation()
                 {
                     Duration = _time,
