@@ -27,7 +27,7 @@ namespace ModApi.UpdateManager
         };
         public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
-        public static string UpdaterDateTimePath = Path.Combine(AppDataPath, "updateDateTime.info");
+        public static string UpdaterDateTimePath = Path.Combine(AppDataPath, "lastUpdateDateTime.info");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string UpdaterDestPath = Path.Combine(AppDataPath, "updater.exe");
         public static string UpdaterBlockPath = Path.Combine(AppDataPath, "noUpdateCheck.info");
