@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,6 +27,7 @@ namespace ModApi.UpdateManager
         };
         public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
+        public static string UpdaterDateTimePath = Path.Combine(AppDataPath, "updateDateTime.info");
         public static string UpdateInfoDestPath = Path.Combine(AppDataPath, "update.info");
         public static string UpdaterDestPath = Path.Combine(AppDataPath, "updater.exe");
         public static string UpdaterBlockPath = Path.Combine(AppDataPath, "noUpdateCheck.info");
@@ -112,6 +114,26 @@ namespace ModApi.UpdateManager
 
             if (File.Exists(UpdaterDestPath))
                 File.Delete(UpdaterDestPath);
+
+            if (File.Exists(UpdaterDateTimePath))
+            {
+                try
+                {
+                    string lastUpdateDateTimeString = File.ReadAllText(UpdaterDateTimePath);
+                    DateTime lastUpdateDateTime = DateTime.ParseExact(lastUpdateDateTimeString, 
+                                                                        "yyyy-MM-dd HH:mm",
+                                                                        CultureInfo.InvariantCulture);
+
+                    if ((DateTime.Now - lastUpdateDateTime).TotalHours < 1)
+                    {
+                        return;
+                    }
+                }
+                catch (Exception)
+                {
+                    File.Delete(UpdaterDateTimePath);
+                }
+            }
 
             if (!File.Exists(UpdaterBlockPath) && HasInternetConnection())
             {
@@ -261,6 +283,8 @@ namespace ModApi.UpdateManager
                             dialog.ShowDialog();
                         }
                     }
+
+                    File.WriteAllText(UpdaterDateTimePath, DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
                 }
                 catch (Exception ex)
                 {
