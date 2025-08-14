@@ -21,7 +21,8 @@ namespace SporeModAPI_Launcher
 
         public DownloadDialog(string title)
         {
-            InitializeComponent(title);
+            InitializeComponent();
+            this.Text = title;
         }
 
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs args)
