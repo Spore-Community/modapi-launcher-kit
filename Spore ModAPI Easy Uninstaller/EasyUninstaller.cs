@@ -54,6 +54,8 @@ namespace Spore_ModAPI_Easy_Uninstaller
                     Form.AddMod(mod);
                 }
 
+                Form.SortMods();
+
                 Application.Run(Form);
             }
         }

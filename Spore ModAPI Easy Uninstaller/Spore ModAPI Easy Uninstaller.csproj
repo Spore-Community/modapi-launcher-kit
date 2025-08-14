@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\VersionInfo\AssemblyVersionInfo.cs" />
+    <Compile Include="ModRowComparer.cs" />
     <Compile Include="Strings.es.Designer.cs">
       <DependentUpon>Strings.es.resx</DependentUpon>
       <AutoGen>True</AutoGen>

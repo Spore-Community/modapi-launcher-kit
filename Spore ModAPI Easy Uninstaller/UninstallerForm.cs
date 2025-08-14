@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using ModAPI_Installers;
@@ -21,13 +16,11 @@ namespace Spore_ModAPI_Easy_Uninstaller
             InitializeComponent();
 
             // create header row
-
             this.dataGridView1.Rows.Add(new object[] { false, "Installed Mods" });
             this.dataGridView1.Rows[0].DefaultCellStyle.ApplyStyle(dataGridView1.ColumnHeadersDefaultCellStyle);
             this.dataGridView1.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             this.dataGridView1.Rows[0].Cells[2].Value = Strings.InstalledMods;
             this.dataGridView1.Columns[1].Visible = false;
-            
 
             this.dataGridView1.CellDoubleClick += dataGridView_CellDoubleClick;
             this.dataGridView1.CellContentClick += dataGridView_CellContentClick;
@@ -37,7 +30,6 @@ namespace Spore_ModAPI_Easy_Uninstaller
             this.btnCancel.Text = Strings.Cancel;
             this.btnUninstall.Text = Strings.UninstallSelected + " (0)";
             this.btnUninstall.Enabled = false;
-            //this.btnUninstall.Text = "asd";
             this.label2.Text = "Spore ModAPI Launcher Kit Version " + ModApi.UpdateManager.UpdateManager.CurrentVersion.ToString() + "\nDLLs Build " + ModApi.UpdateManager.UpdateManager.CurrentDllsBuild;
             this.BringToFront();
         }
@@ -48,6 +40,11 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
             if (GetConfiguratorPath(index) != null)
                 this.dataGridView1.Rows[index].Cells[3].ReadOnly = true;
+        }
+
+        public void SortMods()
+        {
+            this.dataGridView1.Sort(new ModRowComparer());
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
