@@ -147,4 +147,15 @@ jobs:
           r2-bucket: spore-modapi-launcherkit
           source-dir: artifact
           destination-dir: ./
-
+      - name: Purge Cloudflare Cache
+        env:
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CF_PURGECACHE_TOKEN: ${{ secrets.CF_PURGECACHE_TOKEN }}
+        run: |
+          $params = @{
+            Method  = 'POST'
+            Uri     = "https://api.cloudflare.com/client/v4/zones/$env:CF_ZONE_ID/purge_cache"
+            Headers = @{Authorization="Bearer $env:CF_PURGECACHE_TOKEN"}
+            Body    = '{"hosts":["update.launcherkit.sporecommunity.com"]}'
+          }
+          Invoke-WebRequest @params
