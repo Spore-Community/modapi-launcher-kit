@@ -86,30 +86,10 @@ namespace Spore_ModAPI_Easy_Installer
                 LauncherSettings.Load();
                 ModList.Load();
 
-                /*Application.ApplicationExit += (sneder, args) => {
-                    ModList.Save();
-                    Thread thread = new Thread(() =>
-                    {
-                        var win = ModInstalledWindow.GetDialog(outcome, Strings.InstallationCompleted);
-                        win.Closed += (snedre, rags) => Process.GetCurrentProcess().Kill();
-                        win.Show();
-                        Application.Run();
-                    });
-                    thread.SetApartmentState(ApartmentState.STA);
-                    thread.Start();
-                    thread.Join();
-                };*/
-
-
-
-
-
-
                 var cmdArgs = Environment.GetCommandLineArgs();
                 if ((cmdArgs.Length == 4) && bool.TryParse(cmdArgs[2], out bool configResult) && bool.TryParse(cmdArgs[3], out bool uninstall))
                 {
                     string modName = cmdArgs[1];
-                    //MessageBox.Show(modName, "modName");
 
                     if (configResult)
                     {
@@ -259,10 +239,6 @@ namespace Spore_ModAPI_Easy_Installer
                 // default to GA Data
                 return FileType.Package;
             }
-            /*else if (fileName.EndsWith(".exe"))
-            {
-                return FileType.EXE;
-            }*/
             else if (fileName.EndsWith(".dll"))
             {
                 return FileType.DLL;
@@ -491,18 +467,6 @@ namespace Spore_ModAPI_Easy_Installer
             return ResultType.Success;
         }
 
-        private static string ConvertToArgument(string path)
-        {
-            if (path == null)
-            {
-                return "null";
-            }
-            else
-            {
-                return "\"" + path + "\"";
-            }
-        }
-
         [DllImport("user32.dll", ExactSpelling = true)]
         static extern bool IsWindow(IntPtr hWnd);
 
@@ -543,44 +507,22 @@ namespace Spore_ModAPI_Easy_Installer
                         return ResultType.ModNotInstalled;
                     }
 
-                    /*XmlDocument Document = new XmlDocument();
-                    archive.GetEntry("ModInfo.xml").Open();
-                    modName*/
                     string modPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "ModConfigs", modName);
                     if (Directory.Exists(modPath))
                         DeleteFolder(modPath);
 
                     Directory.CreateDirectory(modPath);
 
-                    string revealInstallerInfoPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "RevealXmlInstaller.info");
-                    if (File.Exists(revealInstallerInfoPath))
-                        File.Delete(revealInstallerInfoPath);
 
-                    /*XmlInstallerWindow win = */
-                    //bool installCancelled = false;
                     Thread installerThread = GetXmlInstaller(modName, false, false, true, out XmlInstallerWindow win);
-                    //_showXmlInstaller = true;//Thread showThread = new Thread(() => xmlWin.Show());// xmlWin.Dispatcher.Invoke(new Action(() => xmlWin.Show())));
-                    /*showThread.SetApartmentState(ApartmentState.STA);
-                    showThread.Start();
-                    showThread.Join();*/
-                    //if (archive.GetEntry("Theme.xaml"))
+
                     foreach (var fileEntry in archive.Entries)
                     {
                         fileEntry.ExtractToFile(Path.Combine(modPath, fileEntry.Name), true);
-                        /*if (Path.GetFileName(fileEntry.Name).ToLowerInvariant() == "theme.xaml")
-                            File.WriteAllText(themeInfoPath, string.Empty);*/
                     }
-                    //win.InstallCancelled += (sneder, args) => installCancelled = true;
-                    File.WriteAllText(revealInstallerInfoPath, string.Empty);
-                    /*if (win != null)
-                        win.Closed += (sneder, args) =>
-                        {installCancelled = win.cancelled;
-                            installerThread.Abort();
-                        };
-                    else
-                        MessageBox.Show("win == null");*/
-                    //RevealXmlInstaller = true; //Thread revealThread = new Thread(() => xmlWin.RevealInstaller()); //xmlWin.Dispatcher.Invoke(new Action(() => xmlWin.RevealInstaller())));
-                    //revealThread.SetApartmentState(ApartmentState.STA); revealThread.Start(); xmlWin.Closed += (sneder, args) => System.Windows.Application.Current.Shutdown(); revealThread.Join();
+
+                    win.SignalRevealInstaller();
+
                     installerThread.Join();
                     
                     if (!XmlInstallerCancellation.Cancellation[modName.Trim('"')])
@@ -591,61 +533,11 @@ namespace Spore_ModAPI_Easy_Installer
                 else if (entry != null)
                 {
                     return ResultType.UnsupportedFile;
-                    /*tempFile = Path.GetTempFileName();
-                    try
-                    {
-                        entry.ExtractToFile(tempFile, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        // delete the temp file and propagate the exception
-                        File.Delete(tempFile);
-                        throw ex;
-                    }
-
-                    string validInstaller = "!!!!!2017_DI_9_r_Beta2-1-6";
-                    bool modNameValid = modName == validInstaller;
-                    bool modInstallerSizeValid = new FileInfo(tempFile).Length == 13023232;
-                    //MessageBox.Show("modName: " + modName + "\ninputFile: " + inputFile + "\n\nmodNameValid: " + modNameValid + "\nmodInstallerSizeValid: " + modInstallerSizeValid);
-
-                    if (modNameValid && modInstallerSizeValid)
-                    {
-                        var startInfo = new ProcessStartInfo()
-                        {
-                            UseShellExecute = false,  // we need this to execute a temp file
-                            FileName = tempFile,
-                            Arguments =
-                                ConvertToArgument(inputFile) + " " +
-                                ConvertToArgument(GetOutputPath(FileType.DLL)) + " " +
-                                ConvertToArgument(GetOutputPath(FileType.Package)) + " " +
-                                ConvertToArgument(GetOutputPath(FileType.Spore_Package))
-                        };
-
-                        var process = Process.Start(startInfo);
-                        process.WaitForExit();
-
-                        File.Delete(tempFile);
-
-                        return ResultType.InstallerExecuted;
-                    }
-                    else
-                    {
-                        MessageBox.Show("For security reasons, EXE custom installers have been disabled. If you believe this mod is safe, inform its developer of the issue, and tell them to look into \"XML Custom Installers\".");
-                        return ResultType.UnsupportedFile;
-                    }*/
                 }
                 else
                 {
                     return ResultType.Success;
                 }
-
-                /*
-                    // there's no exe custom installer, check for an xml one
-                    if (xmlEntry == null)
-                    {
-                        // there's no custom installer of any kind
-                        return ResultType.Success;
-                    }*/
             }
         }
 
@@ -660,30 +552,27 @@ namespace Spore_ModAPI_Easy_Installer
             Directory.Delete(path);
         }
 
-        //static bool _showXmlInstaller = false;
-        public static bool RevealXmlInstaller = false;
-
-        //[STAThread]
         static Thread GetXmlInstaller(string modName, bool configure, bool uninstall, bool show, out XmlInstallerWindow win)
         {
             XmlInstallerWindow xmlWin = null;
             Thread thread = new Thread(() =>
             {
-                //MessageBox.Show(modName, "modName");
                 xmlWin = new XmlInstallerWindow(modName, configure, uninstall);
-                if (show)// && (!xmlWin.IsVisible))
+                if (show)
                 {
-                    xmlWin.ShowDialog(); //.Show();
-                    //Application.Run(xmlWin);
-                    //Application.Run();
+                    xmlWin.ShowDialog();
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
-            //thread.Join();
+
+            // wait until xmlWin has been set
+            while (xmlWin == null)
+            {
+                Thread.Sleep(10);
+            }
+
             win = xmlWin;
-            
-            
             return thread;
         }
 
@@ -831,7 +720,6 @@ namespace Spore_ModAPI_Easy_Installer
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
-            //thread.Join();
         }
         static string GetResultText(ResultType result, string modName, string errorString)
         {
@@ -860,13 +748,6 @@ namespace Spore_ModAPI_Easy_Installer
 
         static void WaitForExit()
         {
-            //MessageBox.Show("WAITING FOR EXIT");
-            /*if (XmlInstallerWindow.installerWindows.Count == 0)
-            {
-                ShowExitMessageBox();
-            }
-            else
-            {*/
             int counter = 0;
             System.Timers.Timer timer = new System.Timers.Timer(10);
             timer.Elapsed += (sneder, args) =>
@@ -882,14 +763,12 @@ namespace Spore_ModAPI_Easy_Installer
             };
             timer.Start();
             Application.Run();
-            //}
         }
 
         static void ShowExitMessageBox()
         {
             Thread thread = new Thread(() =>
             {
-                //ModList.Save();
                 var win = ModInstalledWindow.GetDialog(outcome, Strings.InstallationCompleted); //"Your selected mods are done installing.\n" + 
                 win.Closed += (snedre, rags) => Process.GetCurrentProcess().Kill();
                 win.ShowDialog();

@@ -93,30 +93,14 @@ namespace Spore_ModAPI_Easy_Installer
                     }));
                 }
             }
-            else
-            {
-                WaitForCue();
-            }
         }
 
-        void WaitForCue()
+        public void SignalRevealInstaller()
         {
-            string indicatorPath = Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString(), "RevealXmlInstaller.info");
-
-            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
+            Dispatcher.Invoke(new Action(() =>
             {
-                Interval = 250
-            };
-            timer.Tick += (sneder, args) =>
-            {
-                if (File.Exists(indicatorPath))
-                {
-                    RevealInstaller();
-                    File.Delete(indicatorPath);
-                    timer.Stop();
-                }
-            };
-            timer.Start();
+                RevealInstaller();
+            }));
         }
 
         public void RevealInstaller()
