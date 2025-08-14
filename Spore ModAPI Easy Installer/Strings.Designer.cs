@@ -106,7 +106,7 @@ namespace Spore_ModAPI_Easy_Installer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installation cancelled.
+        ///   Looks up a localized string similar to &quot; cancelled installation.
         /// </summary>
         internal static string InstallationCancelled {
             get {
@@ -115,7 +115,7 @@ namespace Spore_ModAPI_Easy_Installer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installation completed.
+        ///   Looks up a localized string similar to &quot; completed installation.
         /// </summary>
         internal static string InstallationCompleted {
             get {

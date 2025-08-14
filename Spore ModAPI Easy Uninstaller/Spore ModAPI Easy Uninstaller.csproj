@@ -50,11 +50,6 @@
   <ItemGroup>
     <Compile Include="..\VersionInfo\AssemblyVersionInfo.cs" />
     <Compile Include="ModRowComparer.cs" />
-    <Compile Include="Strings.es.Designer.cs">
-      <DependentUpon>Strings.es.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -68,10 +63,6 @@
     </Compile>
     <Compile Include="EasyUninstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Strings.es.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.es.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
