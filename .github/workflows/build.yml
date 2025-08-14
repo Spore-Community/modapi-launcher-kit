@@ -35,6 +35,9 @@ jobs:
       - name: Build modapi-launcher-kit
         run: |
           msbuild /p:Configuration=Release /m
+      - name: Remove PDB files
+        run: |
+          remove-item Output\* -include *.pdb
       - name: Package ModApiUpdate.zip
         run: |
           & "C:\Program Files\7-Zip\7z.exe" e -y SporeModAPIdlls.zip -oOutput\coreLibs
