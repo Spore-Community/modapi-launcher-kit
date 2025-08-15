@@ -141,39 +141,56 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
         private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            // if (e.ColumnIndex == this.dataGridView1.Columns["ConfiguratorColumn"].Index)
-            if (e.ColumnIndex == 3)
+            if (e.ColumnIndex == 3 && this.dataGridView1.SelectedRows.Count > 0)
             {
                 if (e.RowIndex > 0)
                 {
-                    var w = Properties.Resources.ConfigIcon.Width;
-                    var h = Properties.Resources.ConfigIcon.Height;
-                    var x = e.CellBounds.Left + (e.CellBounds.Width - w) / 2;
-                    var y = e.CellBounds.Top + (e.CellBounds.Height - h) / 2;
-
-                    Bitmap image = Properties.Resources.NoConfigIcon;
                     if (GetConfiguratorPath(e.RowIndex) != null)
                     {
-                        image = Properties.Resources.ConfigIcon;
-                    }
+                        var w = Properties.Resources.ConfigIcon.Width;
+                        var h = Properties.Resources.ConfigIcon.Height;
+                        var x = e.CellBounds.Left + (e.CellBounds.Width - w) / 2;
+                        var y = e.CellBounds.Top + (e.CellBounds.Height - h) / 2;
 
-                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
-                    e.Graphics.DrawImage(image, new Rectangle(x, y, w, h));
-                    e.Handled = true;
-                }
-                else
-                {
-                    SolidBrush brush = new SolidBrush(e.CellStyle.BackColor);
-                    foreach (DataGridViewRow selectedRow in this.dataGridView1.SelectedRows)
+                        Bitmap image = Properties.Resources.ConfigIcon;
+                        e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+                        e.Graphics.DrawImage(image, new Rectangle(x, y, w, h));
+                        e.Handled = true;
+                    }
+                    else
                     {
-                        if (selectedRow.Index == 0)
+                        SolidBrush brush = new SolidBrush(e.CellStyle.BackColor);
+                        if (this.dataGridView1.SelectedRows[0].Index == e.RowIndex)
                         {
                             brush = new SolidBrush(e.CellStyle.SelectionBackColor);
                         }
+
+                        // ensure we make the cell lines visible
+                        // to make it look consistent
+                        var bounds = e.CellBounds;
+                        bounds.Height -= 5;
+                        bounds.Width  -= 5;
+                        e.Paint(bounds, DataGridViewPaintParts.All);
+                        e.Graphics.FillRectangle(brush, bounds);
+                        e.Handled = true;
+                    }
+                }
+                else
+                { // header row
+                    SolidBrush brush = new SolidBrush(e.CellStyle.BackColor);
+                    if (this.dataGridView1.SelectedRows[0].Index == 0)
+                    {
+                        brush = new SolidBrush(e.CellStyle.SelectionBackColor);
                     }
 
-                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
-                    e.Graphics.FillRectangle(brush, e.CellBounds);
+                    // ensure we make the cell lines visible
+                    // to make it look consistent
+                    var bounds = e.CellBounds;
+                    bounds.Height -= 4;
+                    bounds.Width  -= 2;
+                    bounds.Y      += 2;
+                    e.Paint(bounds, DataGridViewPaintParts.All);
+                    e.Graphics.FillRectangle(brush, bounds);
                     e.Handled = true;
                 }
             }
