@@ -134,73 +134,79 @@ namespace ModApi.UpdateManager
                 }
             }
 
-            if (!File.Exists(UpdaterBlockPath) && HasInternetConnection())
+            if (!File.Exists(UpdaterBlockPath))
             {
                 try
                 {
-                    using (var infoClient = new WebClient())
-                    {
-                        infoClient.Headers.Add("User-Agent", HttpUserAgent);
-
-                        List<Exception> exceptions = new List<Exception>();
-                        bool didDownload = false;
+                    List<Exception> exceptions = new List<Exception>();
+                    bool didDownload = false;
                         
-                        // Try to download the update info file from the override path first
-                        if (File.Exists(UpdaterOverridePath))
-                        {
-                            PathPrefix = File.ReadAllText(UpdaterOverridePath);
+                    // Try to download the update info file from the override path first
+                    if (File.Exists(UpdaterOverridePath))
+                    {
+                        PathPrefix = File.ReadAllText(UpdaterOverridePath);
 
-                            // remove override if the URL is in our URL list
-                            foreach (string url in LauncherKitUpdateUrls)
+                        // remove override if the URL is in our URL list
+                        foreach (string url in LauncherKitUpdateUrls)
+                        {
+                            if (url == PathPrefix)
                             {
-                                if (url == PathPrefix)
-                                {
-                                    File.Delete(UpdaterOverridePath);
-                                    break;
-                                }
+                                File.Delete(UpdaterOverridePath);
+                                break;
+                            }
+                        }
+
+                        try
+                        {
+                            using (var downloadClient = new DownloadClient(Path.Combine(PathPrefix, "update.info")))
+                            {
+                                downloadClient.SetTimeout(TimeSpan.FromSeconds(10));
+                                downloadClient.DownloadFile(UpdateInfoDestPath);
                             }
 
+                            // Hides exceptions if the download was successful
+                            didDownload = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            exceptions.Add(ex);
+                        }
+                    }
+                    // Try to download the update info file from each URL in the list
+                    else
+                    {
+                        foreach (string url in LauncherKitUpdateUrls)
+                        {
                             try
                             {
-                                infoClient.DownloadFile(Path.Combine(PathPrefix, "update.info"), UpdateInfoDestPath);
+                                using (var downloadClient = new DownloadClient(Path.Combine(PathPrefix, "update.info")))
+                                {
+                                    downloadClient.SetTimeout(TimeSpan.FromSeconds(10));
+                                    downloadClient.DownloadFile(UpdateInfoDestPath);
+                                }
 
                                 // Hides exceptions if the download was successful
                                 didDownload = true;
+                                PathPrefix = url;
+                                break;
                             }
                             catch (Exception ex)
                             {
                                 exceptions.Add(ex);
                             }
                         }
-                        // Try to download the update info file from each URL in the list
-                        else
-                        {
-                            foreach (string url in LauncherKitUpdateUrls)
-                            {
-                                try
-                                {
-                                    infoClient.DownloadFile(Path.Combine(url, "update.info"), UpdateInfoDestPath);
+                    }
 
-                                    // Hides exceptions if the download was successful
-                                    didDownload = true;
-                                    PathPrefix = url;
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    exceptions.Add(ex);
-                                }
-                            }
+                    // If no download was successful, show all exceptions, one at a time
+                    if (!didDownload)
+                    {
+                        foreach (var ex in exceptions)
+                        {
+                            ShowUpdateCheckFailedMessage(ex);
                         }
 
-                        // If no download was successful, show all exceptions, one at a time
-                        if (!didDownload)
-                        {
-                            foreach (var ex in exceptions)
-                            {
-                                ShowUpdateCheckFailedMessage(ex);
-                            }
-                        }
+                        // early return when failed
+                        return;
                     }
 
                     if (File.Exists(UpdateInfoDestPath))
@@ -221,13 +227,13 @@ namespace ModApi.UpdateManager
                                     }
                                     else
                                     {
-                                        var installerClient = new WebClient();
-                                        installerClient.Headers.Add("User-Agent", HttpUserAgent);
 
                                         if (File.Exists(UpdaterDestPath))
                                             File.Delete(UpdaterDestPath);
 
-                                        installerClient.DownloadFile(updateInfoLines[3], UpdaterDestPath);
+                                        var downloadClient = new DownloadClient(updateInfoLines[3]);
+                                        downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
+                                        downloadClient.DownloadFile(UpdaterDestPath);
 
                                         if (File.Exists(UpdaterDestPath))
                                         {
@@ -300,24 +306,6 @@ namespace ModApi.UpdateManager
         static void ShowUnrecognizedUpdateInfoVersionMessage()
         {
             MessageBox.Show("This update to the Spore ModAPI Launcher Kit must be downloaded manually.");
-        }
-
-        static bool HasInternetConnection()
-        {
-            try
-            {
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("User-Agent", HttpUserAgent);
-                    client.DownloadString("https://1.1.1.1");
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("The Launcher Kit could not connect to the internet to check for updates. The Launcher Kit will still work, but you may be missing the latest features and improvements.\n\nCurrent version: " + CurrentVersion + "\n\n" + ex.ToString());
-                return false;
-            }
         }
     }
 }

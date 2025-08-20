@@ -5,6 +5,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -30,18 +32,9 @@ namespace ModApi.UpdateManager
 
         private static string GithubRequestGET(string uri)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Method = "GET";
-            request.Accept = "application/vnd.github.v3+json";
-            request.UserAgent = UpdateManager.HttpUserAgent;
-
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            var downloadClient = new DownloadClient(uri);
+            downloadClient.AddHeader("Accept", "application/vnd.github.v3+json");
+            return downloadClient.DownloadString();
         }
 
         private static GithubRelease GetLatestGithubRelease(string repoUser, string repoName)
@@ -90,11 +83,6 @@ namespace ModApi.UpdateManager
 
         static readonly string[] DLL_NAMES = { "SporeModAPI.combined.dll", "SporeModAPI.disk.dll", "SporeModAPI.march2017.dll", "SporeModAPI.lib" };
 
-        public class UpdateProgressEventArgs : EventArgs
-        {
-            public float Progress { get; set; }
-        }
-
         /// <summary>
         /// How much of the progress is spent on download (the rest on copying the files)
         /// </summary>
@@ -114,17 +102,16 @@ namespace ModApi.UpdateManager
             {
                 throw new InvalidOperationException("Invalid update: no 'SporeModAPIdlls.zip' asset");
             }
-            using (var client = new WebClient())
+            using (var downloadClient = new DownloadClient(asset.browser_download_url))
             {
-                client.Headers.Add("User-Agent", UpdateManager.HttpUserAgent);
-                client.DownloadProgressChanged += (s, e) =>
+                downloadClient.DownloadProgressChanged += (s, progress) =>
                 {
                     if (progressHandler != null) 
-                        progressHandler((int)(e.ProgressPercentage * DOWNLOAD_PROGRESS));
+                        progressHandler((int)(progress * DOWNLOAD_PROGRESS));
                 };
 
                 string zipName = Path.GetTempFileName();
-                client.DownloadFile(asset.browser_download_url, zipName);
+                downloadClient.DownloadFile(zipName);
 
                 using (var zip = ZipFile.Open(zipName, ZipArchiveMode.Read))
                 {
