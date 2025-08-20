@@ -22,8 +22,6 @@ namespace ModApi.UpdateManager
             "https://update.launcherkit.sporecommunity.com/",
             // GitHub Releases
             "https://github.com/Spore-Community/modapi-launcher-kit/releases/latest/download/",
-            // DavoOnline (might not work due to anti-bot firewall)
-            "http://davoonline.com/sporemodder/rob55rod/ModAPI/"
         };
         public static string PathPrefix = LauncherKitUpdateUrls.First();
         public static string AppDataPath = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher");
