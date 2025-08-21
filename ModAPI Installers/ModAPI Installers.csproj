@@ -47,11 +47,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="CommonStrings.es.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CommonStrings.es.resx</DependentUpon>
-    </Compile>
     <Compile Include="GameVersion.cs" />
     <Compile Include="InstalledMods.cs" />
     <Compile Include="LauncherSettings.cs" />
@@ -61,10 +56,6 @@
     <Compile Include="SporePath.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CommonStrings.es.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CommonStrings.es.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="CommonStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonStrings.Designer.cs</LastGenOutput>
