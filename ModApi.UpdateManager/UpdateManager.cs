@@ -56,7 +56,6 @@ namespace ModApi.UpdateManager
                     return new Version(999, 999, 999, 999);
             }
         }
-        public static string HttpUserAgent = "Spore-ModAPI-Launcher-Kit/" + CurrentVersion.ToString();
 
         public static bool HasValidDllsVersion(XmlDocument document)
         {
