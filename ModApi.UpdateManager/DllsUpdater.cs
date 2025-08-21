@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -19,15 +16,15 @@ namespace ModApi.UpdateManager
 
         public class GithubReleaseAsset
         {
-            public string name;
-            public string browser_download_url;
+            public string name = null;
+            public string browser_download_url = null;
         }
 
         public class GithubRelease
         {
-            public string tag_name;
-            public string html_url;
-            public GithubReleaseAsset[] assets;
+            public string tag_name = null;
+            public string html_url = null;
+            public GithubReleaseAsset[] assets = null;
         }
 
         private static string GithubRequestGET(string uri)
