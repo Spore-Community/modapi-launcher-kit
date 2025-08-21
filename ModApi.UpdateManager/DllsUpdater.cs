@@ -29,9 +29,11 @@ namespace ModApi.UpdateManager
 
         private static string GithubRequestGET(string uri)
         {
-            var downloadClient = new DownloadClient(uri);
-            downloadClient.AddHeader("Accept", "application/vnd.github.v3+json");
-            return downloadClient.DownloadString();
+            using (var downloadClient = new DownloadClient(uri))
+            {
+                downloadClient.AddHeader("Accept", "application/vnd.github.v3+json");
+                return downloadClient.DownloadString();
+            }
         }
 
         private static GithubRelease GetLatestGithubRelease(string repoUser, string repoName)
