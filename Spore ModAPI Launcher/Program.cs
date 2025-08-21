@@ -23,7 +23,7 @@ namespace SporeModAPI_Launcher
     {
         public static IntPtr processHandle = IntPtr.Zero;
 
-        private const string ModAPIFixDownloadURL = "http://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
+        private const string ModAPIFixDownloadURL = "https://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
         private const string ModApiHelpThreadURL = "https://launcherkit.sporecommunity.com/support";
 
         private string SporebinPath;
