@@ -143,7 +143,7 @@ namespace ModApi.UpdateManager
                         using (var downloadClient = new DownloadClient(Path.Combine(PathPrefix, "update.info")))
                         {
                             downloadClient.SetTimeout(TimeSpan.FromSeconds(15));
-                            downloadClient.DownloadFile(UpdateInfoDestPath);
+                            downloadClient.DownloadToFile(UpdateInfoDestPath);
                         }
 
                         // Hides exceptions if the download was successful
@@ -164,7 +164,7 @@ namespace ModApi.UpdateManager
                             using (var downloadClient = new DownloadClient(Path.Combine(url, "update.info")))
                             {
                                 downloadClient.SetTimeout(TimeSpan.FromSeconds(15));
-                                downloadClient.DownloadFile(UpdateInfoDestPath);
+                                downloadClient.DownloadToFile(UpdateInfoDestPath);
                             }
 
                             // Hides exceptions if the download was successful
@@ -221,7 +221,7 @@ namespace ModApi.UpdateManager
                                                     };
 
                                                     downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
-                                                    downloadClient.DownloadFile(UpdaterDestPath);
+                                                    downloadClient.DownloadToFile(UpdaterDestPath);
                                                 }
 
                                                 if (File.Exists(UpdaterDestPath))

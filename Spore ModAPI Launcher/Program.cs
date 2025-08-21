@@ -410,7 +410,7 @@ namespace SporeModAPI_Launcher
                             };
 
                             downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
-                            memoryStream = downloadClient.DownloadMemory();
+                            memoryStream = downloadClient.DownloadToMemory();
                         }
 
                         result = ExtractFixFiles(memoryStream, outputPath);

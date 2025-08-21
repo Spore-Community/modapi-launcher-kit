@@ -32,7 +32,7 @@ namespace ModApi.UpdateManager
             using (var downloadClient = new DownloadClient(uri))
             {
                 downloadClient.AddHeader("Accept", "application/vnd.github.v3+json");
-                return downloadClient.DownloadString();
+                return downloadClient.DownloadToString();
             }
         }
 
@@ -112,7 +112,7 @@ namespace ModApi.UpdateManager
                 string zipName = Path.GetTempFileName();
 
                 downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
-                downloadClient.DownloadFile(zipName);
+                downloadClient.DownloadToFile(zipName);
 
                 using (var zip = ZipFile.Open(zipName, ZipArchiveMode.Read))
                 {

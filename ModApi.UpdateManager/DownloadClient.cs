@@ -31,7 +31,7 @@ namespace ModApi.UpdateManager
             httpRequestMessage.Headers.Add(key, value);
         }
 
-        public string DownloadString()
+        public string DownloadToString()
         {
             var response = httpClient.SendAsync(httpRequestMessage).Result;
 
@@ -43,7 +43,7 @@ namespace ModApi.UpdateManager
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        public void DownloadFile(string file)
+        public void DownloadToFile(string file)
         {
             var response = httpClient.SendAsync(httpRequestMessage).Result;
 
@@ -79,7 +79,7 @@ namespace ModApi.UpdateManager
             }
         }
 
-        public MemoryStream DownloadMemory()
+        public MemoryStream DownloadToMemory()
         {
             MemoryStream memoryStream = new MemoryStream();
 
