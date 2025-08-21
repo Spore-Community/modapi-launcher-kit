@@ -65,7 +65,7 @@ jobs:
         with:
           name: ModApi.Updater-${{ env.GIT_REVISION }}
           path: Updater/ModApi.Updater/bin/Release/*.exe
-  create-draft-release:
+  publish-github:
     runs-on: windows-2022
     needs: [ build ]
     if: github.ref_type == 'tag'
@@ -110,7 +110,7 @@ jobs:
           tag: ${{ env.GIT_REVISION }}
           artifacts: artifact/*
 
-  release-cloudflare:
+  publish-cloudflare:
     runs-on: windows-2022
     needs: [ build ]
     if: github.ref_type == 'tag'
