@@ -74,12 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugHelper.cs" />
-    <Compile Include="DownloadDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DownloadDialog.Designer.cs">
-      <DependentUpon>DownloadDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="GameVersionSelector.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,9 +95,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="DownloadDialog.resx">
-      <DependentUpon>DownloadDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GameVersionSelector.resx">
       <DependentUpon>GameVersionSelector.cs</DependentUpon>
     </EmbeddedResource>

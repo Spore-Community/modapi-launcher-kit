@@ -14,6 +14,7 @@ using ModApi.UpdateManager;
 using System.Xml;
 using System.Reflection;
 using EnvDTE80;
+using System.ComponentModel;
 
 namespace SporeModAPI_Launcher
 {
@@ -395,26 +396,31 @@ namespace SporeModAPI_Launcher
 
             Thread thread = new Thread(() =>
             {
-                var dialog = new DownloadDialog(Strings.DownloadFixTitle);
-                dialog.DownloadURL = ModAPIFixDownloadURL;
-                dialog.FileName = "SporeApp_ModAPIFix.zip";
-                dialog.DownloadCompletedText = Strings.ExtractingFiles;
-                dialog.DownloadCompletedHandler = (sender, args) =>
+                var dialog = new ProgressDialog(Strings.DownloadFixTitle, Strings.DownloadFixTitle, (s, e) =>
                 {
-                    string temporaryFile = Path.GetTempFileName();
-                    File.WriteAllBytes(temporaryFile, args.Result);
-
-                    result = ExtractFixFiles(temporaryFile, outputPath);
-
-                    File.Delete(temporaryFile);
-
-                    if (result)
+                    try
                     {
-                        // only ask if the download succeded
-                        var dialogResult = MessageBox.Show(Strings.DownloadComplete, Strings.DownloadCompleteTitle, MessageBoxButtons.YesNo);
-                        result = dialogResult == DialogResult.Yes;
+                        string temporaryFile = Path.GetTempFileName();
+
+                        using (var downloadClient = new DownloadClient(ModAPIFixDownloadURL))
+                        {
+                            downloadClient.DownloadProgressChanged += (_, progress) =>
+                            {
+                                (s as BackgroundWorker).ReportProgress(progress);
+                            };
+
+                            downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
+                            downloadClient.DownloadFile(temporaryFile);
+                        }
+
+                        result = ExtractFixFiles(temporaryFile, outputPath);
+                        File.Delete(temporaryFile);
                     }
-                };
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+                });
 
                 dialog.ShowDialog();
             });
