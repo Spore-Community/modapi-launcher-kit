@@ -400,7 +400,7 @@ namespace SporeModAPI_Launcher
                 {
                     try
                     {
-                        string temporaryFile = Path.GetTempFileName();
+                        MemoryStream memoryStream;
 
                         using (var downloadClient = new DownloadClient(ModAPIFixDownloadURL))
                         {
@@ -410,11 +410,10 @@ namespace SporeModAPI_Launcher
                             };
 
                             downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
-                            downloadClient.DownloadFile(temporaryFile);
+                            memoryStream = downloadClient.DownloadMemory();
                         }
 
-                        result = ExtractFixFiles(temporaryFile, outputPath);
-                        File.Delete(temporaryFile);
+                        result = ExtractFixFiles(memoryStream, outputPath);
                     }
                     catch (Exception ex)
                     {
@@ -434,12 +433,11 @@ namespace SporeModAPI_Launcher
 
         // -- UTILITY METHODS -- //
 
-        static bool ExtractFixFiles(string zipFile, string outputPath)
+        static bool ExtractFixFiles(MemoryStream zipStream, string outputPath)
         {
             try
             {
-                // ZipFile.ExtractToDirectory(zipFile, outputPath);
-                using (ZipArchive archive = ZipFile.Open(zipFile, ZipArchiveMode.Read))
+                using (ZipArchive archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
                 {
                     foreach (var entry in archive.Entries)
                     {
