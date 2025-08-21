@@ -189,7 +189,7 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        List<string> GetDLLsToInject(string dllEnding, List<string> dllExceptions)
+        List<string> GetDLLsToInject(string dllEnding)
         {
             List<string> dlls = new List<string>();
 
@@ -214,14 +214,13 @@ namespace SporeModAPI_Launcher
             foreach (string s in Directory.EnumerateFiles(mFolder)
                 .Where(x => !Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase) && 
                     x.ToLowerInvariant().EndsWith(".dll") &&
-                    !dllExceptions.Contains(Path.GetFileName(x)) &&
                     !dlls.Contains(x)))
             {
                 dlls.Add(s);
             }
 
             foreach (var file in baseFolder.EnumerateFiles("*" + dllEnding + ".dll")
-                .Where(x => x.Name != MODAPI_DLL && !dllExceptions.Contains(x.Name)))
+                .Where(x => x.Name != MODAPI_DLL))
             {
                 // the ModAPI dll should already be loaded
                 if (file.Name != MODAPI_DLL)
@@ -236,8 +235,6 @@ namespace SporeModAPI_Launcher
 
         void InjectSporeProcess(string dllEnding)
         {
-            var dllExceptions = CheckOutdatedCoreDlls();
-
             CreateSporeProcess();
 
             try
@@ -245,7 +242,7 @@ namespace SporeModAPI_Launcher
                 const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
                 IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
 
-                List<string> dlls = GetDLLsToInject(dllEnding, dllExceptions);
+                List<string> dlls = GetDLLsToInject(dllEnding);
 
                 Injector.SetInjectionData(this.ProcessInfo, hDLLInjectorHandle, dllEnding == "disk", dlls);
 
@@ -463,70 +460,6 @@ namespace SporeModAPI_Launcher
                 System.Windows.Forms.MessageBox.Show("Error: " + error, info);
                 throw new System.ComponentModel.Win32Exception(error);
             }
-        }
-
-        /// <summary>
-        /// Checks that the current core DLLs version is high enough for all installed mods.
-        /// It will show an error dialog for those mods that won't be loaded becaues they
-        /// require a higher version.
-        /// Returns a list of all .dll files that MUST NOT be loaded.
-        /// </summary>
-        /// <returns></returns>
-        static List<string> CheckOutdatedCoreDlls()
-        {
-            var disabledDlls = new List<string>();
-
-            string modConfigsPath = Path.Combine(
-                Directory.GetParent(Assembly.GetEntryAssembly().Location).ToString(), 
-                "ModConfigs");
-
-            var disabledMods = new List<string>();
-
-            if (Directory.Exists(modConfigsPath))
-            {
-                foreach (var modFolder in Directory.GetDirectories(modConfigsPath))
-                {
-                    var xmlPath = Path.Combine(modFolder, "ModInfo.xml");
-                    if (File.Exists(xmlPath))
-                    {
-                        try
-                        {
-                            var document = new XmlDocument();
-                            document.Load(xmlPath);
-                            var modNode = document.SelectSingleNode("/mod");
-
-                            if (!UpdateManager.HasValidDllsVersion(document))
-                            {
-                                disabledMods.Add(GetModDisplayName(modNode));
-
-                                foreach (var file in GetModFiles(modNode))
-                                {
-                                    if (file.EndsWith(".dll"))
-                                    {
-                                        disabledDlls.Add(Path.GetFileName(file));
-                                    }
-                                }
-                            }
-                        }
-                        catch { }
-                    }
-                }
-            }
-
-            if (disabledMods.Any())
-            {
-                var sb = new StringBuilder();
-                foreach (var mod in disabledMods)
-                {
-                    sb.Append(" - ");
-                    sb.Append(mod);
-                    sb.Append("\n");
-                }
-
-                MessageBox.Show(Strings.UnsupportedDllVersion + sb, Strings.UnsupportedDllVersionTitle);
-            }
-
-            return disabledDlls;
         }
 
         private static string GetModDisplayName(XmlNode modNode)
