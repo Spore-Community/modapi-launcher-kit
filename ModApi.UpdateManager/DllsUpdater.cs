@@ -108,6 +108,8 @@ namespace ModApi.UpdateManager
                 };
 
                 string zipName = Path.GetTempFileName();
+
+                downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
                 downloadClient.DownloadFile(zipName);
 
                 using (var zip = ZipFile.Open(zipName, ZipArchiveMode.Read))
