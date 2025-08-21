@@ -79,6 +79,25 @@ namespace ModApi.UpdateManager
             }
         }
 
+        public MemoryStream DownloadMemory()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+
+            var response = httpClient.SendAsync(httpRequestMessage).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Received unsuccessful status code: {(int)response.StatusCode} {response.StatusCode}");
+            }
+
+            using (var downloadStream = response.Content.ReadAsStreamAsync().Result)
+            {
+                downloadStream.CopyTo(memoryStream);
+            }
+
+            return memoryStream;
+        }
+
         public void Dispose()
         {
             Dispose(true);
