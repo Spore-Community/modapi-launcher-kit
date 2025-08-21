@@ -58,11 +58,6 @@ namespace ModApi.UpdateManager
         }
         public static string HttpUserAgent = "Spore-ModAPI-Launcher-Kit/" + CurrentVersion.ToString();
 
-        /// <summary>
-        /// Core DLLs version is the one that came with the old launcher, 2.5.20
-        /// </summary>
-        public static Version OldLauncherDllsBuild = new Version(2, 5, 20, 0);
-
         public static bool HasValidDllsVersion(XmlDocument document)
         {
             var modNode = document.SelectSingleNode("/mod");
@@ -72,22 +67,6 @@ namespace ModApi.UpdateManager
                 Version requiredDllsVersion = null;
                 if (modNode.Attributes["dllsBuild"] != null)
                     Version.TryParse(modNode.Attributes["dllsBuild"].Value, out requiredDllsVersion);
-
-                if (requiredDllsVersion > OldLauncherDllsBuild)
-                {
-                    // Only allow these mods unless they have the newer installer version, to ensure they don't get released into old Launcher versions
-                    if (modNode.Attributes["installerSystemVersion"] == null ||
-                        !Version.TryParse(modNode.Attributes["installerSystemVersion"].Value, out Version installerSystemVersion) ||
-                        installerSystemVersion < new Version(1, 0, 1, 2))
-                    {
-                        // Some mods already existed with newer DLL version but same installerSystemVersion
-                        // We make exceptions for them here
-                        string unique = modNode.Attributes["unique"] == null ? "" : modNode.Attributes["unique"].Value;
-                        if (!((unique == "AssetSharing" || unique == "CaptainVoiceDiversity") &&
-                              requiredDllsVersion.Major == 2 && requiredDllsVersion.Minor == 5 && requiredDllsVersion.Build == 179))
-                            return false;
-                    }
-                }
 
                 if (requiredDllsVersion != null &&
                     requiredDllsVersion > CurrentDllsBuild)
