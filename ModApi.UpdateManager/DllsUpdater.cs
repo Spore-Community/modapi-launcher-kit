@@ -109,12 +109,10 @@ namespace ModApi.UpdateManager
                         progressHandler((int)(progress * DOWNLOAD_PROGRESS));
                 };
 
-                string zipName = Path.GetTempFileName();
-
                 downloadClient.SetTimeout(TimeSpan.FromMinutes(5));
-                downloadClient.DownloadToFile(zipName);
+                MemoryStream zipStream = downloadClient.DownloadToMemory();
 
-                using (var zip = ZipFile.Open(zipName, ZipArchiveMode.Read))
+                using (var zip = new ZipArchive(zipStream, ZipArchiveMode.Read))
                 {
                     int filesExtracted = 0;
                     foreach (string name in DLL_NAMES)
@@ -135,8 +133,6 @@ namespace ModApi.UpdateManager
                             progressHandler((int)(progress * 100.0));
                     }
                 }
-
-                File.Delete(zipName);
             }
         }
 
