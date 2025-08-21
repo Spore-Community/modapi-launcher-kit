@@ -72,7 +72,7 @@ namespace ModApi.UpdateManager
                     fileStream.Write(buffer, 0, bufferLength);
 
                     // only trigger event when percentage has changed
-                    percentage = (int)(totalBytesRead / streamLength * 100);
+                    percentage = (int)((double)totalBytesRead / (double)streamLength * 100.0);
                     if (percentageDownloaded != percentage)
                     {
                         percentageDownloaded = percentage;
