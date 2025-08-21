@@ -416,8 +416,9 @@ namespace SporeModAPI_Launcher
                         result = ExtractFixFiles(temporaryFile, outputPath);
                         File.Delete(temporaryFile);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        MessageBox.Show(ex.ToString(), "Failed to download or extract ModAPI Fix");
                         result = false;
                     }
                 });
