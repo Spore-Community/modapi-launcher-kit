@@ -18,7 +18,7 @@ namespace ModApi.UpdateManager
         {
             long streamLength = inputStrem.Length;
             long totalBytesRead = 0;
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[4096];
             int bytesRead = 0;
             int percentageDownloaded = 0;
             int percentage;
