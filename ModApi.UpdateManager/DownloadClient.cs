@@ -8,24 +8,24 @@ namespace ModApi.UpdateManager
     {
         private HttpClient httpClient = new HttpClient();
         private HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
-        private static string httpUserAgent = "Spore-ModAPI-Launcher-Kit/" + UpdateManager.CurrentVersion.ToString();
-
+        private static readonly string httpUserAgent = "Spore-ModAPI-Launcher-Kit/" + UpdateManager.CurrentVersion.ToString();
 
         public delegate void DownloadClientEventHandler(object source, int percentage);
-        public event DownloadClientEventHandler DownloadProgressChanged;
+        public event DownloadClientEventHandler DownloadProgressChanged = null;
 
         private void copyStreamWithProgress(Stream inputStrem, Stream outputStream)
         {
             long streamLength = inputStrem.Length;
-            long totalBytesRead = 0;
             byte[] buffer = new byte[4096];
-            int bytesRead = 0;
+            long totalBytesRead = 0;
+            int bytesRead;
             int percentageDownloaded = 0;
             int percentage;
 
             while ((bytesRead = inputStrem.Read(buffer, 0, buffer.Length)) > 0)
             {
                 outputStream.Write(buffer, 0, bytesRead);
+                totalBytesRead += bytesRead;
 
                 // only trigger event when percentage has changed
                 percentage = (int)((double)totalBytesRead / (double)streamLength * 100.0);
@@ -34,8 +34,6 @@ namespace ModApi.UpdateManager
                     percentageDownloaded = percentage;
                     DownloadProgressChanged?.Invoke(this, percentage);
                 }
-
-                totalBytesRead += bytesRead;
             }
         }
 
@@ -118,6 +116,7 @@ namespace ModApi.UpdateManager
 
                 httpClient = null;
                 httpRequestMessage = null;
+                DownloadProgressChanged = null;
             }
         }
     }
