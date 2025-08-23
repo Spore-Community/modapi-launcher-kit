@@ -311,18 +311,12 @@ namespace ModApi.InterimSetup
         {
             if (_isUpgradeInstall)
             {
-                bool returnValue = false;
                 string fileName = Path.GetFileName(path).ToLowerInvariant();
-                if (File.Exists(path) && fileName.StartsWith("spore modapi") && fileName.EndsWith("exe"))
-                    returnValue = true;
-                return returnValue;
+                return File.Exists(path) && fileName.StartsWith("spore modapi") && fileName.EndsWith(".exe");
             }
             else
             {
-                if (IsValidPath(PathTextBox.Text) && (PathTextBox.Text.ToLowerInvariant() != Environment.ExpandEnvironmentVariables(@"%userprofile%\Desktop").ToLowerInvariant()))
-                    return true;
-                else
-                    return false;
+                return IsValidPath(PathTextBox.Text) && (PathTextBox.Text.ToLowerInvariant() != Environment.ExpandEnvironmentVariables(@"%userprofile%\Desktop").ToLowerInvariant());
             }
         }
 
