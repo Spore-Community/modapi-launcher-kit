@@ -14,6 +14,31 @@ namespace ModApi.UpdateManager
         public delegate void DownloadClientEventHandler(object source, int percentage);
         public event DownloadClientEventHandler DownloadProgressChanged;
 
+        private void copyStreamWithProgress(Stream inputStrem, Stream outputStream)
+        {
+            long streamLength = inputStrem.Length;
+            long totalBytesRead = 0;
+            byte[] buffer = new byte[1024];
+            int bytesRead = 0;
+            int percentageDownloaded = 0;
+            int percentage;
+
+            while ((bytesRead = inputStrem.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                outputStream.Write(buffer, 0, bytesRead);
+
+                // only trigger event when percentage has changed
+                percentage = (int)((double)totalBytesRead / (double)streamLength * 100.0);
+                if (percentageDownloaded != percentage)
+                {
+                    percentageDownloaded = percentage;
+                    DownloadProgressChanged?.Invoke(this, percentage);
+                }
+
+                totalBytesRead += bytesRead;
+            }
+        }
+
         public DownloadClient(string url)
         {
             httpClient.Timeout = TimeSpan.FromMinutes(5);
@@ -55,34 +80,12 @@ namespace ModApi.UpdateManager
             using (var downloadStream = response.Content.ReadAsStreamAsync().Result)
             using (var fileStream = new FileStream(file, FileMode.Create))
             {
-                long streamLength = downloadStream.Length;
-                long totalBytesRead = 0;
-                byte[] buffer = new byte[1024];
-                int bufferLength = 0;
-                int percentageDownloaded = 0;
-                int percentage = 0;
-
-                while ((bufferLength = downloadStream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    fileStream.Write(buffer, 0, bufferLength);
-
-                    // only trigger event when percentage has changed
-                    percentage = (int)((double)totalBytesRead / (double)streamLength * 100.0);
-                    if (percentageDownloaded != percentage)
-                    {
-                        percentageDownloaded = percentage;
-                        DownloadProgressChanged?.Invoke(this, percentage);
-                    }
-
-                    totalBytesRead += bufferLength;
-                }
+                copyStreamWithProgress(downloadStream, fileStream);
             }
         }
 
         public MemoryStream DownloadToMemory()
         {
-            MemoryStream memoryStream = new MemoryStream();
-
             var response = httpClient.SendAsync(httpRequestMessage).Result;
 
             if (!response.IsSuccessStatusCode)
@@ -90,9 +93,11 @@ namespace ModApi.UpdateManager
                 throw new HttpRequestException($"Received unsuccessful status code: {(int)response.StatusCode} {response.StatusCode}");
             }
 
+            MemoryStream memoryStream;
             using (var downloadStream = response.Content.ReadAsStreamAsync().Result)
             {
-                downloadStream.CopyTo(memoryStream);
+                memoryStream = new MemoryStream((int)downloadStream.Length);
+                copyStreamWithProgress(downloadStream, memoryStream);
             }
 
             return memoryStream;
