@@ -1,21 +1,20 @@
-﻿using System;
+﻿using ModApi.UI;
+using ModApi.UI.Windows;
+using ModAPI_Installers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Xml;
-using ModAPI_Installers;
-using ModApi.UI;
 using System.Windows.Media.Animation;
-using System.Threading;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Threading.Tasks;
-using ModApi.UI.Windows;
+using System.Xml;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -699,8 +698,12 @@ namespace Spore_ModAPI_Easy_Installer
                 List<string> enabledComponents = new List<string>();
                 InstallProgressBar.Maximum = GetComponentCount(); //enabledComponents.Count + Prerequisites.Count;
 
-                foreach (RemovalInfo p in Removals)
-                    p.Remove();
+                // only respect <remove> during installation
+                if (!_isConfigurator)
+                {
+                    foreach (RemovalInfo p in Removals)
+                        p.Remove();
+                }
 
                 foreach (ComponentInfo p in Prerequisites)
                 {
@@ -725,8 +728,10 @@ namespace Spore_ModAPI_Easy_Installer
                             if (InstallProgressBar.Value < InstallProgressBar.Maximum)
                                 InstallProgressBar.Value += 1;
                         }
-                        /*else
-                            await Task.Run(() => HandleModComponent(info, false));*/
+                        else if (_isConfigurator)
+                        {
+                            await Task.Run(() => HandleModComponent(info, false));
+                        }
                     }
                     else if (c is GroupBox)
                     {
@@ -743,10 +748,10 @@ namespace Spore_ModAPI_Easy_Installer
                                 if (InstallProgressBar.Value < InstallProgressBar.Maximum)
                                     InstallProgressBar.Value += 1;
                             }
-                            /*else
-                                await Task.Run(() => HandleModComponent(info, false));*/
-
-                            
+                            else if (_isConfigurator)
+                            {
+                                await Task.Run(() => HandleModComponent(info, false));
+                            }
                         }
                         storedSettings.Add(CreateSettingStorageString((c as GroupBox).Tag.ToString(), selected));
                     }
@@ -1138,12 +1143,7 @@ namespace Spore_ModAPI_Easy_Installer
             }
         }
 
-        private void HandleModComponent(ComponentInfo p)
-        {
-            HandleModComponent(p, true);
-        }
-
-        private void HandleModComponent(ComponentInfo p, bool copy)
+        private void HandleModComponent(ComponentInfo p, bool copy = true)
         {
             for (int i = 0; i < p.ComponentFileNames.Count; i++)
             {
@@ -1198,7 +1198,11 @@ namespace Spore_ModAPI_Easy_Installer
                         }
 
                         if (copy)
-                            File.Copy(Path.Combine(ModConfigPath, p.ComponentFileNames[index]), outputPath);
+                        {
+                            string inPath = Path.Combine(ModConfigPath, p.ComponentFileNames[index]);
+                            if (File.Exists(inPath))
+                                File.Copy(inPath, outputPath);
+                        }
                     }
                     else
                     {
@@ -1277,70 +1281,6 @@ namespace Spore_ModAPI_Easy_Installer
 
             Directory.Delete(path);
         }
-
-        /*private void DeleteModFile(ComponentInfo p)
-        {
-            if (p.ComponentGame == gameGaString)
-            {
-                string outputPath = Path.Combine(
-                    GaDataPath
-                    , p.ComponentFileName);
-                if (File.Exists(outputPath))
-                {
-                    File.Delete(outputPath);
-                }
-            }
-            else if (p.ComponentGame == gameSporeString)
-            {
-                string outputPath = Path.Combine(
-                    SporeDataPath
-                    , p.ComponentFileName);
-                if (File.Exists(outputPath))
-                {
-                    File.Delete(outputPath);
-                }
-            }
-            else
-            {
-                if ((p.ComponentFileName.EndsWith("-disk.dll")) | (p.ComponentFileName.EndsWith("-steam.dll")) | (p.ComponentFileName.EndsWith("-steam_patched.dll")))
-                {
-                    string outputPath = Path.Combine(
-                        Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
-                        , p.ComponentFileName);
-
-                    if (File.Exists(outputPath))
-                    {
-                        File.Delete(outputPath);
-                    }
-                }
-                else
-                {
-                    string outputPath = Path.Combine(
-                        Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
-                        , p.ComponentFileName.Replace(".dll", "-disk.dll"));
-                    if (File.Exists(outputPath))
-                    {
-                        File.Delete(outputPath);
-                    }
-
-                    outputPath = Path.Combine(
-                        Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
-                        , p.ComponentFileName.Replace(".dll", "-steam.dll"));
-                    if (File.Exists(outputPath))
-                    {
-                        File.Delete(outputPath);
-                    }
-
-                    outputPath = Path.Combine(
-                        Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
-                        , p.ComponentFileName.Replace(".dll", "-steam_patched.dll"));
-                    if (File.Exists(outputPath))
-                    {
-                        File.Delete(outputPath);
-                    }
-                }
-            }
-        }*/
 
         public void CyclePage(int currentPage, int targetPage)
         {
