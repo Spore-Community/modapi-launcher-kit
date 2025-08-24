@@ -246,6 +246,8 @@ namespace ModAPI_Installers
 
         public bool Load(string path)
         {
+            ModConfigurations.Clear();
+
             if (File.Exists(path))
             {
 

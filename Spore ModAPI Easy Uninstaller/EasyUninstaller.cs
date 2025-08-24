@@ -48,16 +48,16 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
                 Mods = new InstalledMods();
                 Mods.Load();
-
-                foreach (ModConfiguration mod in Mods.ModConfigurations)
-                {
-                    Form.AddMod(mod);
-                }
-
-                Form.SortMods();
+                ReloadMods();
 
                 Application.Run(Form);
             }
+        }
+
+        public static void ReloadMods()
+        {
+            Mods.Load();
+            Form.AddMods(Mods.ModConfigurations);
         }
 
         public static void UninstallMods(Dictionary<ModConfiguration, bool> mods)
@@ -94,6 +94,9 @@ namespace Spore_ModAPI_Easy_Uninstaller
             if (successfulMods.Count > 0)
             {
                 Mods.Save();
+
+                // reload before we show the message box
+                EasyUninstaller.ReloadMods();
 
                 var sb = new StringBuilder();
                 foreach (ModConfiguration mod in successfulMods)
@@ -212,10 +215,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 string args = "\"" + mod.Name + "\"" + " true " + uninstall.ToString();
                 //MessageBox.Show(path + "\n\n" + args, "process information");
                 var process = Process.Start(path, args);
-                if (uninstall)
-                {
-                    process.WaitForExit();
-                }
+                process.WaitForExit();
             }
             else
             {

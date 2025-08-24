@@ -34,17 +34,29 @@ namespace Spore_ModAPI_Easy_Uninstaller
             this.BringToFront();
         }
 
-        public void AddMod(ModConfiguration mod)
+        public void AddMods(HashSet<ModConfiguration> mods)
         {
-            int index = this.dataGridView1.Rows.Add(new object[] { false, mod, mod.DisplayName });
+            // clear rows
+            while (this.dataGridView1.RowCount > 1)
+            {
+                this.dataGridView1.Rows.RemoveAt(1);
+            }
 
-            if (GetConfiguratorPath(index) != null)
-                this.dataGridView1.Rows[index].Cells[3].ReadOnly = true;
-        }
+            // add mods
+            foreach (var mod in mods)
+            {
 
-        public void SortMods()
-        {
+                int index = this.dataGridView1.Rows.Add(new object[] { false, mod, mod.DisplayName });
+
+                if (GetConfiguratorPath(index) != null)
+                    this.dataGridView1.Rows[index].Cells[3].ReadOnly = true;
+            }
+
+            // sort mods
             this.dataGridView1.Sort(new ModRowComparer());
+
+            // reset header state
+            dataGridView_CellValueChanged(this, new DataGridViewCellEventArgs(0, 1));
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -134,7 +146,6 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 if (result == DialogResult.Yes)
                 {
                     EasyUninstaller.UninstallMods(list);
-                    this.Close();
                 }
             }
         }
@@ -210,8 +221,10 @@ namespace Spore_ModAPI_Easy_Uninstaller
         {
             try
             {
+                this.Hide();
                 EasyUninstaller.ExecuteConfigurator(mod, false);
-                this.Close();
+                EasyUninstaller.ReloadMods();
+                this.Show();
             }
             catch (Exception ex)
             {
