@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
+using ModAPI_Installers.Types;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -62,7 +63,7 @@ namespace Spore_ModAPI_Easy_Installer
 
         public static string SporeDataPath = SporePath.MoveToData(SporePath.Game.Spore, SporePath.GetRealParent(PathDialogs.ProcessSpore()));
 
-        private EasyInstaller.ResultType _result = EasyInstaller.ResultType.ModNotInstalled;
+        private ResultType _result = ResultType.ModNotInstalled;
 
         public XmlInstallerWindow(string modName, bool configure, bool uninstall)
         {
@@ -96,7 +97,7 @@ namespace Spore_ModAPI_Easy_Installer
             }
         }
 
-        public EasyInstaller.ResultType GetResult()
+        public ResultType GetResult()
         {
             return _result;
         }
@@ -690,7 +691,7 @@ namespace Spore_ModAPI_Easy_Installer
                     XmlInstallerCancellation.Cancellation[ModName] = true;
                     _installerState = 2;
                     _installerMode = 1;
-                    _result = EasyInstaller.ResultType.ModNotInstalled;
+                    _result = ResultType.ModNotInstalled;
                     Close();
                 }
 
@@ -879,19 +880,19 @@ namespace Spore_ModAPI_Easy_Installer
                 if (_installerMode == 1)
                 {
                     _installerState = 2;
-                    _result = EasyInstaller.ResultType.Success;
+                    _result = ResultType.Success;
                     Close();
                 }
                 else
                 {
                     CyclePage(0, 1);
-                    _result = EasyInstaller.ResultType.Success;
+                    _result = ResultType.Success;
                     _installerState = 2;
                 }
             }
             catch (Exception ex)
             {
-                _result = EasyInstaller.ResultType.ModNotInstalled;
+                _result = ResultType.ModNotInstalled;
                 ErrorInfoTextBlock.Text = ex.ToString();
                 CyclePage(0, 3);
             }
@@ -1046,12 +1047,18 @@ namespace Spore_ModAPI_Easy_Installer
 
                 if (_isUninstallingOnly)
                 {
+                    _result = ResultType.Success;
                     Close();
                 }
-                //Process.GetCurrentProcess().Kill();
             }
             catch (Exception ex)
             {
+                // dummy error so that the uninstaller
+                // knows this mod failed to uninstall
+                if (_isUninstallingOnly)
+                {
+                    _result = ResultType.UnsupportedFile;
+                }
                 ErrorInfoTextBlock.Text = ex.ToString();
                 CyclePage(0, 3);
             }
@@ -1397,7 +1404,7 @@ namespace Spore_ModAPI_Easy_Installer
             if (installerWindows.Contains(this))
                 installerWindows.Remove(this);
             if (_isConfigurator)
-                Process.GetCurrentProcess().Kill();
+                Environment.Exit((int)_result);
         }
                         
         private void SplashBorder_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

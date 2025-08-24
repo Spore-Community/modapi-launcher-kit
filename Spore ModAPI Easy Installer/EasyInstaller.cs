@@ -17,6 +17,7 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Xml;
 using ModApi.UpdateManager;
+using ModAPI_Installers.Types;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -38,17 +39,6 @@ namespace Spore_ModAPI_Easy_Installer
             Spore_Package // a .package that goes to the Spore data folder instead of the EP1 one
         }
 
-        public enum ResultType
-        {
-            Success,
-            InstallerExecuted,  // we have found a custom installer, close Easy installer and execute that one
-            UnsupportedFile,
-            GalacticAdventuresNotFound,
-            UnauthorizedAccess,
-            InvalidPath,
-            ModNotInstalled,
-            NoInstallerFound
-        }
         //// Show a file chooser and returns the path selected. It can ask for files or directories.
         //static string ShowFileChooser(FileChooserType type, string title, string filter);
 
