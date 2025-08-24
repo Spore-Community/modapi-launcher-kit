@@ -10,6 +10,7 @@ using System.Text;
 using System.IO;
 
 using ModAPI_Installers;
+using ModAPI_Installers.Types;
 
 namespace Spore_ModAPI_Easy_Uninstaller
 {
@@ -68,18 +69,22 @@ namespace Spore_ModAPI_Easy_Uninstaller
             {
                 foreach (var mod in mods)
                 {
+                    ResultType result = ResultType.Success;
+
                     if (mod.Value)
                     {
-                        ExecuteConfigurator(mod.Key, true);
+                        result = ExecuteConfigurator(mod.Key, true);
                     }
                     else
                     {
                         RemoveModFiles(mod.Key);
                     }
 
-                    Mods.RemoveMod(mod.Key);
-
-                    successfulMods.Add(mod.Key);
+                    if (result == ResultType.Success)
+                    {
+                        Mods.RemoveMod(mod.Key);
+                        successfulMods.Add(mod.Key);
+                    }
                 }
             }
             catch (UnauthorizedAccessException)
@@ -205,7 +210,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
             }
         }
 
-        public static void ExecuteConfigurator(ModConfiguration mod, bool uninstall)
+        public static ResultType ExecuteConfigurator(ModConfiguration mod, bool uninstall)
         {
             if (mod.ConfiguratorPath.ToLowerInvariant().EndsWith("xml"))
             {
@@ -216,6 +221,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 //MessageBox.Show(path + "\n\n" + args, "process information");
                 var process = Process.Start(path, args);
                 process.WaitForExit();
+                return (ResultType)process.ExitCode;
             }
             else
             {
@@ -234,6 +240,8 @@ namespace Spore_ModAPI_Easy_Uninstaller
                     ConvertToArgument(GetOutputPath("GalacticAdventures", null)) + " " +
                     ConvertToArgument(GetOutputPath("Spore", null))
                 });
+
+                return ResultType.Success;
             }
         }
     }
