@@ -59,6 +59,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;MODAPISTEAMOCT2024_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -75,6 +76,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;MODAPISTEAMOCT2024_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -97,16 +99,14 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="DeleteUnnecessaryFiles" AfterTargets="Build">
-     <ItemGroup>
-       <FilesToDelete Include="..\Output\$(ProjectName).exp"/>
-       <FilesToDelete Include="..\Output\$(ProjectName).lib"/>
-     </ItemGroup>
-     <Message Text="Deleting Files @(FilesToDelete)"/>
-     <Delete Files="@(FilesToDelete)">
-       <Output 
-          TaskParameter="DeletedFiles"
-          ItemName="FilesDeleted"/>
-     </Delete>
-     <Message Text="Files deleted: @(FilesDeleted)"/>
+    <ItemGroup>
+      <FilesToDelete Include="..\Output\$(ProjectName).exp" />
+      <FilesToDelete Include="..\Output\$(ProjectName).lib" />
+    </ItemGroup>
+    <Message Text="Deleting Files @(FilesToDelete)" />
+    <Delete Files="@(FilesToDelete)">
+      <Output TaskParameter="DeletedFiles" ItemName="FilesDeleted" />
+    </Delete>
+    <Message Text="Files deleted: @(FilesDeleted)" />
   </Target>
 </Project>
