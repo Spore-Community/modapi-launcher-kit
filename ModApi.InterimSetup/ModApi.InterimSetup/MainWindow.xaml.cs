@@ -22,7 +22,13 @@ namespace ModApi.InterimSetup
         bool _isUpgradeInstall = false;
         int _currentPage = 0;
         bool _createDesktopShortcuts = true;
-
+        string _currentLauncherKitPath = String.Empty;
+        string[] _launcherkitExecutables = new string[]
+        {
+            "Spore ModAPI Easy Installer.exe",
+            "Spore ModAPI Easy Uninstaller.exe",
+            "Spore ModAPI Launcher.exe"
+        };
         CircleEase _ease = new CircleEase()
         {
             EasingMode = EasingMode.EaseOut
@@ -49,6 +55,8 @@ namespace ModApi.InterimSetup
                 if (RootGrid.Children.IndexOf(p) != _currentPage)
                     p.Visibility = Visibility.Collapsed;
             }
+
+            FindExistingLauncherKit();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -65,6 +73,30 @@ namespace ModApi.InterimSetup
         {
             CyclePage(_currentPage + 1);
             BeginInstallation();
+        }
+
+        private void FindExistingLauncherKit()
+        {
+            try
+            {
+                string pathInfo = Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher\path.info");
+                string launcherKitPath;
+                if (File.Exists(pathInfo))
+                {
+                    launcherKitPath = File.ReadAllText(pathInfo);
+                    if (VerifyPath(launcherKitPath, true))
+                    {
+                        _currentLauncherKitPath = launcherKitPath;
+
+                        // when found, redirect directly to the upgrade page
+                        UpgradeInstallButton_Click(this, null);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // do nothing
+            }
         }
 
         private void UnzipLauncherKit(string path)
@@ -173,7 +205,7 @@ namespace ModApi.InterimSetup
             _pathAcceptableText = "This path is valid. An existing ModAPI Launcher was found.";
             _pathNotAcceptableText = "This path is not valid. No existing ModAPI Launcher was found to upgrade.";
             PageOneInstructionsTextBlock.Text = _pageOneInstructionsUpgradeInstallText;
-            PathTextBox.Text = string.Empty;
+            PathTextBox.Text = _currentLauncherKitPath;
             CyclePage(1);
         }
 
@@ -271,16 +303,14 @@ namespace ModApi.InterimSetup
                 OpenFileDialog dialog = new OpenFileDialog()
                 {
                     Title = "Select the path to your existing Spore ModAPI Launcher.",
-                    Filter = "Spore ModAPI Executable (*.exe)|*.exe",
+                    Filter = "Spore ModAPI Executable (*.exe)|" + String.Join(";", _launcherkitExecutables),
                     FilterIndex = 0,
                     CheckPathExists = true
                 };
 
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    string path = dialog.FileName;
-                    bool verified = VerifyPath(path);
-                    PathTextBox.Text = Environment.ExpandEnvironmentVariables(path);
+                    PathTextBox.Text = dialog.FileName;
                 }
             }
             else
@@ -296,23 +326,45 @@ namespace ModApi.InterimSetup
 
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    string path = dialog.SelectedPath;
-                    bool verified = VerifyPath(path);
-                    string expandedPath = Environment.ExpandEnvironmentVariables(path);
-                    if (!expandedPath.ToLowerInvariant().EndsWith(_pathSuffix.ToLowerInvariant()))
-                        expandedPath = Path.Combine(expandedPath, _pathSuffix);
-
-                    PathTextBox.Text = expandedPath;
+                    PathTextBox.Text = dialog.SelectedPath;
                 }
             }
         }
 
-        bool VerifyPath(string path)
+        bool VerifyPath(string path, bool forceUpgradeCheck = false)
         {
-            if (_isUpgradeInstall)
+            if (forceUpgradeCheck || _isUpgradeInstall)
             {
-                string fileName = Path.GetFileName(path).ToLowerInvariant();
-                return File.Exists(path) && fileName.StartsWith("spore modapi") && fileName.EndsWith(".exe");
+                try
+                {
+                    if (File.Exists(path))
+                    {
+                        path = Path.GetFileName(path).ToLower();
+                        foreach (var executable in _launcherkitExecutables)
+                        {
+                            if (path == executable.ToLower())
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var executable in _launcherkitExecutables)
+                        {
+                            if (File.Exists(Path.Combine(path, executable)))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // do nothing
+                }
+
+                return false;
             }
             else
             {
