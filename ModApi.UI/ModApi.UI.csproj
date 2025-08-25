@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedScrollViewer.cs" />
-    <Compile Include="..\..\VersionInfo\AssemblyVersionInfo.cs" />
+    <Compile Include="..\VersionInfo\AssemblyVersionInfo.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="CutCornerBorder.cs" />
     <Compile Include="LoadingPanel.cs" />

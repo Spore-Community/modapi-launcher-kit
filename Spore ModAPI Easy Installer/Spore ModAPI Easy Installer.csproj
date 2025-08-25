@@ -55,7 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ModApi.UI">
-      <HintPath>..\ModApi.UI\ModApi.UI\bin\$(Configuration)\ModApi.UI.dll</HintPath>
+      <HintPath>..\ModApi.UI\bin\$(Configuration)\ModApi.UI.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
