@@ -132,7 +132,7 @@
     <Content Include="SporeModAPIEasyInstaller.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModApi.Common\ModAPI.Common.csproj">
+    <ProjectReference Include="..\ModAPI.Common\ModAPI.Common.csproj">
       <Project>{2204f49d-0129-4522-8ef0-16702153e915}</Project>
       <Name>ModAPI.Common</Name>
     </ProjectReference>

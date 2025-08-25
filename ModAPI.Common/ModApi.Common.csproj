@@ -7,8 +7,8 @@
     <ProjectGuid>{2204F49D-0129-4522-8EF0-16702153E915}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModApi.Common</RootNamespace>
-    <AssemblyName>ModApi.Common</AssemblyName>
+    <RootNamespace>ModAPI.Common</RootNamespace>
+    <AssemblyName>ModAPI.Common</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
