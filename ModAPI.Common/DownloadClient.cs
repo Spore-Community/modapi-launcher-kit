@@ -1,7 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
+﻿using ModApi.Common;
 using ModAPI.Common.Update;
+using System;
+using System.IO;
+using System.IO.Pipes;
+using System.Net.Http;
 
 namespace ModAPI.Common
 {
@@ -11,32 +13,7 @@ namespace ModAPI.Common
         private HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
         private static readonly string httpUserAgent = "Spore-ModAPI-Launcher-Kit/" + UpdateManager.CurrentVersion.ToString();
 
-        public delegate void DownloadClientEventHandler(object source, int percentage);
-        public event DownloadClientEventHandler DownloadProgressChanged = null;
-
-        private void copyStreamWithProgress(Stream inputStrem, Stream outputStream)
-        {
-            long streamLength = inputStrem.Length;
-            byte[] buffer = new byte[4096];
-            long totalBytesRead = 0;
-            int bytesRead;
-            int percentageDownloaded = 0;
-            int percentage;
-
-            while ((bytesRead = inputStrem.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                outputStream.Write(buffer, 0, bytesRead);
-                totalBytesRead += bytesRead;
-
-                // only trigger event when percentage has changed
-                percentage = (int)((double)totalBytesRead / (double)streamLength * 100.0);
-                if (percentageDownloaded != percentage)
-                {
-                    percentageDownloaded = percentage;
-                    DownloadProgressChanged?.Invoke(this, percentage);
-                }
-            }
-        }
+        public event StreamUtils.StreamProgressEventHandler DownloadProgressChanged = null;
 
         public DownloadClient(string url)
         {
@@ -79,7 +56,7 @@ namespace ModAPI.Common
             using (var downloadStream = response.Content.ReadAsStreamAsync().Result)
             using (var fileStream = new FileStream(file, FileMode.Create))
             {
-                copyStreamWithProgress(downloadStream, fileStream);
+                StreamUtils.CopyStreamWithProgress(downloadStream, fileStream, this, DownloadProgressChanged);
             }
         }
 
@@ -96,7 +73,7 @@ namespace ModAPI.Common
             using (var downloadStream = response.Content.ReadAsStreamAsync().Result)
             {
                 memoryStream = new MemoryStream((int)downloadStream.Length);
-                copyStreamWithProgress(downloadStream, memoryStream);
+                StreamUtils.CopyStreamWithProgress(downloadStream, memoryStream, this, DownloadProgressChanged);
             }
 
             return memoryStream;
