@@ -39,22 +39,6 @@ namespace ModAPI.Common.Update
         private static GithubRelease GetLatestGithubRelease(string repoUser, string repoName)
         {
             string data = GithubRequestGET(GITHUB_API_URL + "/repos/" + repoUser + "/" + repoName + "/releases/latest");
-
-            var errors = new List<string>();
-            var settings = new JsonSerializerSettings();
-            settings.Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
-            {
-                errors.Add(args.ErrorContext.Error.Message);
-                args.ErrorContext.Handled = true;
-            };
-            if (errors.Any())
-            {
-                Console.Error.WriteLine("Found " + errors.Count + " errors while parsing JSON for " + repoUser + "/" + repoName);
-                foreach (var error in errors)
-                {
-                    Console.Error.WriteLine(error);
-                }
-            }
             return JsonConvert.DeserializeObject<GithubRelease>(data);
         }
 
