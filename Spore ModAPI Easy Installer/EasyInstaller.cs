@@ -1,21 +1,20 @@
-﻿using System;
+﻿using ModApi.Common;
+using ModAPI.Common;
+using ModAPI.Common.Dialog;
+using ModAPI.Common.Types;
+using ModAPI.Common.Update;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-
-using System.Threading;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
-using System.ComponentModel;
-
-using System.Diagnostics;
-
-using ModAPI.Common;
+using System.Threading;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Xml;
-using ModAPI.Common.Update;
-using ModAPI.Common.Types;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -53,7 +52,6 @@ namespace Spore_ModAPI_Easy_Installer
         // 
 
         public static InstalledMods ModList = new InstalledMods();
-        static ProgressWindow ProgressDialog = new ProgressWindow(Strings.InstallingModTitle);
         public static string outcome = string.Empty;
 
         /// <summary>
@@ -302,22 +300,6 @@ namespace Spore_ModAPI_Easy_Installer
             return path;
         }
 
-        static void TryCloseProgressDialog()
-        {
-            while (!ProgressDialog.IsDisposed)
-            {
-                try
-                {
-                    ProgressDialog.Close();
-                }
-                catch
-                {
-                    Thread.Sleep(250);
-                }
-            }
-        }
-
-
         static ResultType InstallPackage(string inputFile, string modName)
         {
             ResultType result = ResultType.Success;
@@ -331,53 +313,39 @@ namespace Spore_ModAPI_Easy_Installer
 
             try
             {
-                // File.Copy(inputFile, Path.Combine(new string[] { outputPath, Path.GetFileName(inputFile) }), true);
-
-                ProgressDialog.SetDescriptionText(Strings.ModIsInstalling1 + modName + Strings.ModIsInstalling2);
-
                 string fileName = Path.GetFileName(inputFile);
+                string outputFile = Path.Combine(outputPath, fileName);
 
-                var client = new WebClient();
-
-                bool isFinished = false;
-
-                client.DownloadFileCompleted += (object sender, AsyncCompletedEventArgs args) =>
-                    {
-                        isFinished = true;
-                        // if the transfer is too fast, it tries to close the dialog before it even loaded. So keep trying until we have it
-                        TryCloseProgressDialog();
-
-                        if (args.Error != null)
-                        {
-                            if (args.Error.GetType() == typeof(WebException))
-                            {
-                                result = ResultType.UnauthorizedAccess;
-                                ex = ((WebException)args.Error).InnerException;
-                            }
-                            else
-                            {
-                                ex = args.Error;
-                            }
-                        }
-                    };
-
-                client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs args) =>
+                Thread thread = new Thread(() =>
                 {
-                    if (!isFinished)
+                    var dialog = new ProgressDialog(Strings.CopyingFile + " " + fileName, Strings.InstallingModTitle, (s, e) =>
                     {
                         try
                         {
-                            ProgressDialog.SetProgress(args.ProgressPercentage);
-                            ProgressDialog.SetProgressText(Strings.CopyingFile + " \"" + fileName + "\" (" + (args.BytesReceived / 1000) + " / " + (args.TotalBytesToReceive / 1000) + " KBs)");
+                            using (FileStream inputFileStream = File.Open(inputFile, FileMode.Open))
+                            using (FileStream outputFileStream = File.Open(outputFile, FileMode.Create))
+                            {
+                                StreamUtils.CopyStreamWithProgress(inputFileStream, outputFileStream, null, (_, progress) =>
+                                {
+                                    (s as BackgroundWorker).ReportProgress(progress);
+                                });
+
+                                outputFileStream.Flush();
+                            }
                         }
-                        catch { }
-                    }
-                };
+                        catch (Exception copyException)
+                        {
+                            ex = copyException;
+                            result = ResultType.ModNotInstalled;
+                        }
+                    });
 
+                    dialog.ShowDialog();
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
 
-                ShowProgressDialog(client, inputFile, Path.Combine(new string[] { outputPath, Path.GetFileName(inputFile) }));
-
-                
                 if (ex != null)
                 {
                     throw ex;
@@ -407,7 +375,7 @@ namespace Spore_ModAPI_Easy_Installer
         }
 
         // Installs the files and adds them to the list in the ModConfiguration (so they can be removed if something goes wrong)
-        private static ResultType ExtractSporemodZip(string inputFile, ModConfiguration mod)
+        private static ResultType ExtractSporemodZip(string inputFile, ModConfiguration mod, StreamUtils.StreamProgressEventHandler eventHandler)
         {
             //TODO check if it contains an installer
             string modName = Path.GetFileNameWithoutExtension(inputFile);
@@ -422,11 +390,8 @@ namespace Spore_ModAPI_Easy_Installer
                 if (!Directory.Exists(modPath))
                     Directory.CreateDirectory(modPath);
 
-
                 foreach (var entry in archive.Entries)
                 {
-                    ProgressDialog.SetProgressText(Strings.ExtractingFile + " \"" + entry.Name + "\" (" + entriesExtracted + " / " + numEntries + " files).");
-
                     // we use the FullName because we also might check the folder that contains that file
                     var type = GetFileType(entry.FullName);
                     string outputPath = GetOutputPath(type);
@@ -440,11 +405,11 @@ namespace Spore_ModAPI_Easy_Installer
                         {
                             string fileOutPath = Path.Combine(outputPath, entry.Name);
 
-                            File.Copy(configOutPath, fileOutPath);
+                            File.Copy(configOutPath, fileOutPath, true);
                         }
                     }
-                    ProgressDialog.SetProgress((int)((entriesExtracted / (float) numEntries) * 100.0f));
 
+                    eventHandler?.Invoke(null, (int)((entriesExtracted / (float) numEntries) * 100.0f));
                     entriesExtracted++;
                 }
             }
@@ -565,49 +530,60 @@ namespace Spore_ModAPI_Easy_Installer
             if (result == ResultType.NoInstallerFound)
             {
                 // the custom installer just didn't exist, extract as ZIP file
-
                 var mod = ModList.AddMod(modName);
+                Exception exception = null;
 
-                ShowProgressDialog();
-                // ProgressDialog.Show();
-                ProgressDialog.SetDescriptionText(Strings.ModIsInstalling1 + modName + Strings.ModIsInstalling2);
-
-                try
+                Thread thread = new Thread(() =>
                 {
-                    ExtractSporemodZip(inputFile, mod);
-                    //ModList.Save();
+                    var dialog = new ProgressDialog(Strings.ModIsInstalling1 + modName + "\" is being installed", Strings.InstallingModTitle, (s, e) =>
+                    {
+                        try
+                        {
+                            ExtractSporemodZip(inputFile, mod, (_, progress) =>
+                            {
+                                (s as BackgroundWorker).ReportProgress(progress);
+                            });
 
-                    TryCloseProgressDialog();
-                    return ResultType.Success;
-                }
-                catch (UnauthorizedAccessException)
+                            result = ResultType.Success;
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            // remove all the files we added (so the mod is not only partially installed)
+                            RemoveModFiles(mod);
+                            ModList.RemoveMod(mod);
+
+                            result = ResultType.UnauthorizedAccess;
+                        }
+                        catch (IOException)
+                        {
+                            // remove all the files we added (so the mod is not only partially installed)
+                            RemoveModFiles(mod);
+                            ModList.RemoveMod(mod);
+                            result = ResultType.InvalidPath;
+                        }
+                        catch (Exception ex)
+                        {
+                            // remove all the files we added (so the mod is not only partially installed)
+                            RemoveModFiles(mod);
+                            ModList.RemoveMod(mod);
+
+                            // just propagate the exception
+                            exception = ex;
+                        }
+                    });
+
+                    dialog.ShowDialog();
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
+
+                if (exception != null)
                 {
-                    // remove all the files we added (so the mod is not only partially installed)
-                    RemoveModFiles(mod);
-                    ModList.RemoveMod(mod);
-
-                    TryCloseProgressDialog();
-                    return ResultType.UnauthorizedAccess;
+                    throw exception;
                 }
-                catch (IOException)
-                {
-                    // remove all the files we added (so the mod is not only partially installed)
-                    RemoveModFiles(mod);
-                    ModList.RemoveMod(mod);
 
-                    TryCloseProgressDialog();
-                    return ResultType.InvalidPath;
-                }
-                catch (Exception ex)
-                {
-                    // remove all the files we added (so the mod is not only partially installed)
-                    RemoveModFiles(mod);
-                    ModList.RemoveMod(mod);
-
-                    TryCloseProgressDialog();
-                    // just propagate the exception
-                    throw ex;
-                }
+                return result;
             }
             else
             {
@@ -653,51 +629,7 @@ namespace Spore_ModAPI_Easy_Installer
         }
 
 
-        // Progress dialog
-
-        static void ShowProgressDialog(WebClient client, string input, string output)
-        {
-            Exception exception = null;
-
-            Thread thread = new Thread(() =>
-            {
-                try
-                {
-                    client.DownloadFileAsync(new Uri(input), output);
-
-                    if (!ProgressDialog.IsDisposed)
-                    {
-                        ProgressDialog.ShowDialog();
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    exception = ex;
-                }
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-
-            if (exception != null)
-            {
-                throw exception;
-            }
-        }
-
         // this one does not block the thread
-        static void ShowProgressDialog()
-        {
-            if (ProgressDialog.IsDisposed)
-                ProgressDialog = new ProgressWindow(Strings.InstallingModTitle);
-            Thread thread = new Thread(() =>
-            {
-                ProgressDialog.ShowDialog();
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-        }
         static string GetResultText(ResultType result, string modName, string errorString)
         {
             if (result == ResultType.Success)
