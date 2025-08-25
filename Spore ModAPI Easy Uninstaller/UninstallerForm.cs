@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using ModAPI_Installers;
+using ModAPI.Common;
+using ModAPI.Common.Update;
 
 namespace Spore_ModAPI_Easy_Uninstaller
 {
@@ -30,7 +31,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
             this.btnCancel.Text = Strings.Cancel;
             this.btnUninstall.Text = Strings.UninstallSelected + " (0)";
             this.btnUninstall.Enabled = false;
-            this.label2.Text = "Spore ModAPI Launcher Kit Version " + ModApi.UpdateManager.UpdateManager.CurrentVersion.ToString() + "\nDLLs Build " + ModApi.UpdateManager.UpdateManager.CurrentDllsBuild;
+            this.label2.Text = "Spore ModAPI Launcher Kit Version " + UpdateManager.CurrentVersion.ToString() + "\nDLLs Build " + UpdateManager.CurrentDllsBuild;
             this.BringToFront();
         }
 

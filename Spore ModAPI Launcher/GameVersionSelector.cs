@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using ModAPI_Installers;
+using ModAPI.Common;
 
 namespace SporeModAPI_Launcher
 {

@@ -9,8 +9,9 @@ using System.Text;
 
 using System.IO;
 
-using ModAPI_Installers;
-using ModAPI_Installers.Types;
+using ModAPI.Common;
+using ModAPI.Common.Types;
+using ModAPI.Common.Update;
 
 namespace Spore_ModAPI_Easy_Uninstaller
 {
@@ -35,7 +36,7 @@ namespace Spore_ModAPI_Easy_Uninstaller
         {
             if (!Permissions.IsAdministrator())
             {
-                ModApi.UpdateManager.UpdateManager.CheckForUpdates();
+                UpdateManager.CheckForUpdates();
                 Permissions.RerunAsAdministrator();
             }
             else

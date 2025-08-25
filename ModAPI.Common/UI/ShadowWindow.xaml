@@ -1,0 +1,120 @@
+﻿<Window x:Class="ModAPI.Common.UI.ShadowWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModAPI.Common.UI"
+        mc:Ignorable="d"
+        Title="ShadowWindow" WindowStyle="None" ResizeMode="NoResize"
+        AllowsTransparency="True" Background="Transparent" Margin="0" Padding="0" Visibility="Visible"
+        Focusable="False" ShowActivated="False" ShowInTaskbar="False" RenderTransformOrigin="0.5,0.5">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="RootGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            
+            <!--Grid x:Name="ShadowGrid" Background="Transparent" Margin="0">
+        <!-Diagonal size is 67.19->
+        <Canvas HorizontalAlignment="Left" VerticalAlignment="Top" Width="185" Height="185">
+            <Canvas.Background>
+                <RadialGradientBrush GradientOrigin="1,1" Center="1,1" RadiusX="1" RadiusY="1">
+                    <RadialGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#422A2A2A" />
+                        <GradientStop Offset="1" Color="#00000000" />
+                    </RadialGradientBrush.GradientStops>
+                </RadialGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="185,0" Height="185">
+            <Canvas.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#00000000" />
+                        <GradientStop Offset="1" Color="#422A2A2A" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Right" VerticalAlignment="Top" Width="185" Height="185">
+            <Canvas.Background>
+                <RadialGradientBrush GradientOrigin="0,1" Center="0,1" RadiusX="1" RadiusY="1">
+                    <RadialGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#422A2A2A" />
+                        <GradientStop Offset="1" Color="#00000000" />
+                    </RadialGradientBrush.GradientStops>
+                </RadialGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,185" Width="185">
+            <Canvas.Background>
+                <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#00000000" />
+                        <GradientStop Offset="1" Color="#422A2A2A" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="185" Height="185">
+            <Canvas.Background>
+                <RadialGradientBrush GradientOrigin="0,0" Center="0,0" RadiusX="1" RadiusY="1">
+                    <RadialGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#422A2A2A" />
+                        <GradientStop Offset="1" Color="#00000000" />
+                    </RadialGradientBrush.GradientStops>
+                </RadialGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="185,0" Height="185">
+            <Canvas.Background>
+                <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#00000000" />
+                        <GradientStop Offset="1" Color="#422A2A2A" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="185" Height="185">
+            <Canvas.Background>
+                <RadialGradientBrush GradientOrigin="1,0" Center="1,0" RadiusX="1" RadiusY="1">
+                    <RadialGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#422A2A2A" />
+                        <GradientStop Offset="1" Color="#00000000" />
+                    </RadialGradientBrush.GradientStops>
+                </RadialGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,185" Width="185">
+            <Canvas.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="#00000000" />
+                        <GradientStop Offset="1" Color="#422A2A2A" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="185,185" Background="#422A2A2A" />
+    </Grid-->
+            
+            <Rectangle x:Name="SizingAid"/>
+            <Rectangle x:Name="ShadowGrid" Fill="#C0000000" Margin="60,90,60,45">
+                <!--Margin="{Binding Path=ShadowOffsetThickness, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"-->
+                <Rectangle.Effect>
+                    <BlurEffect Radius="60" RenderingBias="Performance"/>
+                </Rectangle.Effect>
+                <!--Border.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Grid Width="{Binding Width, Source={x:Reference SizingAid}}" Height="{Binding Height, Source={x:Reference SizingAid}}" Background="#01000000">
+                                <Border Background="Transparent" BorderBrush="Black" BorderThickness="{Binding Path=ShadowOffsetThickness, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                <Grid Margin="-1">
+                                    <Border Background="Transparent" BorderBrush="Black" BorderThickness="1" Margin="{Binding Path=ShadowOffsetThickness, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                </Grid>
+                            </Grid>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Border.OpacityMask-->
+            </Rectangle>
+        </Grid>
+    </Grid>
+</Window>

@@ -98,13 +98,9 @@
     <None Include="Resources\config_24.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModAPI Installers\ModAPI Installers.csproj">
-      <Project>{73e87191-f4ba-4ea0-a60e-a89143eaa15c}</Project>
-      <Name>ModAPI Installers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ModApi.UpdateManager\ModApi.UpdateManager.csproj">
-      <Project>{b2da8f97-4af4-48c1-be95-b1299912ee65}</Project>
-      <Name>ModApi.UpdateManager</Name>
+    <ProjectReference Include="..\ModApi.Common\ModAPI.Common.csproj">
+      <Project>{2204f49d-0129-4522-8ef0-16702153e915}</Project>
+      <Name>ModAPI.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

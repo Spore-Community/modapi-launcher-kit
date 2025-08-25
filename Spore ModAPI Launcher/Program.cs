@@ -1,20 +1,19 @@
-﻿using System;
+﻿using EnvDTE80;
+using ModAPI.Common;
+using ModAPI.Common.Dialog;
+using ModAPI.Common.Update;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
-using System.Threading;
-
 using System.IO;
 using System.IO.Compression;
-
-using ModAPI_Installers;
-using ModApi.UpdateManager;
-using System.Xml;
+using System.Linq;
 using System.Reflection;
-using EnvDTE80;
-using System.ComponentModel;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace SporeModAPI_Launcher
 {
@@ -31,8 +30,8 @@ namespace SporeModAPI_Launcher
         private GameVersionType _executableType;
 
         // Used for executing Spore and injecting DLLs
-        private STARTUPINFO StartupInfo;
-        private PROCESS_INFORMATION ProcessInfo;
+        private NativeTypes.STARTUPINFO StartupInfo;
+        private NativeTypes.PROCESS_INFORMATION ProcessInfo;
 
         /// <summary>
         /// The main entry point for the application.
@@ -293,7 +292,7 @@ namespace SporeModAPI_Launcher
                 currentSporebinPath = this.SporebinPath;
 
             if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
-                    IntPtr.Zero, IntPtr.Zero, false, ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, currentSporebinPath, ref this.StartupInfo, out this.ProcessInfo))
+                    IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, currentSporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
                 //throw new InjectException(Strings.ProcessNotStarted);
                 int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();

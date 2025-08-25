@@ -1,6 +1,4 @@
-﻿using ModApi.UI;
-using ModApi.UI.Windows;
-using ModAPI_Installers;
+﻿using ModAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +13,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
-using ModAPI_Installers.Types;
+using ModAPI.Common.Types;
+using ModAPI.Common.Update;
+using ModAPI.Common.UI;
+using ModAPI.Common.UI.Windows;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -203,7 +204,7 @@ namespace Spore_ModAPI_Easy_Installer
 
                         if ((Document.SelectSingleNode("/mod").Attributes["dllsBuild"] != null) && (Version.TryParse(Document.SelectSingleNode("/mod").Attributes["dllsBuild"].Value + ".0", out Version minFeaturesLevel)))
                         {
-                            if (minFeaturesLevel > ModApi.UpdateManager.UpdateManager.CurrentDllsBuild)
+                            if (minFeaturesLevel > UpdateManager.CurrentDllsBuild)
                                 CyclePage(0, 2);
                         }
                         else

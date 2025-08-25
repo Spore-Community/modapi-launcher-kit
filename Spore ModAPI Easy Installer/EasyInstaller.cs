@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Threading;
@@ -12,12 +11,11 @@ using System.ComponentModel;
 
 using System.Diagnostics;
 
-using ModAPI_Installers;
+using ModAPI.Common;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
 using System.Xml;
-using ModApi.UpdateManager;
-using ModAPI_Installers.Types;
+using ModAPI.Common.Update;
+using ModAPI.Common.Types;
 
 namespace Spore_ModAPI_Easy_Installer
 {
@@ -65,7 +63,7 @@ namespace Spore_ModAPI_Easy_Installer
         {
             if (!Permissions.IsAdministrator())
             {
-                ModApi.UpdateManager.UpdateManager.CheckForUpdates();
+                UpdateManager.CheckForUpdates();
                 Permissions.RerunAsAdministrator();
             }
             else
