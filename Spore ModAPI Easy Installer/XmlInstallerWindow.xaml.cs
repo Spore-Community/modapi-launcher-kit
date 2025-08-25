@@ -321,15 +321,10 @@ namespace Spore_ModAPI_Easy_Installer
                     checkBox.MouseLeave += Component_MouseLeave;
 
                     checkBox.IsChecked = false;
-                    //if (_isConfigurator && (enabledList.Contains(ComponentInfoToQuestionMarkSeparatedString(info)/*info.ComponentFileName + "?" + info.ComponentGame*/)))
+
                     string storedValue = GetSettingValueFromStorageString(info.ComponentUniqueName);
-                    if (storedValue != null)
-                    {
-                        if (bool.TryParse(storedValue, out bool valueBool))
-                            checkBox.IsChecked = valueBool;
-                        else
-                            checkBox.IsChecked = info.defaultChecked;
-                    }
+                    if (storedValue != null && bool.TryParse(storedValue, out bool valueBool))
+                        checkBox.IsChecked = valueBool;
                     else
                         checkBox.IsChecked = info.defaultChecked;
 
@@ -784,14 +779,11 @@ namespace Spore_ModAPI_Easy_Installer
                     File.Delete(Path.Combine(ModConfigPath, "EnabledComponents.txt"));
                 }
 
-                /*using (StreamWriter enabledComponentsListFile = new StreamWriter(/*Path.Combine(ModConfigPath, "EnabledComponents.txt")*ModSettingsStoragePath))
+                // only write settings if they exist
+                if (storedSettings.Count > 0)
                 {
-                    foreach (string s in storedSettings)
-                    {
-                        enabledComponentsListFile.WriteLine(s);
-                    }
-                }*/
-                File.WriteAllLines(ModSettingsStoragePath, storedSettings.ToArray());
+                    File.WriteAllLines(ModSettingsStoragePath, storedSettings.ToArray());
+                }
 
                 if (_installerMode == 0)
                 {
@@ -931,10 +923,6 @@ namespace Spore_ModAPI_Easy_Installer
                         break;
                     }
                 }
-                /*if (returnValue != null)
-                    MessageBox.Show(returnValue, "setting value");
-                else
-                    MessageBox.Show("NULL", "setting value is null");*/
 
                 return returnValue;
             }
