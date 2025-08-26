@@ -213,37 +213,13 @@ namespace Spore_ModAPI_Easy_Uninstaller
 
         public static ResultType ExecuteConfigurator(ModConfiguration mod, bool uninstall)
         {
-            if (mod.ConfiguratorPath.ToLowerInvariant().EndsWith("xml"))
-            {
-                string path = Path.Combine(
-                        Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
-                        , "Spore ModAPI Easy Installer.exe");
-                string args = "\"" + mod.Name + "\"" + " true " + uninstall.ToString();
-                //MessageBox.Show(path + "\n\n" + args, "process information");
-                var process = Process.Start(path, args);
-                process.WaitForExit();
-                return (ResultType)process.ExitCode;
-            }
-            else
-            {
-                if (!File.Exists(mod.ConfiguratorPath))
-                {
-                    throw new Exception(Strings.ConfiguratorDoesNotExist);
-                }
-
-                var process = Process.Start(new ProcessStartInfo()
-                {
-                    UseShellExecute = false,  // we need this to execute a temp file
-                    FileName = mod.ConfiguratorPath,
-                    Arguments = // we use null so they don't throw a warning (the configurator might not need them)
-                    ConvertToArgument(mod.Name) + " " +
-                    ConvertToArgument(GetOutputPath("None", null)) + " " +
-                    ConvertToArgument(GetOutputPath("GalacticAdventures", null)) + " " +
-                    ConvertToArgument(GetOutputPath("Spore", null))
-                });
-
-                return ResultType.Success;
-            }
+            string path = Path.Combine(
+                    Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).ToString()
+                    , "Spore ModAPI Easy Installer.exe");
+            string args = "\"" + mod.Name + "\"" + " true " + uninstall.ToString();
+            var process = Process.Start(path, args);
+            process.WaitForExit();
+            return (ResultType)process.ExitCode;
         }
     }
 }
