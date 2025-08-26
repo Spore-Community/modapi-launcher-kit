@@ -45,8 +45,6 @@ namespace Spore_ModAPI_Easy_Installer
         string ModDisplayName = string.Empty;
         string ModName = string.Empty;
         string ModDescription = string.Empty;
-        List<string> enabledList = new List<string>();
-        string enabledListPath = string.Empty;
         bool _isConfigurator = false;
         bool _isUninstallingOnly = false;
         int _activeComponentCount = 0;
@@ -134,7 +132,6 @@ namespace Spore_ModAPI_Easy_Installer
             {
                 /*if (!Directory.Exists(ModConfigPath))
                     Directory.CreateDirectory(ModConfigPath);*/
-                enabledListPath = Path.Combine(ModConfigPath, "EnabledComponents.txt");
                 //ModName = fixedName;
                 ModDisplayName = ModName;
                 Document.Load(Path.Combine(ModConfigPath, "ModInfo.xml"));
@@ -152,11 +149,6 @@ namespace Spore_ModAPI_Easy_Installer
         {
             try
             {
-                /*if (Document.SelectSingleNode("/mod").Attributes["installerSystemVersion"] != null)
-                {
-                    if (Version.TryParse(Document.SelectSingleNode("/mod").Attributes["installerSystemVersion"].Value, out Version versionFromXml))
-                        ModInfoVersion = versionFromXml;
-                }*/
                 ModInfoVersion = Version.Parse(Document.SelectSingleNode("/mod").Attributes["installerSystemVersion"].Value);
 
                 if ((ModInfoVersion == new Version(1, 0, 0, 0)) || 
@@ -302,9 +294,6 @@ namespace Spore_ModAPI_Easy_Installer
 
         private void GetComponents()
         {
-            if (File.Exists(enabledListPath))
-                enabledList = File.ReadAllLines(enabledListPath).ToList();
-
             foreach (XmlNode node in Document.SelectSingleNode("/mod").ChildNodes)
             {
                 Debug.WriteLine("/mod");
@@ -592,14 +581,10 @@ namespace Spore_ModAPI_Easy_Installer
                 }
             }
 
-            if ((!File.Exists(enabledListPath)) && (node.Attributes["defaultChecked"] != null))
+            if (node.Attributes["defaultChecked"] != null)
             {
                 info.defaultChecked = bool.Parse(node.Attributes["defaultChecked"].Value);
             }
-            /*if (enabledList.Contains(info.ComponentFileName + "?" + info.ComponentGame))
-            {
-                info.defaultChecked = true;
-            }*/
 
             return info;
         }
@@ -761,24 +746,6 @@ namespace Spore_ModAPI_Easy_Installer
                         InstallProgressBar.Value += 1;
                 }
 
-                if (File.Exists(Path.Combine(ModConfigPath, "OldVersionFiles.txt")))
-                {
-                    //MessageBox.Show("OldVersionFiles.txt found");
-                    List<string> oldVersionFiles = File.ReadAllLines(Path.Combine(ModConfigPath, "OldVersionFiles.txt")).ToList();
-                    foreach (string s in oldVersionFiles)
-                    {
-                        await Task.Run(() =>
-                        {
-                            HandleModComponent(QuestionMarkSeparatedStringToComponentInfo(s), false);
-                        });
-                    }
-                }
-
-                if (File.Exists(Path.Combine(ModConfigPath, "EnabledComponents.txt")))
-                {
-                    File.Delete(Path.Combine(ModConfigPath, "EnabledComponents.txt"));
-                }
-
                 // only write settings if they exist
                 if (storedSettings.Count > 0)
                 {
@@ -795,9 +762,6 @@ namespace Spore_ModAPI_Easy_Installer
 
                     mod.InstalledFiles.Add(new InstalledFile(ModName));
 
-                    //var installedMods = new InstalledMods();
-                    //installedMods.Load();
-
                     for (int i = 0; i < EasyInstaller.ModList.ModConfigurations.Count; i++)
                     {
                         ModConfiguration selMod = EasyInstaller.ModList.ModConfigurations.ElementAt(i);
@@ -811,7 +775,6 @@ namespace Spore_ModAPI_Easy_Installer
                     }
 
                     EasyInstaller.ModList.ModConfigurations.Add(mod);
-                    //installedMods.Save();
                 }
                 else if (_installerMode == 1)
                 {
@@ -852,9 +815,6 @@ namespace Spore_ModAPI_Easy_Installer
                         }
                     }
 
-                    /*var installedMods = new InstalledMods();
-                    installedMods.Load();*/
-
                     for (int i = 0; i < EasyInstaller.ModList.ModConfigurations.Count; i++)
                     {
                         ModConfiguration selMod = EasyInstaller.ModList.ModConfigurations.ElementAt(i);
@@ -868,7 +828,6 @@ namespace Spore_ModAPI_Easy_Installer
                     }
 
                     EasyInstaller.ModList.ModConfigurations.Add(mod);
-                    //installedMods.Save();
                 }
                 if (_installerMode == 1)
                 {
@@ -945,13 +904,6 @@ namespace Spore_ModAPI_Easy_Installer
                 _installerState = 1;
                 CollapseButtons();
 
-                /*BeginAnimation(HeightProperty, new DoubleAnimation()
-                {
-                    Duration = _time,
-                    EasingFunction = _ease,
-                    From = Height,
-                    To = 112
-                });*/
                 var anim = new DoubleAnimation()
                 {
                     Duration = _time,
@@ -967,8 +919,7 @@ namespace Spore_ModAPI_Easy_Installer
 
                 BeginAnimation(HeightProperty, anim);
 
-                //List<string> enabledComponents = new List<string>();
-                InstallProgressBar.Maximum = _activeComponentCount; //GetComponentCount(); //enabledComponents.Count + Prerequisites.Count;
+                InstallProgressBar.Maximum = _activeComponentCount;
 
                 foreach (ComponentInfo p in Prerequisites)
                 {
@@ -1011,8 +962,6 @@ namespace Spore_ModAPI_Easy_Installer
                     });
                 }
 
-                /*var installedMods = new InstalledMods();
-                installedMods.Load();*/
                 for (int i = 0; i < EasyInstaller.ModList.ModConfigurations.Count; i++)
                 {
                     ModConfiguration mod = EasyInstaller.ModList.ModConfigurations.ElementAt(i);
@@ -1025,7 +974,6 @@ namespace Spore_ModAPI_Easy_Installer
                     }
                 }
                 EasyInstaller.ModList.Save();
-                //installedMods ();
 
                 if (File.Exists(ModSettingsStoragePath))
                     File.Delete(ModSettingsStoragePath);
@@ -1095,14 +1043,7 @@ namespace Spore_ModAPI_Easy_Installer
                     targetPaths = new string[] { Path.Combine(GaDataPath, p.ComponentCompatTargetFileNames[i]) };
                 else if (p.ComponentCompatTargetGames[i] == GameSporeString)
                     targetPaths = new string[] { Path.Combine(SporeDataPath, p.ComponentCompatTargetFileNames[i]) };
-                /*else
-                {
-                    {
-                        HandleModComponent(p);
-                        InstalledCompatFiles.Add(p);
-                    }
-                }*/
-                //foreach (string targetPath in targetPaths)
+
                 if (targetPaths.Length == 1)
                 {
                     if (!File.Exists(targetPaths[0]))
@@ -1120,9 +1061,6 @@ namespace Spore_ModAPI_Easy_Installer
                     }
                 }
 
-                /*if (File.Exists(Path.Combine(targetPath, p.ComponentCompatTargetFileNames[i])))
-                {
-                }*/
                 targets.AddRange(targetPaths);
             }
 
@@ -1149,15 +1087,13 @@ namespace Spore_ModAPI_Easy_Installer
 
         private void HandleModFile(ComponentInfo p, int index, bool copy)
         {
-            //MessageBox.Show(p.ComponentFileNames[index] + ", " + p.ComponentGames[index] + ", " + index.ToString() + ", " + copy.ToString());
-
             bool isDll = false;
             string targetPath;
             string targetFolderPath = string.Empty;
             if (p.ComponentGames[index] == GameGaString)
-                targetFolderPath = GaDataPath; //Path.Combine(GaDataPath, p.ComponentFileNames[index]);
+                targetFolderPath = GaDataPath;
             else if (p.ComponentGames[index] == GameSporeString)
-                targetFolderPath = SporeDataPath; //Path.Combine(SporeDataPath, p.ComponentFileNames[index]);
+                targetFolderPath = SporeDataPath;
             else
             {
                 isDll = true;
