@@ -289,21 +289,6 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        string ProcessSporebinPath()
-        {
-            string path = PathDialogs.ProcessGalacticAdventures();
-
-            if (path == null || !Directory.Exists(path))
-            {
-
-                throw new InjectException(CommonStrings.GalacticAdventuresNotFound);
-            }
-
-            this.SporebinPath = path;
-
-            return path;
-        }
-
         GameVersionType ProcessExecutableType()
         {
             GameVersionType executableType = GameVersion.DetectVersion(this.ExecutablePath);
@@ -443,11 +428,6 @@ namespace SporeModAPI_Launcher
                 System.Windows.Forms.MessageBox.Show("Error: " + error, info);
                 throw new System.ComponentModel.Win32Exception(error);
             }
-        }
-
-        private static string GetModDisplayName(XmlNode modNode)
-        {
-            return modNode.Attributes["displayName"]?.Value ?? modNode.Attributes["unique"]?.Value;
         }
 
         private static List<string> GetModFiles(XmlNode componentNode)
