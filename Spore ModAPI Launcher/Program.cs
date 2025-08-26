@@ -74,59 +74,37 @@ namespace SporeModAPI_Launcher
                 // We try a new approach for Steam users.
                 // Before, we used Steam to launch the game and tried to find the new process and inject it.
                 // However, when the injection happens the game already executed a bit, so mods fail.
-                // Instead, we create a steam_appid.txt that allows us to execute SporeApp.exe directly
-                
-                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath != null)
-                    this.ExecutablePath = LauncherSettings.ForcedGalacticAdventuresSporeAppPath;
-
-                if (LauncherSettings.ForcedSporebinEP1Path == null)
-                {
-                    this.ProcessSporebinPath();
-                }
-                else
-                {
-                    SporebinPath = LauncherSettings.ForcedSporebinEP1Path;
-                }
+                // Instead, we create a steam_appid.txt that allows us to execute SporeApp.exe directly                
+                SporebinPath = PathDialogs.ProcessGalacticAdventures();
 
                 // use the default path for now (we might have to use a different one for Origin)
-                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
+                this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
+                this.ProcessExecutableType();
+
+                if (this._executableType == GameVersionType.None)
                 {
-                    this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
-
-                    this.ProcessExecutableType();
-
-
-                    if (this._executableType == GameVersionType.None)
-                    {
-                        // don't execute the game if the user closed the dialog
-                        return;
-                    }
-                }
-                else
-                {
-                    this._executableType = LauncherSettings.GameVersion;
+                    // don't execute the game if the user closed the dialog
+                    return;
                 }
 
                 // get the correct executable path
-                if (LauncherSettings.ForcedGalacticAdventuresSporeAppPath == null)
+                this.ExecutablePath = this.SporebinPath + GameVersion.ExecutableNames[(int)this._executableType];
+                if (!File.Exists(this.ExecutablePath))
                 {
-                    this.ExecutablePath = this.SporebinPath + GameVersion.ExecutableNames[(int)this._executableType];
-                    if (!File.Exists(this.ExecutablePath))
+                    // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
+                    if (GameVersion.RequiresModAPIFix(this._executableType))
                     {
-                        // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
-                        if (GameVersion.RequiresModAPIFix(this._executableType))
+                        if (!HandleOriginUsers())
                         {
-                            if (!HandleOriginUsers())
-                            {
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception(CommonStrings.GalacticAdventuresNotFound);
+                            return;
                         }
                     }
+                    else
+                    {
+                        throw new Exception(CommonStrings.GalacticAdventuresNotFound);
+                    }
                 }
+                
 
                 // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
                 if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(this.SporebinPath + "steam_api.dll"))
@@ -292,14 +270,8 @@ namespace SporeModAPI_Launcher
                 i++;
             }
 
-            string currentSporebinPath = string.Empty;
-            if (LauncherSettings.ForcedSporebinEP1Path != null)
-                currentSporebinPath = LauncherSettings.ForcedSporebinEP1Path;
-            else
-                currentSporebinPath = this.SporebinPath;
-
             if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
-                    IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, currentSporebinPath, ref this.StartupInfo, out this.ProcessInfo))
+                    IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, this.SporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
                 //throw new InjectException(Strings.ProcessNotStarted);
                 int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();

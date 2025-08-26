@@ -13,56 +13,6 @@ namespace ModAPI.Common
 
         private static Dictionary<string, string> _dictionary = new Dictionary<string, string>();
 
-        public static string ForcedCoreSporeDataPath
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("ForcedCoreSporeDataPath", out value);
-                return value;
-            }
-        }
-
-        /*public static string ForcedSporebinPath
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("ForcedSporebinPath", out value);
-                return value;
-            }
-        }*/
-
-        public static string ForcedGalacticAdventuresDataPath
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("ForcedGalacticAdventuresDataPath", out value);
-                return value;
-            }
-        }
-
-        public static string ForcedSporebinEP1Path
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("ForcedSporebinEP1Path", out value);
-                return value;
-            }
-        }
-
-        public static string ForcedGalacticAdventuresSporeAppPath
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("ForcedGalacticAdventuresSporeAppPath", out value);
-                return value;
-            }
-        }
-
         public static string GamePath
         {
             get

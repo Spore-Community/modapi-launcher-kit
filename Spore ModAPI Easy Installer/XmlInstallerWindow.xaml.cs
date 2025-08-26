@@ -70,9 +70,9 @@ namespace Spore_ModAPI_Easy_Installer
             //LauncherSettings.Load();
             installerWindows.Add(this);
 
-            if ((LauncherSettings.ForcedCoreSporeDataPath == null) && (!Directory.Exists(SporeDataPath)))
+            if (!Directory.Exists(SporeDataPath))
                 PathDialogs.ProcessSpore();
-            if ((LauncherSettings.ForcedGalacticAdventuresDataPath == null) && (!Directory.Exists(GaDataPath)))
+            if (!Directory.Exists(GaDataPath))
                 PathDialogs.ProcessGalacticAdventures();
 
             ModName = modName.Trim('"');

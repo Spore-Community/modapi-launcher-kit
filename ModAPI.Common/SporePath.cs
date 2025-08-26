@@ -230,27 +230,19 @@ namespace ModAPI.Common
         {
             if (game == Game.Spore)
             {
-                if (LauncherSettings.ForcedCoreSporeDataPath != null)
-                    return LauncherSettings.ForcedCoreSporeDataPath;
-                else
-                    return Path.Combine(new string[] {installationDirectory, "Data"});
+                return Path.Combine(new string[] {installationDirectory, "Data"});
             }
             else if (game == Game.GalacticAdventures)
             {
-                if (LauncherSettings.ForcedGalacticAdventuresDataPath != null)
-                    return LauncherSettings.ForcedGalacticAdventuresDataPath;
+                // Steam and GoG uses DataEP1
+                string outputPath = Path.Combine(new string[] { installationDirectory, "DataEP1" });
+                if (Directory.Exists(outputPath))
+                {
+                    return outputPath;
+                }
                 else
                 {
-                    // Steam and GoG uses DataEP1
-                    string outputPath = Path.Combine(new string[] { installationDirectory, "DataEP1" });
-                    if (Directory.Exists(outputPath))
-                    {
-                        return outputPath;
-                    }
-                    else
-                    {
-                        return Path.Combine(new string[] { installationDirectory, "Data" });
-                    }
+                    return Path.Combine(new string[] { installationDirectory, "Data" });
                 }
             }
             else
