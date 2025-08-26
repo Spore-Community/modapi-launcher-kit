@@ -3,10 +3,14 @@
             xmlns:mod="clr-namespace:ModAPI.Common.UI"
             xmlns:win="clr-namespace:ModAPI.Common.UI.Windows"
             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <!-- YOU HAVE TO ADD THESE TO YOUR APP.XAML -->
+    <!--
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/ModAPI.Common;component/UI/Themes/Colors/AlterModBaseLight.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/ModAPI.Common;component/UI/Themes/Colors/AlterModBlue.xaml"/>
     </ResourceDictionary.MergedDictionaries>
+    -->
+    
     <sys:String x:Key="ThemeName">AlterMod</sys:String>
 
     <!--#region Converters-->
