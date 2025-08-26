@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.IO;
 using System.Windows.Forms;
+using System;
 
 namespace ModAPI.Common
 {
@@ -11,43 +12,47 @@ namespace ModAPI.Common
         {
             string path = null;
 
-            if (!LauncherSettings.ForceGamePath)
+            try
             {
-                path = SporePath.GetFromRegistry(SporePath.Game.GalacticAdventures);
-            }
-
-            // for debugging purposes
-            // path = null;
-
-            if (path != null)
-            {
-                // move the path to SporebinEP1
-                path = SporePath.MoveToSporebinEP1(path);
-            }
-
-            // If we didn't find the path in the registry or was not valid, ask the user
-            if (path == null || !Directory.Exists(path))
-            {
-
-                if (path == null)
+                if (!LauncherSettings.ForceGamePath)
                 {
-                    path = LauncherSettings.GamePath;
-                    if (path == null || path.Length == 0)
-                    {
-                        var result = MessageBox.Show(CommonStrings.GalacticAdventuresNotFoundSpecifyManual, CommonStrings.GalacticAdventuresNotFound,
-                            MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-                        if (result == DialogResult.OK)
-                        {
-                            path = ShowGalacticAdventuresChooserDialog();
-                        }
-                    }
+                    path = SporePath.GetFromRegistry(SporePath.Game.GalacticAdventures);
                 }
-                else
+
+                if (path != null)
                 {
                     // move the path to SporebinEP1
                     path = SporePath.MoveToSporebinEP1(path);
                 }
+
+                // If we didn't find the path in the registry or was not valid, ask the user
+                if (path == null || !Directory.Exists(path))
+                {
+
+                    if (path == null)
+                    {
+                        path = LauncherSettings.GamePath;
+                        if (path == null || path.Length == 0)
+                        {
+                            var result = MessageBox.Show(CommonStrings.GalacticAdventuresNotFoundSpecifyManual, CommonStrings.GalacticAdventuresNotFound,
+                                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+                            if (result == DialogResult.OK)
+                            {
+                                path = ShowGalacticAdventuresChooserDialog();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // move the path to SporebinEP1
+                        path = SporePath.MoveToSporebinEP1(path);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
 
             return path;
@@ -58,43 +63,47 @@ namespace ModAPI.Common
         {
             string path = null;
 
-            if (!LauncherSettings.ForceGamePath)
+            try
             {
-                path = SporePath.GetFromRegistry(SporePath.Game.Spore);
-            }
-
-            // for debugging purposes
-            // path = null;
-
-            if (path != null)
-            {
-                // move the path to Sporebin
-                path = SporePath.MoveToSporebin(path);
-            }
-
-            // If we didn't find the path in the registry or was not valid, ask the user
-            if (path == null || !Directory.Exists(path))
-            {
-
-                if (path == null)
+                if (!LauncherSettings.ForceGamePath)
                 {
-                    path = LauncherSettings.GamePath;
-                    if (path == null || path.Length == 0)
-                    {
-                        var result = MessageBox.Show(CommonStrings.SporeNotFoundSpecifyManual, CommonStrings.SporeNotFound,
-                            MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-                        if (result == DialogResult.OK)
-                        {
-                            path = ShowSporeChooserDialog();
-                        }
-                    }
+                    path = SporePath.GetFromRegistry(SporePath.Game.Spore);
                 }
-                else
+
+                if (path != null)
                 {
                     // move the path to Sporebin
                     path = SporePath.MoveToSporebin(path);
                 }
+
+                // If we didn't find the path in the registry or was not valid, ask the user
+                if (path == null || !Directory.Exists(path))
+                {
+
+                    if (path == null)
+                    {
+                        path = LauncherSettings.GamePath;
+                        if (path == null || path.Length == 0)
+                        {
+                            var result = MessageBox.Show(CommonStrings.SporeNotFoundSpecifyManual, CommonStrings.SporeNotFound,
+                                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+                            if (result == DialogResult.OK)
+                            {
+                                path = ShowSporeChooserDialog();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // move the path to Sporebin
+                        path = SporePath.MoveToSporebin(path);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
 
             return path;
@@ -104,9 +113,6 @@ namespace ModAPI.Common
         public static string ProcessSteam()
         {
             string path = SporePath.GetFromRegistry(SporePath.SteamRegistryKeys, new string[] { SporePath.SteamRegistryValue });
-
-            // for debugging purposes
-            // path = null;
 
             if (path != null)
             {
