@@ -67,9 +67,6 @@ namespace Spore_ModAPI_Easy_Installer
             else
             {
                 Application.EnableVisualStyles();
-                //fix for that one guy with a weird GPU, for whom all WPF UI breaks when shown unless software rendering is enabled
-                if (File.Exists(Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher\WpfUseSoftwareRendering.info")))
-                    System.Windows.Media.RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
                 LauncherSettings.Load();
                 ModList.Load();
 
