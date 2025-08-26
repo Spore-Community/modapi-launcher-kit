@@ -70,6 +70,13 @@ namespace Spore_ModAPI_Easy_Installer
                 LauncherSettings.Load();
                 ModList.Load();
 
+                // ensure we find Spore & GA as early as possible
+                if (PathDialogs.ProcessSpore() == null || 
+                    PathDialogs.ProcessGalacticAdventures() == null)
+                {
+                    return;
+                }
+
                 var cmdArgs = Environment.GetCommandLineArgs();
                 if ((cmdArgs.Length == 4) && bool.TryParse(cmdArgs[2], out bool configResult) && bool.TryParse(cmdArgs[3], out bool uninstall))
                 {

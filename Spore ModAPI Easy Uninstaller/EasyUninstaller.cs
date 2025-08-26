@@ -44,9 +44,16 @@ namespace Spore_ModAPI_Easy_Uninstaller
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                Form = new UninstallerForm();
-
                 LauncherSettings.Load();
+
+                // ensure we find Spore & GA as early as possible
+                if (PathDialogs.ProcessSpore() == null ||
+                    PathDialogs.ProcessGalacticAdventures() == null)
+                {
+                    return;
+                }
+
+                Form = new UninstallerForm();
 
                 Mods = new InstalledMods();
                 Mods.Load();

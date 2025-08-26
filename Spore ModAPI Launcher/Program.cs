@@ -52,6 +52,13 @@ namespace SporeModAPI_Launcher
                 Application.EnableVisualStyles();
                 LauncherSettings.Load();
 
+                // ensure we find Spore & GA as early as possible
+                if (PathDialogs.ProcessSpore() == null ||
+                    PathDialogs.ProcessGalacticAdventures() == null)
+                {
+                    return;
+                }
+
                 new Program().Execute();
             }
             else
