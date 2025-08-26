@@ -8,9 +8,15 @@ namespace ModAPI.Common
     public static class PathDialogs
     {
         // Returns path to SporebinEP1 or null
+        private static string _galacticAdventuresPath = null;
         public static string ProcessGalacticAdventures()
         {
             string path = null;
+
+            if (_galacticAdventuresPath != null)
+            {
+                return _galacticAdventuresPath;
+            }
 
             try
             {
@@ -55,13 +61,20 @@ namespace ModAPI.Common
                 return null;
             }
 
-            return path;
+            _galacticAdventuresPath = path;
+            return _galacticAdventuresPath;
         }
 
         // Returns path to Sporebin or null
+        private static string _coreSporePath = null;
         public static string ProcessSpore()
         {
             string path = null;
+
+            if (_coreSporePath != null)
+            {
+                return _coreSporePath;
+            }
 
             try
             {
@@ -106,48 +119,9 @@ namespace ModAPI.Common
                 return null;
             }
 
-            return path;
+            _coreSporePath = path;
+            return _coreSporePath;
         }
-
-        // Returns path to Steam or null
-        public static string ProcessSteam()
-        {
-            string path = SporePath.GetFromRegistry(SporePath.SteamRegistryKeys, new string[] { SporePath.SteamRegistryValue });
-
-            if (path != null)
-            {
-                // move the path to Steam
-                path = SporePath.MoveToSteam(path);
-            }
-
-            // If we didn't find the path in the registry or was not valid, ask the user
-            if (path == null || !Directory.Exists(path))
-            {
-
-                if (path == null)
-                {
-                    path = LauncherSettings.GamePath;
-                    if (path == null || path.Length == 0)
-                    {
-                        var result = MessageBox.Show(CommonStrings.SteamNotFoundSpecifyManual, CommonStrings.SteamNotFound,
-                            MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-                        if (result == DialogResult.OK)
-                        {
-                            path = ShowSteamChooserDialog();
-                        }
-                    }
-                }
-                else
-                {
-                    // move the path to Sporebin
-                    path = SporePath.MoveToSteam(path);
-                }
-            }
-
-            return path;
-        }
-
 
         // -- DIALOGS -- //
         private static string ShowGalacticAdventuresChooserDialog()
