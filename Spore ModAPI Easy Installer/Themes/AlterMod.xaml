@@ -6,6 +6,8 @@
             xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/ModAPI.Common;component/UI/Themes/AlterMod.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/ModAPI.Common;component/UI/Themes/Colors/AlterModBaseLight.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/ModAPI.Common;component/UI/Themes/Colors/AlterModBlue.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="{x:Type mod:LoadingPanel}" TargetType="{x:Type mod:LoadingPanel}">
