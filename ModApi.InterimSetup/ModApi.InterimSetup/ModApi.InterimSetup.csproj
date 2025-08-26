@@ -83,8 +83,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="..\..\VersionInfo\AssemblyVersionInfo.cs" />
-    <Compile Include="Converters.cs" />
-    <Compile Include="SystemScaling.cs" />
+    <Compile Include="..\..\ModAPI.Common\UI\Converters.cs" />
+    <Compile Include="..\..\ModAPI.Common\UI\SystemScaling.cs" />
+    <Compile Include="..\..\ModAPI.Common\UI\Windows\CompositingWindow.cs" />
+    <Compile Include="..\..\ModAPI.Common\UI\Windows\DecoratableWindow.cs" />
+    <Compile Include="..\..\ModAPI.Common\UI\ToggleSwitch.cs" />
+    <Compile Include="..\..\ModAPI.Common\NativeMethods.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,15 +101,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Themes\Colors\ModenaBaseLight.xaml">
+    <Page Include="..\..\ModAPI.Common\UI\Themes\Colors\AlterModBaseLight.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Colors\ModenaBlue.xaml">
+    <Page Include="..\..\ModAPI.Common\UI\Themes\Colors\AlterModBlue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Modena.xaml">
+    <Page Include="..\..\ModAPI.Common\UI\Themes\AlterMod.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
