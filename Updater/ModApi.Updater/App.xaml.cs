@@ -17,12 +17,6 @@ namespace ModApi.Updater
     {
         public App()
         {
-            /*EmbeddedAssembly.Load("ModApi.Updater.MddApi.UI.dll", "MddApi.UI.dll");
-
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);*/
-            if (File.Exists(Environment.ExpandEnvironmentVariables(@"%appdata%\Spore ModAPI Launcher\WpfUseSoftwareRendering.info")))
-                System.Windows.Media.RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-
             try
             {
                 Start();
