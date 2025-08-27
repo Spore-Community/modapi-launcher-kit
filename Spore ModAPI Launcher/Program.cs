@@ -78,7 +78,7 @@ namespace SporeModAPI_Launcher
                 SporebinPath = PathDialogs.ProcessGalacticAdventures();
 
                 // use the default path for now (we might have to use a different one for Origin)
-                this.ExecutablePath = this.SporebinPath + "SporeApp.exe";
+                this.ExecutablePath = Path.Combine(this.SporebinPath, "SporeApp.exe");
                 this.ProcessExecutableType();
 
                 if (this._executableType == GameVersionType.None)
@@ -88,7 +88,7 @@ namespace SporeModAPI_Launcher
                 }
 
                 // get the correct executable path
-                this.ExecutablePath = this.SporebinPath + GameVersion.ExecutableNames[(int)this._executableType];
+                this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.ExecutableNames[(int)this._executableType]);
                 if (!File.Exists(this.ExecutablePath))
                 {
                     // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
@@ -107,7 +107,7 @@ namespace SporeModAPI_Launcher
                 
 
                 // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
-                if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(this.SporebinPath + "steam_api.dll"))
+                if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(Path.Combine(this.SporebinPath, "steam_api.dll")))
                 {
                     if (!HandleOriginUsers())
                     {
