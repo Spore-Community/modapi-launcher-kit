@@ -368,7 +368,37 @@ namespace ModAPI.InterimSetup
             }
             else
             {
-                return IsValidPath(PathTextBox.Text) && (PathTextBox.Text.ToLowerInvariant() != Environment.ExpandEnvironmentVariables(@"%userprofile%\Desktop").ToLowerInvariant());
+                if (!IsValidPath(PathTextBox.Text))
+                {
+                    return false;
+                }
+
+                // ensure users don't install to the Desktop or Program Files
+                string lowerPathText = PathTextBox.Text.ToLowerInvariant();
+                string desktopPath = Environment.ExpandEnvironmentVariables(@"%userprofile%\Desktop").ToLowerInvariant();
+                if (lowerPathText.StartsWith(desktopPath))
+                {
+                    return false;
+                }
+
+                string[] programFilesEnvironmentVariables =
+                {
+                    "ProgramFiles",
+                    "ProgramFiles(X86)",
+                    "ProgramW6432",
+                };
+
+                foreach (var environmentVariable in programFilesEnvironmentVariables)
+                {
+                    string envPath = Environment.GetEnvironmentVariable(environmentVariable).ToLowerInvariant();
+
+                    if (!String.IsNullOrEmpty(envPath) && lowerPathText.StartsWith(envPath))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
 
