@@ -149,19 +149,15 @@ namespace ModAPI.Common
         // This method returns the path to the folder that contains the executable
         public static string MoveToSporebinEP1(string path, bool recursive = true)
         {
-            if (!path.EndsWith("\\"))
-            {
-                path += "\\";
-            }
-
-            if (File.Exists(path + "SporeApp.exe"))
+            if (File.Exists(Path.Combine(path, "SporeApp.exe")))
             {
                 return path;
             }
 
-            if (Directory.Exists(path + "SporebinEP1"))
+            string sporeBinEP1Path = Path.Combine(path, "SporebinEP1");
+            if (Directory.Exists(sporeBinEP1Path))
             {
-                return path + "SporebinEP1\\";
+                return sporeBinEP1Path;
             }
 
             if (recursive)
@@ -176,19 +172,15 @@ namespace ModAPI.Common
         // This method returns the path to the folder that contains the executable
         public static string MoveToSporebin(string path, bool recursive = true)
         {
-            if (!path.EndsWith("\\"))
-            {
-                path += "\\";
-            }
-
-            if (File.Exists(path + "SporeApp.exe"))
+            if (File.Exists(Path.Combine(path, "SporeApp.exe")))
             {
                 return path;
             }
 
-            if (Directory.Exists(path + "Sporebin"))
+            string sporeBinPath = Path.Combine(path, "Sporebin");
+            if (Directory.Exists(sporeBinPath))
             {
-                return path + "Sporebin\\";
+                return sporeBinPath;
             }
 
             if (recursive)
@@ -200,49 +192,23 @@ namespace ModAPI.Common
             return null;
         }
 
-        public static string MoveToSteam(string path, bool recursive = true)
-        {
-            if (!path.EndsWith("\\"))
-            {
-                path += "\\";
-            }
-
-            if (File.Exists(path + "Steam.exe"))
-            {
-                return path;
-            }
-
-            if (Directory.Exists(path + "Steam"))
-            {
-                return path + "Steam\\";
-            }
-
-            if (recursive)
-            {
-                // check if the user selected another folder (for example, "steamapps")
-                return MoveToSteam(GetRealParent(path), false);
-            }
-
-            return null;
-        }
-
         public static string MoveToData(Game game, string installationDirectory)
         {
             if (game == Game.Spore)
             {
-                return Path.Combine(new string[] {installationDirectory, "Data"});
+                return Path.Combine(installationDirectory, "Data");
             }
             else if (game == Game.GalacticAdventures)
             {
                 // Steam and GoG uses DataEP1
-                string outputPath = Path.Combine(new string[] { installationDirectory, "DataEP1" });
+                string outputPath = Path.Combine(installationDirectory, "DataEP1");
                 if (Directory.Exists(outputPath))
                 {
                     return outputPath;
                 }
                 else
                 {
-                    return Path.Combine(new string[] { installationDirectory, "Data" });
+                    return Path.Combine(installationDirectory, "Data");
                 }
             }
             else
