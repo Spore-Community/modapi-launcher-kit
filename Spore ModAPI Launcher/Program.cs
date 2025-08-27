@@ -119,11 +119,11 @@ namespace SporeModAPI_Launcher
                 {
                     string steamAppIdPath = Path.Combine(this.SporebinPath, "steam_appid.txt");
                     //we have to use Spore GAs appid now, due to steam DRM :(
-                    if (!File.Exists(steamAppIdPath) || File.ReadAllText(steamAppIdPath) != "24720")
+                    if (!File.Exists(steamAppIdPath) || File.ReadAllText(steamAppIdPath) != SporePath.GalacticAdventuresSteamID)
                     {
                         try
                         {
-                            File.WriteAllText(steamAppIdPath, "24720");
+                            File.WriteAllText(steamAppIdPath, SporePath.GalacticAdventuresSteamID);
                         }
                         catch
                         {
