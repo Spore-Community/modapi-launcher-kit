@@ -5,7 +5,7 @@ defaults:
     values:
       layout: "default"
       # Add or change reusable variables here
-      lk_download_url: "https://github.com/Spore-Community/modapi-launcher-kit/releases/latest/download/ModApi.InterimSetup.exe"
+      lk_download_url: "https://github.com/Spore-Community/modapi-launcher-kit/releases/latest/download/ModAPI.InterimSetup.exe"
       smc_discord_url: "https://discord.gg/spore-modding"
       license_name: "MIT License"
       license_url: "https://github.com/Spore-Community/modapi-launcher-kit/blob/main/LICENSE"
