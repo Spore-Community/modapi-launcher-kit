@@ -404,7 +404,7 @@ namespace SporeModAPI_Launcher
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        entry.ExtractToFile(outputPath + entry.Name, true);
+                        entry.ExtractToFile(Path.Combine(outputPath, entry.Name), true);
                     }
                 }
                 return true;
