@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModApi.InterimSetup.Properties {
+namespace ModAPI.InterimSetup.Properties {
     using System;
     
     

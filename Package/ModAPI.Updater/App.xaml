@@ -1,7 +1,7 @@
-﻿<Application x:Class="ModApi.Updater.App"
+﻿<Application x:Class="ModAPI.Updater.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ModApi.Updater">
+             xmlns:local="clr-namespace:ModAPI.Updater">
     <!--StartupUri="MainWindow.xaml"-->
     <Application.Resources>
          

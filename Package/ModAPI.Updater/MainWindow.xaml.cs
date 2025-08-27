@@ -6,7 +6,7 @@ using System.IO.Compression;
 using System.Windows;
 using System.Windows.Input;
 
-namespace ModApi.Updater
+namespace ModAPI.Updater
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -39,7 +39,7 @@ namespace ModApi.Updater
             bool foundLauncher = File.Exists(Path.Combine(path, "Spore ModAPI Launcher.exe"));
             if (foundLauncher)
             {
-                using (MemoryStream unmStream = new MemoryStream(ModApi.Updater.Properties.Resources.ModApiUpdate))
+                using (MemoryStream unmStream = new MemoryStream(ModAPI.Updater.Properties.Resources.ModApiUpdate))
                 {
                     using (ZipArchive archive = new ZipArchive(unmStream, ZipArchiveMode.Read))
                     {

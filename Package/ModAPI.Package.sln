@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2026
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModApi.InterimSetup", "ModApi.InterimSetup\ModApi.InterimSetup.csproj", "{788A2ABB-921C-4FA5-94FC-C22F76A5A86D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModAPI.InterimSetup", "ModAPI.InterimSetup\ModAPI.InterimSetup.csproj", "{788A2ABB-921C-4FA5-94FC-C22F76A5A86D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModAPI.Updater", "ModAPI.Updater\ModAPI.Updater.csproj", "{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,11 +23,19 @@ Global
 		{788A2ABB-921C-4FA5-94FC-C22F76A5A86D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{788A2ABB-921C-4FA5-94FC-C22F76A5A86D}.Release|x86.ActiveCfg = Release|x86
 		{788A2ABB-921C-4FA5-94FC-C22F76A5A86D}.Release|x86.Build.0 = Release|x86
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Debug|x86.ActiveCfg = Debug|x86
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Debug|x86.Build.0 = Debug|x86
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Release|x86.ActiveCfg = Release|x86
+		{CC306B83-BD75-4BB5-A7A0-FC83B1DB1B09}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {913C88BB-30CA-4B0A-9DA6-4571D5775537}
+		SolutionGuid = {25DE70B7-957E-446B-96B5-8FB6AD8E8E45}
 	EndGlobalSection
 EndGlobal

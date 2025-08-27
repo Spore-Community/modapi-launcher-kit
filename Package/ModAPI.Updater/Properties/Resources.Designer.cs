@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModApi.Updater.Properties {
+namespace ModAPI.Updater.Properties {
     using System;
     
     

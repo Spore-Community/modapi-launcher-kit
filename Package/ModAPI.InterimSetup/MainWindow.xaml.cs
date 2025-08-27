@@ -12,7 +12,7 @@ using IWshRuntimeLibrary;
 using Panel = System.Windows.Controls.Panel;
 using File = System.IO.File;
 
-namespace ModApi.InterimSetup
+namespace ModAPI.InterimSetup
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -101,7 +101,7 @@ namespace ModApi.InterimSetup
 
         private void UnzipLauncherKit(string path)
         {
-            using (MemoryStream unmStream = new MemoryStream(ModApi.InterimSetup.Properties.Resources.ModApiUpdate))
+            using (MemoryStream unmStream = new MemoryStream(ModAPI.InterimSetup.Properties.Resources.ModApiUpdate))
             {
                 using (ZipArchive archive = new ZipArchive(unmStream, ZipArchiveMode.Read))
                 {

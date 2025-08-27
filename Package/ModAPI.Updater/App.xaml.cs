@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace ModApi.Updater
+namespace ModAPI.Updater
 {
     /// <summary>
     /// Interaction logic for App.xaml
