@@ -167,28 +167,6 @@ namespace ModAPI.Common
 
             return path;
         }
-
-        private static string ShowSteamChooserDialog()
-        {
-            string path = null;
-            Thread thread = new Thread(() =>
-            {
-                var dialog = new FolderBrowserDialog();
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    path = dialog.SelectedPath;
-                    // move the path to the folder that contains Steam.exe (just in case)
-                    path = SporePath.MoveToSteam(path);
-                    LauncherSettings.SteamPath = path;
-                    LauncherSettings.Save();
-                }
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-
-            return path;
-        }
     }
 
 }
