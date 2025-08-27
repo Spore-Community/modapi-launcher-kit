@@ -12,38 +12,38 @@ namespace ModAPI.Common
             Spore,
             CreepyAndCute
         }
-        public static string[] RegistryValues = { "InstallLoc", "Install Dir" };
+        public static readonly string[] RegistryValues = { "InstallLoc", "Install Dir" };
 
-        public static string[] RegistryKeys = { 
+        public static readonly string[] RegistryKeys = { 
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Electronic Arts\\SPORE_EP1",
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\SPORE_EP1"
                                          };
 
-        public static string[] SporeRegistryKeys = { 
+        public static readonly string[] SporeRegistryKeys = { 
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Electronic Arts\\SPORE",
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\SPORE"
                                                     };
 
-        public static string[] CCRegistryKeys = { 
+        public static readonly string[] CCRegistryKeys = { 
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Electronic Arts\\SPORE(TM) Creepy & Cute Parts Pack",
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\SPORE(TM) Creepy & Cute Parts Pack"
                                          };
 
 
-        public static string RegistryDataDir = "DataDir";  // Steam/GoG users don't have InstallLoc nor Install Dir
+        public static readonly string RegistryDataDir = "DataDir";  // Steam/GoG users don't have InstallLoc nor Install Dir
 
 
         // Some things for Steam
-        public static string[] SteamRegistryKeys = {
+        public static readonly string[] SteamRegistryKeys = {
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam",
                                              "HKEY_LOCAL_MACHINE\\SOFTWARE\\Valve\\Steam"
                                          };
 
-        public static string SteamRegistryValue = "InstallPath";
+        public static readonly string SteamRegistryValue = "InstallPath";
 
-        public static string SteamAppsKey = @"HKEY_CURRENT_USER\Software\Valve\Steam\Apps\";
+        public static readonly string SteamAppsKey = @"HKEY_CURRENT_USER\Software\Valve\Steam\Apps\";
 
-        public static int GalacticAdventuresSteamID = 24720;
+        public static readonly string GalacticAdventuresSteamID = "24720";
 
 
         // remove "" if necessary
@@ -61,7 +61,7 @@ namespace ModAPI.Common
 
         public static bool SporeIsInstalledOnSteam()
         {
-            object result = Registry.GetValue(SteamAppsKey + GalacticAdventuresSteamID.ToString(), "Installed", 0);
+            object result = Registry.GetValue(SteamAppsKey + GalacticAdventuresSteamID, "Installed", 0);
             // returns null if the key does not exist, or default value if the key existed but the value did not
             return result == null ? false : ((int)result == 0 ? false : true);
         }
