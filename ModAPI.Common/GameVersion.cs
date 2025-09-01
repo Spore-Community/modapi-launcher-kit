@@ -1,4 +1,6 @@
-﻿namespace ModAPI.Common
+﻿using System.IO;
+
+namespace ModAPI.Common
 {
     public enum GameVersionType
     {
@@ -24,9 +26,9 @@
 
     public static class GameVersion
     {
-  
 
-        public static int[] ExecutableSizes = { 
+
+        private static readonly int[] ExecutableSizes = { 
                                        /* DISC*/    24909584,
                                        /* ORIGIN */ 31347984,
                                        /* ORIGIN_P */ 24898224,
@@ -36,7 +38,7 @@
                                        /* GOG_OCT24 */24895536,
                                        /* STEAM_OCT24 */ 25066744};
 
-        public static string[] VersionNames = { 
+        private static readonly string[] VersionNames = { 
                                                   "disk", 
                                                   "steam_patched",  // origin uses the steam_patched one
                                                   "steam_patched",  // origin uses the steam_patched one
@@ -49,7 +51,7 @@
                                               };
 
         // Origin users download an alternative executable, so it uses a different name
-        public static string[] ExecutableNames = { 
+        private static readonly string[] ExecutableNames = { 
                                                   "SporeApp.exe", 
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
@@ -70,39 +72,50 @@
 
         public static GameVersionType DetectVersion(string path)
         {
-            if (path == null)
+            if (!string.IsNullOrEmpty(path))
             {
-                return GameVersionType.None;
-            }
-            var length = new System.IO.FileInfo(path).Length;
+                var length = new FileInfo(path).Length;
 
-            for (int i = 0; i < ExecutableSizes.Length; i++)
-            {
-                if (length == ExecutableSizes[i])
+                for (int i = 0; i < ExecutableSizes.Length; i++)
                 {
-                    return (GameVersionType)i;
+                    if (length == ExecutableSizes[i])
+                    {
+                        return (GameVersionType)i;
+                    }
                 }
             }
 
             return GameVersionType.None;
         }
 
+        public static string GetVersionName(GameVersionType type)
+        {
+            return VersionNames[(int)type];
+        }
+
+        public static string GetExecutableFileName(GameVersionType type)
+        {
+            return ExecutableNames[(int)type];
+        }
+
         public static string GetNewDLLName(GameVersionType type)
         {
             if (type == GameVersionType.Disc)
+            {
                 return "SporeModAPI.disk.dll";
-            else if ((type == GameVersionType.Origin)         || 
+            }
+            else if ((type == GameVersionType.Origin) ||
                      (type == GameVersionType.Origin_Patched) ||
-                     (type == GameVersionType.EA_Oct24)       ||
-                     (type == GameVersionType.Steam_Patched)  ||
-                     (type == GameVersionType.GoG_Oct24)      ||
+                     (type == GameVersionType.EA_Oct24) ||
+                     (type == GameVersionType.Steam_Patched) ||
+                     (type == GameVersionType.GoG_Oct24) ||
                      (type == GameVersionType.Steam_Oct24))
+            {
                 return "SporeModAPI.march2017.dll";
+            }
             else
             {
-                System.Windows.Forms.MessageBox.Show("Your current Spore game version is not compatible with this Launcher Kit version. If you downloaded the game from EA App, Steam, or GOG, please update to version 3.1.0.29 to proceed. If you're using a higher version of Spore, please see https://launcherkit.sporecommunity.com/support.", "Unsupported Game Version");
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
-                return string.Empty;
+                return null;
             }
         }
     }

@@ -110,7 +110,7 @@ namespace SporeModAPI_Launcher
                 }
 
                 // get the correct executable path
-                this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.ExecutableNames[(int)this.ExecutableType]);
+                this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.GetExecutableFileName(this.ExecutableType));
                 if (!File.Exists(this.ExecutablePath))
                 {
                     // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
@@ -154,7 +154,7 @@ namespace SporeModAPI_Launcher
                     }
                 }
 
-                string dllEnding = GameVersion.VersionNames[(int)this.ExecutableType];
+                string dllEnding = GameVersion.GetVersionName(this.ExecutableType);
                 if (dllEnding == null)
                 {
                     MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
