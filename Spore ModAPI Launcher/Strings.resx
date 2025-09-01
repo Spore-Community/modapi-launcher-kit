@@ -188,4 +188,15 @@ or
   <data name="CannotApplySteamFixTitle" xml:space="preserve">
     <value>Could not apply the Steam fix</value>
   </data>
+  <data name="SporeModLoaderDetected" xml:space="preserve">
+    <value>SporeModLoader has been detected, running the Launcher Kit alongside SporeModLoader is unsupported.
+
+You have the the following options:
+- Remove SporeModLoader to use the Launcher Kit by removing $PATH$
+- Use SporeModLoader instead of the Launcher Kit
+</value>
+  </data>
+  <data name="SporeModLoaderDetectedTitle" xml:space="preserve">
+    <value>SporeModLoader detected</value>
+  </data>
 </root>

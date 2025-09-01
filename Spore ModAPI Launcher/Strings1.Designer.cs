@@ -170,7 +170,16 @@ namespace SporeModAPI_Launcher {
                 return ResourceManager.GetString("GalacticAdventuresNotExecuted", resourceCulture);
             }
         }
-                
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incompatible Mod Detected.
+        /// </summary>
+        public static string IncompatibleMod {
+            get {
+                return ResourceManager.GetString("IncompatibleMod", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to The Launcher Kit requires Galactic Adventures and one of the following three game versions: 3.0.0.2818 (disc only), 3.1.0.22, or 3.1.0.29. If your game crashes or mods do not work, download the latest version of Spore and Galactic Adventures. Disc users must instead manually install patch 1.5.1 after installing Galactic Adventures..
         /// </summary>
@@ -204,6 +213,29 @@ namespace SporeModAPI_Launcher {
         public static string ProcessNotStarted {
             get {
                 return ResourceManager.GetString("ProcessNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SporeModLoader has been detected, running the Launcher Kit alongside SporeModLoader is unsupported.
+        ///
+        ///You have the the following options:
+        ///- Remove SporeModLoader to use the Launcher Kit by removing $PATH$
+        ///- Use SporeModLoader instead of the Launcher Kit
+        ///.
+        /// </summary>
+        public static string SporeModLoaderDetected {
+            get {
+                return ResourceManager.GetString("SporeModLoaderDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SporeModLoader detected.
+        /// </summary>
+        public static string SporeModLoaderDetectedTitle {
+            get {
+                return ResourceManager.GetString("SporeModLoaderDetectedTitle", resourceCulture);
             }
         }
         

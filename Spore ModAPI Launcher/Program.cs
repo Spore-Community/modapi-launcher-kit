@@ -87,6 +87,27 @@ namespace SporeModAPI_Launcher
                     return;
                 }
 
+                // check if SporeModLoader is installed
+                try
+                {
+                    string sporeModLoaderPath = Path.Combine(this.SporebinPath, "dinput8.dll");
+                    string originalFileName = "SporeModLoader.dll";
+                    if (File.Exists(sporeModLoaderPath))
+                    {
+                        FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(sporeModLoaderPath);
+                        if (fileVersionInfo.InternalName == originalFileName ||
+                            fileVersionInfo.OriginalFilename == originalFileName)
+                        {
+                            MessageBox.Show(Strings.SporeModLoaderDetected.Replace("$PATH$", sporeModLoaderPath), Strings.SporeModLoaderDetectedTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignore exception, SporeModLoader is likely not installed
+                }
+
                 // get the correct executable path
                 this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.ExecutableNames[(int)this._executableType]);
                 if (!File.Exists(this.ExecutablePath))
