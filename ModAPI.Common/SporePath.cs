@@ -63,7 +63,7 @@ namespace ModAPI.Common
         {
             object result = Registry.GetValue(SteamAppsKey + GalacticAdventuresSteamID, "Installed", 0);
             // returns null if the key does not exist, or default value if the key existed but the value did not
-            return result == null ? false : ((int)result == 0 ? false : true);
+            return result != null && ((int)result != 0);
         }
 
         public static string GetFromRegistry(Game game)
