@@ -82,42 +82,6 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your game version could not be detected. Please choose your version:.
-        /// </summary>
-        public static string ChooseGameVersion {
-            get {
-                return ResourceManager.GetString("ChooseGameVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select your game version.
-        /// </summary>
-        public static string ChooseGameVersionTitle {
-            get {
-                return ResourceManager.GetString("ChooseGameVersionTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Download complete. Launch game now?.
-        /// </summary>
-        public static string DownloadComplete {
-            get {
-                return ResourceManager.GetString("DownloadComplete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Download complete.
-        /// </summary>
-        public static string DownloadCompleteTitle {
-            get {
-                return ResourceManager.GetString("DownloadCompleteTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Downloading ModAPI Fix.
         /// </summary>
         public static string DownloadFixTitle {
@@ -145,15 +109,6 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extracting files....
-        /// </summary>
-        public static string ExtractingFiles {
-            get {
-                return ResourceManager.GetString("ExtractingFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to File needed.
         /// </summary>
         public static string FileNeeded {
@@ -172,29 +127,11 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Incompatible Mod Detected.
-        /// </summary>
-        public static string IncompatibleMod {
-            get {
-                return ResourceManager.GetString("IncompatibleMod", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Launcher Kit requires Galactic Adventures and one of the following three game versions: 3.0.0.2818 (disc only), 3.1.0.22, or 3.1.0.29. If your game crashes or mods do not work, download the latest version of Spore and Galactic Adventures. Disc users must instead manually install patch 1.5.1 after installing Galactic Adventures..
         /// </summary>
         public static string MightNotWork {
             get {
                 return ResourceManager.GetString("MightNotWork", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ModAPI might not work.
-        /// </summary>
-        public static string MightNotWorkTitle {
-            get {
-                return ResourceManager.GetString("MightNotWorkTitle", resourceCulture);
             }
         }
         
@@ -236,44 +173,6 @@ namespace SporeModAPI_Launcher {
         public static string SporeModLoaderDetectedTitle {
             get {
                 return ResourceManager.GetString("SporeModLoaderDetectedTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you have the most recent patch (released on March 20th, 2017 if nothing newer is out since) installed?.
-        /// </summary>
-        public static string SteamLastVersion {
-            get {
-                return ResourceManager.GetString("SteamLastVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you have the latest version?.
-        /// </summary>
-        public static string SteamLastVersionTitle {
-            get {
-                return ResourceManager.GetString("SteamLastVersionTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following mods cannot be loaded because they require a greater version of the ModAPI Core DLLs.
-        ///Please, restart the launcher and allow it to update.
-        ///.
-        /// </summary>
-        public static string UnsupportedDllVersion {
-            get {
-                return ResourceManager.GetString("UnsupportedDllVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error: some mods could not be loaded.
-        /// </summary>
-        public static string UnsupportedDllVersionTitle {
-            get {
-                return ResourceManager.GetString("UnsupportedDllVersionTitle", resourceCulture);
             }
         }
         
