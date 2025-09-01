@@ -59,45 +59,5 @@ namespace SporeModAPI_Launcher.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] Spore_ModAPI_Launcher {
-            get {
-                object obj = ResourceManager.GetObject("Spore_ModAPI_Launcher", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Disc_Icon {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Disc_Icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_EAApp_Icon {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_EAApp_Icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap VersionButton_Steam_GOG_Icon {
-            get {
-                object obj = ResourceManager.GetObject("VersionButton_Steam_GOG_Icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

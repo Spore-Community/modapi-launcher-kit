@@ -74,12 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugHelper.cs" />
-    <Compile Include="GameVersionSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GameVersionSelector.Designer.cs">
-      <DependentUpon>GameVersionSelector.cs</DependentUpon>
-    </Compile>
     <Compile Include="Injector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,9 +88,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="GameVersionSelector.resx">
-      <DependentUpon>GameVersionSelector.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -110,9 +101,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SporeModAPILauncher.ico" />
-    <None Include="Resources\VersionButton_EAApp_Icon.png" />
-    <None Include="Resources\VersionButton_Steam_GOG_Icon.png" />
-    <None Include="Resources\VersionButton_Disc_Icon.png" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Spore ModAPI Launcher.manifest" />

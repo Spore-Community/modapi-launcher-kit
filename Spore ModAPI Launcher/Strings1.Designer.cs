@@ -278,6 +278,24 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your current Spore game version is not compatible with this Launcher Kit version. If you downloaded the game from EA App, Steam, or GOG, please update to version 3.1.0.29 to proceed. If you&apos;re using a higher version of Spore, please see https://launcherkit.sporecommunity.com/support..
+        /// </summary>
+        public static string UnsupportedSporeVersion {
+            get {
+                return ResourceManager.GetString("UnsupportedSporeVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported Spore version.
+        /// </summary>
+        public static string UnsupportedSporeVersionTitle {
+            get {
+                return ResourceManager.GetString("UnsupportedSporeVersionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your version could not be detected, ModAPI won&apos;t load..
         /// </summary>
         public static string VersionNotDetected {

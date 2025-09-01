@@ -27,7 +27,7 @@ namespace SporeModAPI_Launcher
 
         private string SporebinPath;
         private string ExecutablePath;
-        private GameVersionType _executableType;
+        private GameVersionType ExecutableType;
 
         // Used for executing Spore and injecting DLLs
         private NativeTypes.STARTUPINFO StartupInfo;
@@ -79,11 +79,12 @@ namespace SporeModAPI_Launcher
 
                 // use the default path for now (we might have to use a different one for Origin)
                 this.ExecutablePath = Path.Combine(this.SporebinPath, "SporeApp.exe");
-                this.ProcessExecutableType();
+                this.ExecutableType = GameVersion.DetectVersion(this.ExecutablePath);
 
-                if (this._executableType == GameVersionType.None)
+                // ensure we have detected a valid game version
+                if (this.ExecutableType == GameVersionType.None)
                 {
-                    // don't execute the game if the user closed the dialog
+                    MessageBox.Show(Strings.UnsupportedSporeVersion, Strings.UnsupportedSporeVersionTitle);
                     return;
                 }
 
@@ -109,11 +110,11 @@ namespace SporeModAPI_Launcher
                 }
 
                 // get the correct executable path
-                this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.ExecutableNames[(int)this._executableType]);
+                this.ExecutablePath = Path.Combine(this.SporebinPath, GameVersion.ExecutableNames[(int)this.ExecutableType]);
                 if (!File.Exists(this.ExecutablePath))
                 {
                     // the file might only not exist in Origin (since Origin users will use a different executable compatible with ModAPI)
-                    if (GameVersion.RequiresModAPIFix(this._executableType))
+                    if (GameVersion.RequiresModAPIFix(this.ExecutableType))
                     {
                         if (!HandleOriginUsers())
                         {
@@ -128,7 +129,7 @@ namespace SporeModAPI_Launcher
                 
 
                 // we must also check if the steam_api.dll doesn't exist (it's required for Origin users)
-                if (GameVersion.RequiresModAPIFix(this._executableType) && !File.Exists(Path.Combine(this.SporebinPath, "steam_api.dll")))
+                if (GameVersion.RequiresModAPIFix(this.ExecutableType) && !File.Exists(Path.Combine(this.SporebinPath, "steam_api.dll")))
                 {
                     if (!HandleOriginUsers())
                     {
@@ -153,7 +154,7 @@ namespace SporeModAPI_Launcher
                     }
                 }
 
-                string dllEnding = GameVersion.VersionNames[(int)this._executableType];
+                string dllEnding = GameVersion.VersionNames[(int)this.ExecutableType];
                 if (dllEnding == null)
                 {
                     MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -178,7 +179,7 @@ namespace SporeModAPI_Launcher
             string versionInfo = "Launcher Kit version: " + UpdateManager.CurrentVersion + "\nModAPI DLLs version: " + UpdateManager.CurrentDllsBuild + "\nLauncher Kit path: " + Assembly.GetEntryAssembly().Location;
             if(this.ExecutablePath != null && File.Exists(this.ExecutablePath))
             {
-                versionInfo += "\n\nSpore version: " + FileVersionInfo.GetVersionInfo(this.ExecutablePath).FileVersion + " - " + this._executableType + "\nSpore path: " + this.ExecutablePath;
+                versionInfo += "\n\nSpore version: " + FileVersionInfo.GetVersionInfo(this.ExecutablePath).FileVersion + " - " + this.ExecutableType + "\nSpore path: " + this.ExecutablePath;
             }
             MessageBox.Show(Strings.GalacticAdventuresNotExecuted + "\n" + ModApiHelpThreadURL + "\n\n" + ex.GetType() + "\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n\n" + versionInfo, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             if (ex is System.ComponentModel.Win32Exception)
@@ -208,8 +209,13 @@ namespace SporeModAPI_Launcher
 
             string libName = "SporeModAPI.lib";
             string MODAPI_DLL = "SporeModAPI-" + dllEnding + ".dll";
-            string coreDllName = GameVersion.GetNewDLLName(_executableType);
+            string coreDllName = GameVersion.GetNewDLLName(ExecutableType);
             string coreDllOutPath = Path.Combine(mFolder, "SporeModAPI.dll");
+
+            if (coreDllName == null)
+            {
+                throw new Exception("Failed to retrieve DLL name!");
+            }
 
             File.Copy(Path.Combine(coreFolder, libName), Path.Combine(mFolder, libName), true);
             File.Copy(Path.Combine(coreFolder, coreDllName), coreDllOutPath, true);
@@ -310,35 +316,6 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        GameVersionType ProcessExecutableType()
-        {
-            GameVersionType executableType = GameVersion.DetectVersion(this.ExecutablePath);
-
-            // for debugging purposes
-            //executableType = GameVersionType.None;
-
-            if (executableType == GameVersionType.None)
-            {
-                if (LauncherSettings.GameVersion != GameVersionType.None)
-                {
-                    executableType = LauncherSettings.GameVersion;
-                }
-                else
-                {
-                    executableType = ShowVersionSelectorDialog();
-
-                    // The detection should work fine unless you have the wrong version, so tell the user                        
-                    MessageBox.Show(Strings.MightNotWork, Strings.MightNotWorkTitle,
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                }
-            }
-
-            this._executableType = executableType;
-
-            return executableType;
-        }
-
         bool HandleOriginUsers()
         {
             if (MessageBox.Show(Strings.DownloadOriginFix, Strings.FileNeeded, MessageBoxButtons.OKCancel) == DialogResult.OK)
@@ -353,26 +330,6 @@ namespace SporeModAPI_Launcher
         }
 
         // -- DIALOGS -- //
-
-
-        static GameVersionType ShowVersionSelectorDialog()
-        {
-            GameVersionType gameVersion = GameVersionType.None;
-            Thread thread = new Thread(() =>
-            {
-                var dialog = new GameVersionSelector();
-                dialog.ShowDialog();
-
-                gameVersion = dialog.SelectedVersion;
-                LauncherSettings.GameVersion = gameVersion;
-                LauncherSettings.Save();
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-
-            return gameVersion;
-        }
 
         static bool ShowDownloadFixDialog(string outputPath)
         {

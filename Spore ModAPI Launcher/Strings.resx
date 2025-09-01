@@ -199,4 +199,10 @@ You have the the following options:
   <data name="SporeModLoaderDetectedTitle" xml:space="preserve">
     <value>SporeModLoader detected</value>
   </data>
+  <data name="UnsupportedSporeVersion" xml:space="preserve">
+    <value>Your current Spore game version is not compatible with this Launcher Kit version. If you downloaded the game from EA App, Steam, or GOG, please update to version 3.1.0.29 to proceed. If you're using a higher version of Spore, please see https://launcherkit.sporecommunity.com/support.</value>
+  </data>
+  <data name="UnsupportedSporeVersionTitle" xml:space="preserve">
+    <value>Unsupported Spore version</value>
+  </data>
 </root>
