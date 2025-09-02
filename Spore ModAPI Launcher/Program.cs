@@ -10,10 +10,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace SporeModAPI_Launcher
 {
@@ -162,11 +162,6 @@ namespace SporeModAPI_Launcher
                 }
 
                 InjectSporeProcess(dllEnding);
-
-                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                
-                if (lastError != 0 && lastError != 18)
-                    ThrowWin32Exception("Something went wrong", lastError);
             }
             catch (Exception ex)
             {
@@ -177,7 +172,7 @@ namespace SporeModAPI_Launcher
         public void ShowError(Exception ex)
         {
             string versionInfo = "Launcher Kit version: " + UpdateManager.CurrentVersion + "\nModAPI DLLs version: " + UpdateManager.CurrentDllsBuild + "\nLauncher Kit path: " + Assembly.GetEntryAssembly().Location;
-            if(this.ExecutablePath != null && File.Exists(this.ExecutablePath))
+            if (this.ExecutablePath != null && File.Exists(this.ExecutablePath))
             {
                 versionInfo += "\n\nSpore version: " + FileVersionInfo.GetVersionInfo(this.ExecutablePath).FileVersion + " - " + this.ExecutableType + "\nSpore path: " + this.ExecutablePath;
             }
@@ -186,8 +181,8 @@ namespace SporeModAPI_Launcher
             {
                 var exc = ex as System.ComponentModel.Win32Exception;
                 MessageBox.Show("ErrorCode: " + exc.ErrorCode + "\n" +
-                    "NativeErrorCode: " + exc.NativeErrorCode + "\n" +
-                    "HResult: " + exc.HResult + "\n", "Additional Win32Exception Error Info");
+                                "NativeErrorCode: " + exc.NativeErrorCode + "\n" +
+                                "HResult: " + exc.HResult + "\n", "Additional Win32Exception Error Info");
 
                 if (exc.InnerException != null)
                 {
@@ -300,10 +295,7 @@ namespace SporeModAPI_Launcher
             if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
                     IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, this.SporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
-                //throw new InjectException(Strings.ProcessNotStarted);
-                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError, Strings.ProcessNotStarted);
-                throw new System.ComponentModel.Win32Exception(lastError);
+                ThrowWin32Exception(Strings.ProcessNotStarted);
             }
         }
 
@@ -311,7 +303,6 @@ namespace SporeModAPI_Launcher
         {
             if (NativeMethods.ResumeThread(this.ProcessInfo.hThread) != 1)
             {
-                /*throw new InjectException(Strings.ProcessNotResumed);*/
                 ThrowWin32Exception(Strings.ProcessNotResumed);
             }
         }
@@ -394,38 +385,11 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        public static void ThrowWin32Exception(string info)
+        public static void ThrowWin32Exception(string title, string additionalErrorText = "")
         {
-            ThrowWin32Exception(info, System.Runtime.InteropServices.Marshal.GetLastWin32Error());
-        }
-
-        public static void ThrowWin32Exception(string info, int error)
-        {
-            if ((error != 0) && (error != 18))
-            {
-                System.Windows.Forms.MessageBox.Show("Error: " + error, info);
-                throw new System.ComponentModel.Win32Exception(error);
-            }
-        }
-
-        private static List<string> GetModFiles(XmlNode componentNode)
-        {
-            var modFiles = new List<string>();
-            foreach (XmlNode child in componentNode.ChildNodes)
-            {
-                switch (child.Name.ToLower())
-                {
-                    case "component":
-                    case "prerequisite":
-                    case "compatfile":
-                        modFiles.AddRange(child.InnerText.Split('?'));
-                        break;
-                    case "componentgroup":
-                        modFiles.AddRange(GetModFiles(child));
-                        break;
-                }
-            }
-            return modFiles;
+            int error = Marshal.GetLastWin32Error();
+            MessageBox.Show("Error: " + error + additionalErrorText, title);
+            throw new Win32Exception(error);
         }
     }
 }

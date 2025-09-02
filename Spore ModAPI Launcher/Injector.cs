@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
-using System.Runtime.InteropServices;
 using System.Threading;
 using ModAPI.Common;
 
@@ -29,9 +27,7 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = NativeMethods.VirtualAllocEx(hProc, IntPtr.Zero, (uint)dllPath.Length + 1, NativeTypes.AllocationType.Commit, NativeTypes.MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                int lastError = Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Virtual alloc failure.");
-                throw new System.ComponentModel.Win32Exception(lastError);
+                Program.ThrowWin32Exception("Virtual alloc failure.");
             }
 
             //Write the path to the DLL file in the location just created
@@ -45,7 +41,6 @@ namespace SporeModAPI_Launcher
             bool writeProcessMemoryOutput = NativeMethods.WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out numBytesWritten);
             if (!writeProcessMemoryOutput || numBytesWritten.ToUInt32() != bytes.Length)
             {
-                /*throw new InjectException("Write process memory failed.");*/
                 Program.ThrowWin32Exception("Write process memory failed.");
             }
 
@@ -70,9 +65,8 @@ namespace SporeModAPI_Launcher
             }
             else
             {
-                int lastError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString(), "Create remote thread failed.");
-                throw new System.ComponentModel.Win32Exception(lastError);
+                Program.ThrowWin32Exception("Create remote thread failed.");
+                return IntPtr.Zero; // silence a warning
             }
 
             NativeMethods.VirtualFreeEx(hProc, objPtr, (uint)0, NativeTypes.AllocationType.Release);
@@ -89,9 +83,8 @@ namespace SporeModAPI_Launcher
 
             if (SetInjectDataPtr == IntPtr.Zero)
             {
-                int lastError = Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hDLLInjectorHandle: " + hDLLInjectorHandle.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Get proc address failure.");
-                throw new System.ComponentModel.Win32Exception(lastError);
+                string additionalErrorText = "\n" + "hDLLInjectorHandle: " + hDLLInjectorHandle.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                Program.ThrowWin32Exception("Get proc address failure.", additionalErrorText);
             }
 
             SetInjectDataPtr = new IntPtr(hDLLInjectorHandle.ToInt64() + (SetInjectDataPtr.ToInt64() - hLocalDLLInjectorHandle.ToInt64()));
@@ -112,9 +105,8 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = NativeMethods.VirtualAllocEx(hProc, IntPtr.Zero, (uint)total_alloc_size, NativeTypes.AllocationType.Commit, NativeTypes.MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                int lastError = Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError.ToString() + "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero), "Virtual alloc failure.");
-                throw new System.ComponentModel.Win32Exception(lastError);
+                string additionalErrorText = "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                Program.ThrowWin32Exception("Virtual alloc failure.", additionalErrorText);
             }
             
             //write injection data
@@ -148,7 +140,6 @@ namespace SporeModAPI_Launcher
             {
                 if (NativeMethods.WaitForSingleObject(hRemoteThread, MAXWAIT) == WAIT_TIMEOUT)
                 {
-                    //throw new InjectException("Wait for single object failed.");
                     Program.ThrowWin32Exception("Wait for single object failed. This usually occurs if something has become stuck during injection, or if another error was left open for too long.");
                 }
                 while (NativeMethods.GetExitCodeThread(hRemoteThread, out var thread_result))
@@ -160,9 +151,7 @@ namespace SporeModAPI_Launcher
             }
             else
             {
-                int lastError = Marshal.GetLastWin32Error();
-                System.Windows.Forms.MessageBox.Show("Error: " + lastError, "Create remote thread failed.");
-                throw new System.ComponentModel.Win32Exception(lastError);
+                Program.ThrowWin32Exception("Create remote thread failed.");
             }
 
             NativeMethods.VirtualFreeEx(hProc, objPtr, (uint)0, NativeTypes.AllocationType.Release);
