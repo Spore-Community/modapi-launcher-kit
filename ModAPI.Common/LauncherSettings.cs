@@ -41,20 +41,6 @@ namespace ModAPI.Common
             }
         }
 
-        public static string SteamPath
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("SteamPath", out value);
-                return value;
-            }
-            set
-            {
-                _dictionary["SteamPath"] = value;
-            }
-        }
-
         public static bool ForceGamePath
         {
             get
@@ -69,27 +55,6 @@ namespace ModAPI.Common
             set
             {
                 _dictionary["ForceGamePath"] = value ? "true" : "false";
-            }
-        }
-
-        public static GameVersionType GameVersion
-        {
-            get
-            {
-                string value = null;
-                _dictionary.TryGetValue("GameVersion", out value);
-                if (value == null)
-                {
-                    return GameVersionType.None;
-                }
-                else
-                {
-                    return (GameVersionType) Enum.Parse(typeof(GameVersionType), value);
-                }
-            }
-            set
-            {
-                _dictionary["GameVersion"] = value.ToString();
             }
         }
 
