@@ -191,53 +191,57 @@ namespace SporeModAPI_Launcher
             }
         }
 
-        List<string> GetDLLsToInject(string dllEnding)
+        string[] GetDLLsToInject(string dllEnding)
         {
             List<string> dlls = new List<string>();
 
             //coreLibs and mLibs
-            var baseFolder = new FileInfo(Assembly.GetEntryAssembly().Location).Directory;
-            var coreFolder = Path.Combine(baseFolder.FullName, "coreLibs");
-            var mFolder    = Path.Combine(baseFolder.FullName, "mLibs");
-            if (!Directory.Exists(mFolder))
-                Directory.CreateDirectory(mFolder);
+            string basePath     = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            string coreLibsPath = Path.Combine(basePath, "coreLibs");
+            string mLibsPath    = Path.Combine(basePath, "mLibs");
 
-            string libName = "SporeModAPI.lib";
-            string MODAPI_DLL = "SporeModAPI-" + dllEnding + ".dll";
-            string coreDllName = GameVersion.GetNewDLLName(ExecutableType);
-            string coreDllOutPath = Path.Combine(mFolder, "SporeModAPI.dll");
+            if (!Directory.Exists(mLibsPath))
+                Directory.CreateDirectory(mLibsPath);
 
-            if (coreDllName == null)
+            string coreLibFile =  "SporeModAPI.lib";
+            string coreLibPath = Path.Combine(coreLibsPath, coreLibFile);
+            string coreLegacyDllName = "SporeModAPI-" + dllEnding + ".dll";
+            string coreLegacyDllPath = Path.Combine(basePath, coreLegacyDllName);
+            string coreDllPath = Path.Combine(coreLibsPath, GameVersion.GetNewDLLName(this.ExecutableType));
+            string coreDllOutPath = Path.Combine(mLibsPath, "SporeModAPI.dll");
+
+            // ensure ModAPI DLLs exist
+            foreach (string dll in new string[] { coreLegacyDllPath, coreDllPath })
             {
-                throw new Exception("Failed to retrieve DLL name!");
-            }
-
-            File.Copy(Path.Combine(coreFolder, libName), Path.Combine(mFolder, libName), true);
-            File.Copy(Path.Combine(coreFolder, coreDllName), coreDllOutPath, true);
-
-            dlls.Add(coreDllOutPath);
-            dlls.Add(Path.GetFullPath(MODAPI_DLL));
-
-            foreach (string s in Directory.EnumerateFiles(mFolder)
-                .Where(x => !Path.GetFileName(x).Equals(coreDllName, StringComparison.OrdinalIgnoreCase) && 
-                    x.ToLowerInvariant().EndsWith(".dll") &&
-                    !dlls.Contains(x)))
-            {
-                dlls.Add(s);
-            }
-
-            foreach (var file in baseFolder.EnumerateFiles("*" + dllEnding + ".dll")
-                .Where(x => x.Name != MODAPI_DLL))
-            {
-                // the ModAPI dll should already be loaded
-                if (file.Name != MODAPI_DLL)
+                if (!File.Exists(dll))
                 {
-                    dlls.Add(file.FullName);
+                    throw new FileNotFoundException("Required ModAPI DLL was not found: " + dll);
                 }
             }
 
+            File.Copy(coreLibPath, Path.Combine(mLibsPath, coreLibFile), true);
+            File.Copy(coreDllPath, coreDllOutPath, true);
 
-            return dlls;
+            dlls.Add(coreDllOutPath);
+            dlls.Add(coreLegacyDllPath);
+
+            foreach (string file in Directory.EnumerateFiles(mLibsPath)
+                                          .Where(x => 
+                                          {
+                                              x = x.ToLowerInvariant();
+                                              return x.EndsWith(".dll") && x != coreDllOutPath.ToLowerInvariant();
+                                          }))
+            {
+                dlls.Add(file);
+            }
+
+            foreach (string file in Directory.EnumerateFiles(basePath, "*" + dllEnding + ".dll")
+                                            .Where(x => x.ToLowerInvariant() != coreLegacyDllPath.ToLowerInvariant()))
+            {
+                dlls.Add(file);
+            }
+
+            return dlls.ToArray();
         }
 
         void InjectSporeProcess(string dllEnding)
@@ -249,7 +253,7 @@ namespace SporeModAPI_Launcher
                 const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
                 IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
 
-                List<string> dlls = GetDLLsToInject(dllEnding);
+                string[] dlls = GetDLLsToInject(dllEnding);
 
                 Injector.SetInjectionData(this.ProcessInfo, hDLLInjectorHandle, dllEnding == "disk", dlls);
 
@@ -280,20 +284,16 @@ namespace SporeModAPI_Launcher
         void CreateSporeProcess()
         {
             var sb = new StringBuilder();
-            int i = 0;
-            foreach (string arg in Environment.GetCommandLineArgs())
+            // skip first argument because it's the launcher executable
+            foreach (string arg in Environment.GetCommandLineArgs().Skip(1))
             {
-                // the first argument is the path
-                if (i != 0)
-                {
-                    sb.Append(arg);
-                    sb.Append(" ");
-                }
-                i++;
+                sb.Append(arg);
+                sb.Append(" ");
             }
 
             if (!NativeMethods.CreateProcess(null, "\"" + this.ExecutablePath + "\" " + sb,
-                    IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, this.SporebinPath, ref this.StartupInfo, out this.ProcessInfo))
+                    IntPtr.Zero, IntPtr.Zero, false, NativeTypes.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, 
+                    this.SporebinPath, ref this.StartupInfo, out this.ProcessInfo))
             {
                 ThrowWin32Exception(Strings.ProcessNotStarted);
             }

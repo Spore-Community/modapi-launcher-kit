@@ -27,7 +27,8 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = NativeMethods.VirtualAllocEx(hProc, IntPtr.Zero, (uint)dllPath.Length + 1, NativeTypes.AllocationType.Commit, NativeTypes.MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                Program.ThrowWin32Exception("Virtual alloc failure.");
+                string additionalErrorText = "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                Program.ThrowWin32Exception("Virtual alloc failure.", additionalErrorText);
             }
 
             //Write the path to the DLL file in the location just created
@@ -53,7 +54,7 @@ namespace SporeModAPI_Launcher
             {
                 if (NativeMethods.WaitForSingleObject(hRemoteThread, MAXWAIT) == WAIT_TIMEOUT)
                 {
-                    Program.ThrowWin32Exception("Wait for single object failed. This usually occurs if something has become stuck during injection, or if another error was left open for too long.");
+                    Program.ThrowWin32Exception("Wait for single object failed.");
                 }
                 while (NativeMethods.GetExitCodeThread(hRemoteThread, out thread_result))
                 {
@@ -76,7 +77,7 @@ namespace SporeModAPI_Launcher
             return new IntPtr((Int64)thread_result);
         }
 
-        public static void SetInjectionData(NativeTypes.PROCESS_INFORMATION pi, IntPtr hDLLInjectorHandle, bool is_disc_spore, List<string> dlls)
+        public static void SetInjectionData(NativeTypes.PROCESS_INFORMATION pi, IntPtr hDLLInjectorHandle, bool is_disc_spore, string[] dlls)
         {
             IntPtr hLocalDLLInjectorHandle = NativeMethods.LoadLibraryEx("ModAPI.DLLInjector.dll", IntPtr.Zero, NativeTypes.LoadLibraryFlags.DONT_RESOLVE_DLL_REFERENCES);
             IntPtr SetInjectDataPtr = NativeMethods.GetProcAddress(hLocalDLLInjectorHandle, "SetInjectionData");
@@ -113,7 +114,7 @@ namespace SporeModAPI_Launcher
             var bytes = new byte[total_alloc_size];
             int byte_offset = 0;
             bytes[byte_offset++] = (byte)(is_disc_spore ? 1 : 0);
-            foreach (byte b in BitConverter.GetBytes((uint)dlls.Count))
+            foreach (byte b in BitConverter.GetBytes((uint)dlls.Length))
                 bytes[byte_offset++] = b;
 
             foreach (string dll in dlls)
