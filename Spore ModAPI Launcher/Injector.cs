@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ModAPI.Common;
@@ -9,8 +8,8 @@ namespace SporeModAPI_Launcher
     public class Injector
     {
         private const int WAIT_TIMEOUT = 0x102;
-        private const uint MAXWAIT = 15000; //10000;
-        private const uint AccessRequired = 0x0002 | 0x0020 | 0x0008 | 0x0400 | 0x0010; //0x0002 | 0x0020 | 0x0008; //0xF0000 | 0x00100000 | 0xFFFF;
+        private const uint MAXWAIT = 15000;
+        private const uint AccessRequired = 0x0002 | 0x0020 | 0x0008 | 0x0400 | 0x0010;
 
         public static IntPtr InjectDLL(NativeTypes.PROCESS_INFORMATION pi, string dllPath)
         {
@@ -18,7 +17,7 @@ namespace SporeModAPI_Launcher
 
             if (retLib == IntPtr.Zero)
             {
-                throw new InjectException("LoadLibrary unreachable.");
+                throw new Exception("LoadLibrary unreachable.");
             }
 
             IntPtr hProc = NativeMethods.OpenProcess(AccessRequired, false, pi.dwProcessId); //Open the process with all access
@@ -27,7 +26,7 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = NativeMethods.VirtualAllocEx(hProc, IntPtr.Zero, (uint)dllPath.Length + 1, NativeTypes.AllocationType.Commit, NativeTypes.MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                string additionalErrorText = "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                string additionalErrorText = "\n" + "hProc: " + hProc.ToString();
                 Program.ThrowWin32Exception("Virtual alloc failure.", additionalErrorText);
             }
 
@@ -38,15 +37,14 @@ namespace SporeModAPI_Launcher
             }
             bytes[dllPath.Length] = 0;
 
-            UIntPtr numBytesWritten;
-            bool writeProcessMemoryOutput = NativeMethods.WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out numBytesWritten);
+            bool writeProcessMemoryOutput = NativeMethods.WriteProcessMemory(hProc, objPtr, bytes, (uint)bytes.Length, out UIntPtr numBytesWritten);
             if (!writeProcessMemoryOutput || numBytesWritten.ToUInt32() != bytes.Length)
             {
                 Program.ThrowWin32Exception("Write process memory failed.");
             }
 
             // Create a remote thread that begins at the LoadLibrary function and is passed as memory pointer
-            IntPtr hRemoteThread = NativeMethods.CreateRemoteThread(hProc, IntPtr.Zero, 0, retLib, objPtr, 0, out var lpThreadId);
+            IntPtr hRemoteThread = NativeMethods.CreateRemoteThread(hProc, IntPtr.Zero, 0, retLib, objPtr, 0, out _);
 
             // Wait for the thread to finish
             uint thread_result;
@@ -84,7 +82,7 @@ namespace SporeModAPI_Launcher
 
             if (SetInjectDataPtr == IntPtr.Zero)
             {
-                string additionalErrorText = "\n" + "hDLLInjectorHandle: " + hDLLInjectorHandle.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                string additionalErrorText = "\n" + "hDLLInjectorHandle: " + hDLLInjectorHandle.ToString();
                 Program.ThrowWin32Exception("Get proc address failure.", additionalErrorText);
             }
 
@@ -106,7 +104,7 @@ namespace SporeModAPI_Launcher
             IntPtr objPtr = NativeMethods.VirtualAllocEx(hProc, IntPtr.Zero, (uint)total_alloc_size, NativeTypes.AllocationType.Commit, NativeTypes.MemoryProtection.ReadWrite);
             if (objPtr == IntPtr.Zero)
             {
-                string additionalErrorText = "\n" + "hProc: " + hProc.ToString() + "\nProgram.processHandle: " + (Program.processHandle == IntPtr.Zero);
+                string additionalErrorText = "\n" + "hProc: " + hProc.ToString();
                 Program.ThrowWin32Exception("Virtual alloc failure.", additionalErrorText);
             }
             
@@ -141,7 +139,7 @@ namespace SporeModAPI_Launcher
             {
                 if (NativeMethods.WaitForSingleObject(hRemoteThread, MAXWAIT) == WAIT_TIMEOUT)
                 {
-                    Program.ThrowWin32Exception("Wait for single object failed. This usually occurs if something has become stuck during injection, or if another error was left open for too long.");
+                    Program.ThrowWin32Exception("Wait for single object failed.");
                 }
                 while (NativeMethods.GetExitCodeThread(hRemoteThread, out var thread_result))
                 {
@@ -159,18 +157,5 @@ namespace SporeModAPI_Launcher
 
             NativeMethods.CloseHandle(hProc);
         }
-    }
-
-    [Serializable()]
-    public class InjectException : Exception
-    {
-        public InjectException() : base() { }
-        public InjectException(string message) : base(message) { }
-        public InjectException(string message, System.Exception inner) : base(message, inner) { }
-
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client. 
-        protected InjectException(System.Runtime.Serialization.SerializationInfo info,
-            System.Runtime.Serialization.StreamingContext context) { }
     }
 }

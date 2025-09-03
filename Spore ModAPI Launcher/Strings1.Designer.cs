@@ -91,15 +91,6 @@ namespace SporeModAPI_Launcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading.
-        /// </summary>
-        public static string Downloading {
-            get {
-                return ResourceManager.GetString("Downloading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to EA App and Origin users need to download an additional file in order for mods to work. If you press OK, the launcher will download and apply this additional file..
         /// </summary>
         public static string DownloadOriginFix {
@@ -123,15 +114,6 @@ namespace SporeModAPI_Launcher {
         public static string GalacticAdventuresNotExecuted {
             get {
                 return ResourceManager.GetString("GalacticAdventuresNotExecuted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Launcher Kit requires Galactic Adventures and one of the following three game versions: 3.0.0.2818 (disc only), 3.1.0.22, or 3.1.0.29. If your game crashes or mods do not work, download the latest version of Spore and Galactic Adventures. Disc users must instead manually install patch 1.5.1 after installing Galactic Adventures..
-        /// </summary>
-        public static string MightNotWork {
-            get {
-                return ResourceManager.GetString("MightNotWork", resourceCulture);
             }
         }
         
@@ -191,15 +173,6 @@ namespace SporeModAPI_Launcher {
         public static string UnsupportedSporeVersionTitle {
             get {
                 return ResourceManager.GetString("UnsupportedSporeVersionTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your version could not be detected, ModAPI won&apos;t load..
-        /// </summary>
-        public static string VersionNotDetected {
-            get {
-                return ResourceManager.GetString("VersionNotDetected", resourceCulture);
             }
         }
     }

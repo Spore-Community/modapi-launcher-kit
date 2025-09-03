@@ -20,8 +20,6 @@ namespace SporeModAPI_Launcher
 
     class Program
     {
-        public static IntPtr processHandle = IntPtr.Zero;
-
         private const string ModAPIFixDownloadURL = "https://davoonline.com/sporemodder/emd4600/SporeApp_ModAPIFix.zip";
         private const string ModApiHelpThreadURL = "https://launcherkit.sporecommunity.com/support";
 
@@ -32,6 +30,8 @@ namespace SporeModAPI_Launcher
         // Used for executing Spore and injecting DLLs
         private NativeTypes.STARTUPINFO StartupInfo;
         private NativeTypes.PROCESS_INFORMATION ProcessInfo;
+
+        private string LauncherKitPath;
 
         /// <summary>
         /// The main entry point for the application.
@@ -71,6 +71,9 @@ namespace SporeModAPI_Launcher
         {
             try
             {
+                // store the launcher kit path for later
+                this.LauncherKitPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
                 // We try a new approach for Steam users.
                 // Before, we used Steam to launch the game and tried to find the new process and inject it.
                 // However, when the injection happens the game already executed a bit, so mods fail.
@@ -154,14 +157,7 @@ namespace SporeModAPI_Launcher
                     }
                 }
 
-                string dllEnding = GameVersion.GetVersionName(this.ExecutableType);
-                if (dllEnding == null)
-                {
-                    MessageBox.Show(Strings.VersionNotDetected, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                InjectSporeProcess(dllEnding);
+                InjectSporeProcess(GameVersion.GetVersionName(this.ExecutableType));
             }
             catch (Exception ex)
             {
@@ -177,9 +173,9 @@ namespace SporeModAPI_Launcher
                 versionInfo += "\n\nSpore version: " + FileVersionInfo.GetVersionInfo(this.ExecutablePath).FileVersion + " - " + this.ExecutableType + "\nSpore path: " + this.ExecutablePath;
             }
             MessageBox.Show(Strings.GalacticAdventuresNotExecuted + "\n" + ModApiHelpThreadURL + "\n\n" + ex.GetType() + "\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n\n" + versionInfo, CommonStrings.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            if (ex is System.ComponentModel.Win32Exception)
+            if (ex is Win32Exception)
             {
-                var exc = ex as System.ComponentModel.Win32Exception;
+                var exc = ex as Win32Exception;
                 MessageBox.Show("ErrorCode: " + exc.ErrorCode + "\n" +
                                 "NativeErrorCode: " + exc.NativeErrorCode + "\n" +
                                 "HResult: " + exc.HResult + "\n", "Additional Win32Exception Error Info");
@@ -196,17 +192,16 @@ namespace SporeModAPI_Launcher
             List<string> dlls = new List<string>();
 
             //coreLibs and mLibs
-            string basePath     = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string coreLibsPath = Path.Combine(basePath, "coreLibs");
-            string mLibsPath    = Path.Combine(basePath, "mLibs");
+            string coreLibsPath = Path.Combine(this.LauncherKitPath, "coreLibs");
+            string mLibsPath    = Path.Combine(this.LauncherKitPath, "mLibs");
 
             if (!Directory.Exists(mLibsPath))
                 Directory.CreateDirectory(mLibsPath);
 
-            string coreLibFile =  "SporeModAPI.lib";
+            const string coreLibFile =  "SporeModAPI.lib";
             string coreLibPath = Path.Combine(coreLibsPath, coreLibFile);
             string coreLegacyDllName = "SporeModAPI-" + dllEnding + ".dll";
-            string coreLegacyDllPath = Path.Combine(basePath, coreLegacyDllName);
+            string coreLegacyDllPath = Path.Combine(this.LauncherKitPath, coreLegacyDllName);
             string coreDllPath = Path.Combine(coreLibsPath, GameVersion.GetNewDLLName(this.ExecutableType));
             string coreDllOutPath = Path.Combine(mLibsPath, "SporeModAPI.dll");
 
@@ -235,7 +230,7 @@ namespace SporeModAPI_Launcher
                 dlls.Add(file);
             }
 
-            foreach (string file in Directory.EnumerateFiles(basePath, "*" + dllEnding + ".dll")
+            foreach (string file in Directory.EnumerateFiles(this.LauncherKitPath, "*" + dllEnding + ".dll")
                                             .Where(x => x.ToLowerInvariant() != coreLegacyDllPath.ToLowerInvariant()))
             {
                 dlls.Add(file);
@@ -250,8 +245,8 @@ namespace SporeModAPI_Launcher
 
             try
             {
-                const string MOD_API_DLL_INJECTOR = "ModAPI.DLLInjector.dll";
-                IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.GetFullPath(MOD_API_DLL_INJECTOR));
+                const string modApiDllInjector = "ModAPI.DLLInjector.dll";
+                IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.Combine(this.LauncherKitPath, modApiDllInjector));
 
                 string[] dlls = GetDLLsToInject(dllEnding);
 
