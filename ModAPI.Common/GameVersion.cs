@@ -6,14 +6,10 @@ namespace ModAPI.Common
     {
         /// <summary>3.0.0.2818 (July 2009) installed from disc, with patch 5.1</summary>
         Disc,
-        /// <summary>3.0.0.2818 (July 2009) installed from Origin, with patch 5.1, requires ModAPI Fix</summary>
-        Origin,
         /// <summary>3.1.0.22 (March 2017) installed from Origin, requires ModAPI Fix</summary>
         Origin_Patched,
         /// <summary>3.1.0.29 (October 2024) installed from EA App or Origin, requires ModAPI Fix</summary>
         EA_Oct24,
-        /// <summary>3.0.0.2818 (July 2009) installed from GOG or Steam, with patch 5.1</summary>
-        Steam,
         /// <summary>3.1.0.22 (March 2017) installed from GOG or Steam</summary>
         Steam_Patched,
         /// <summary>3.1.0.29 (October 2024) installed from GOG</summary>
@@ -30,10 +26,8 @@ namespace ModAPI.Common
 
         private static readonly int[] ExecutableSizes = { 
                                        /* DISC*/    24909584,
-                                       /* ORIGIN */ 31347984,
                                        /* ORIGIN_P */ 24898224,
                                        /* EA_OCT24 */ 24906040,
-                                       /* STEAM */  24888320,
                                        /* STEAM_P */24885248,
                                        /* GOG_OCT24 */24895536,
                                        /* STEAM_OCT24 */ 25066744};
@@ -41,9 +35,7 @@ namespace ModAPI.Common
         private static readonly string[] VersionNames = { 
                                                   "disk", 
                                                   "steam_patched",  // origin uses the steam_patched one
-                                                  "steam_patched",  // origin uses the steam_patched one
                                                   "steam_patched",  // EA app uses the steam_patched one
-                                                  "steam", 
                                                   "steam_patched", 
                                                   "steam_patched",  // in GoG executable, addresses did not change in October 2024 update
                                                   "steam_patched",  // addresses did not change in October 2024 update, but the executable was protected with SteamDRM
@@ -54,9 +46,7 @@ namespace ModAPI.Common
         private static readonly string[] ExecutableNames = { 
                                                   "SporeApp.exe", 
                                                   "SporeApp_ModAPIFix.exe",  // origin uses a different one
-                                                  "SporeApp_ModAPIFix.exe",  // origin uses a different one
                                                   "SporeApp_ModAPIFix.exe",  // EA app uses a different one
-                                                  "SporeApp.exe", 
                                                   "SporeApp.exe", 
                                                   "SporeApp.exe", 
                                                   "SporeApp.exe",
@@ -65,8 +55,7 @@ namespace ModAPI.Common
 
         public static bool RequiresModAPIFix(GameVersionType versionType)
         {
-            return versionType == GameVersionType.Origin || 
-                    versionType == GameVersionType.Origin_Patched ||
+            return versionType == GameVersionType.Origin_Patched ||
                     versionType == GameVersionType.EA_Oct24;
         }
 
@@ -104,8 +93,7 @@ namespace ModAPI.Common
             {
                 return "SporeModAPI.disk.dll";
             }
-            else if ((type == GameVersionType.Origin) ||
-                     (type == GameVersionType.Origin_Patched) ||
+            else if ((type == GameVersionType.Origin_Patched) ||
                      (type == GameVersionType.EA_Oct24) ||
                      (type == GameVersionType.Steam_Patched) ||
                      (type == GameVersionType.GoG_Oct24) ||
