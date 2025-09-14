@@ -22,8 +22,6 @@ namespace ModAPI.Common
 
     public static class GameVersion
     {
-
-
         private static readonly int[] ExecutableSizes = { 
                                                     24909584, // Disc
                                                     24898224, // Origin_March2017
@@ -31,27 +29,6 @@ namespace ModAPI.Common
                                                     24885248, // Steam_March2017
                                                     24895536, // GoG_October2024
                                                     25066744  // Steam_October2024
-                                                };
-
-        private static readonly string[] VersionNames = { 
-                                                    "disk", 
-                                                    "steam_patched",  // Origin_March2017 uses the steam_patched one
-                                                    "steam_patched",  // EA_October2024 uses the steam_patched one
-                                                    "steam_patched", 
-                                                    "steam_patched",  // in GoG executable, addresses did not change in October 2024 update
-                                                    "steam_patched",  // addresses did not change in October 2024 update, but the executable was protected with SteamDRM
-                                                    null
-                                                };
-
-        // Origin users download an alternative executable, so it uses a different name
-        private static readonly string[] ExecutableNames = { 
-                                                    "SporeApp.exe", 
-                                                    "SporeApp_ModAPIFix.exe",  // Origin_March2017 uses a different one
-                                                    "SporeApp_ModAPIFix.exe",  // EA_October2024 uses a different one
-                                                    "SporeApp.exe", 
-                                                    "SporeApp.exe", 
-                                                    "SporeApp.exe",
-                                                    null
                                                 };
 
         public static bool RequiresModAPIFix(GameVersionType versionType)
@@ -80,31 +57,60 @@ namespace ModAPI.Common
 
         public static string GetVersionName(GameVersionType type)
         {
-            return VersionNames[(int)type];
+            switch (type)
+            {
+                case GameVersionType.Disc:
+                    return "disk";
+
+                case GameVersionType.Origin_March2017:
+                case GameVersionType.EA_October2024:
+                case GameVersionType.Steam_March2017:
+                case GameVersionType.GOG_October2024:
+                case GameVersionType.Steam_October2024:
+                    return "steam_patched";
+
+                default:
+                    return null;
+            }
         }
 
         public static string GetExecutableFileName(GameVersionType type)
         {
-            return ExecutableNames[(int)type];
+            switch (type)
+            {
+                case GameVersionType.Disc:
+                case GameVersionType.Steam_March2017:
+                case GameVersionType.GOG_October2024:
+                case GameVersionType.Steam_October2024:
+                    return "SporeApp.exe";
+
+                // Origin and EA App have extra DRM
+                // which requires the ModAPIFix executable
+                case GameVersionType.Origin_March2017:
+                case GameVersionType.EA_October2024:
+                    return "SporeApp_ModAPIFix.exe";
+
+                default:
+                    return null;
+            }
         }
 
         public static string GetNewDLLName(GameVersionType type)
         {
-            if (type == GameVersionType.Disc)
+            switch (type)
             {
-                return "SporeModAPI.disk.dll";
-            }
-            else if ((type == GameVersionType.Origin_March2017) ||
-                     (type == GameVersionType.EA_October2024)  ||
-                     (type == GameVersionType.Steam_March2017) ||
-                     (type == GameVersionType.GOG_October2024) ||
-                     (type == GameVersionType.Steam_October2024))
-            {
-                return "SporeModAPI.march2017.dll";
-            }
-            else
-            {
-                return null;
+                case GameVersionType.Disc:
+                    return "SporeModAPI.disk.dll";
+
+                case GameVersionType.Origin_March2017:
+                case GameVersionType.EA_October2024:
+                case GameVersionType.Steam_March2017:
+                case GameVersionType.GOG_October2024:
+                case GameVersionType.Steam_October2024:
+                    return "SporeModAPI.march2017.dll";
+
+                default:
+                    return null;
             }
         }
     }
