@@ -23,7 +23,7 @@ Open Windows Security, go to "Virus & threat protection", then "Protection histo
 
 If this is correct, you can safely "restore" these items.
 
-If "Detected" does *not* end in `ml`, please [ask for help](support).
+If "Detected" does *not* end in `ml`, please [ask for help](/support).
 
 ## Other antivirus
 We do not recommend using antivirus other than the built-in Windows Defender. There is no need to, and you may encounter issues if you choose to use other antivirus options.
@@ -58,4 +58,4 @@ Please note that while the Launcher Kit itself is safe, we do not check individu
 
 Do not run the Launcher as administrator, as this is a security risk because it removes certain safeguards, allowing mods to have full unrestricted access to your computer.
 
-If in doubt, please [ask for help](support) before downloading a mod that you are unsure about.
+If in doubt, please [ask for help](/support) before downloading a mod that you are unsure about.

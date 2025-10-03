@@ -16,9 +16,6 @@ Open the folder where Spore Galactic Adventures is installed and open the `Spore
 ### Do not install multiple copies of the game
 Installing multiple copies of the game is known to cause a variety of problems. For example, do not install the game from EA App if you already have it installed from Steam or GOG. 
 
-### Note for EA App users
-The Launcher Kit needs to download a fix to allow mods to work on this version of the game. This fix *may* downgrade your game to 3.1.0.22 while using the Launcher Kit. There are no differences between 3.1.0.22 and 3.1.0.29 aside from online functionality, which can be restored with the [SporeFixOnline mod]({{ page.fixonline_mod_url }}).
-
 ### Galactic Adventures requirement
 Due to major changes and technical improvements introduced in Galactic Adventures, the Launcher Kit and most mods cannot work without Galactic Adventures.
 
