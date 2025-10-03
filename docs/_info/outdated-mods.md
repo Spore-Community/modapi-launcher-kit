@@ -24,3 +24,14 @@ While Dark Injection has historically been a popular mod to install, and the lat
 If you still want to use Dark Injection for its parts, you may use the mod, but it is strongly recommended to disable all non-essential options. Some of these options cause crashes, graphical issues, or incompatibilities with other mods. In particular, do not use the Full Darkspore UI or Darkspore Beta UI, and disable all options except the part categories.
 
 Please note that even with these options disabled, there are still known issues and incompatibilities that cannot be fixed without fully uninstalling Dark Injection.
+
+Some of these issues are related to Force Save, which is included with Dark Injection and cannot be disabled without fully uninstalling. These issues are described below.
+
+## Force Save
+Force Save disables *all* validation checks when saving or loading creations, allowing invalid creations to be saved or loaded. While this is necessary for some mods, notably older part mods, this is a brute force approach, and removes many useful safety checks.
+
+For example, this allows saving creations without a name (making them inaccessible), or saving/loading broken creations that cause crashes, potentially rendering the game unplayable.
+
+For these reasons, it is strongly recommended *not* to use any Force Save mod.
+
+If you have older part mods that require it, or otherwise need to selectively bypass normal saving restrictions, you may instead use toggleable force save, as explained [here](https://discord.com/channels/368198218632396810/860854703663087636/1411056445901770794) (link goes to SMC Discord), or included with the [Cheatbox mod](https://mods.sporecommunity.com/?search=Cheatbox). These keep Force Save disabled unless explicitly needed.
