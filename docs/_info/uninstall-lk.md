@@ -11,9 +11,7 @@ If you are attempting to remove all mods and return to "vanilla" Spore, you do n
 ## Uninstalling all mods
 You must uninstall all mods **before** uninstalling the Launcher Kit.
 
-Open the Easy Uninstaller, check the box next to each mod with a checkbox, and click "Uninstall Selected".
-
-For mods with a gear icon instead of a checkbox, click the gear, and then click "Uninstall" at the bottom.
+Open the Easy Uninstaller, check the box next to each mod, and click "Uninstall Selected".
 
 Do not uninstall the Launcher Kit unless no mods are listed in the Easy Uninstaller.
 
