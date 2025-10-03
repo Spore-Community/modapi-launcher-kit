@@ -11,4 +11,4 @@ If you have identified which mod is causing the crash, you will need to contact 
 
 For crashes that occur even when SporeCrashFix is the only installed mod, it is likely a bug in the game itself. Specific crashes may be added to SporeCrashFix if the cause of the crash can be identified and fixed.
 
-In any case, you can [ask for help](support) - please make sure to include a screenshot of the Easy Uninstaller showing your full mod list, as well as exactly when the crash occurs.
+In any case, you can [ask for help](/support) - please make sure to include a screenshot of the Easy Uninstaller showing your full mod list, as well as exactly when the crash occurs.
