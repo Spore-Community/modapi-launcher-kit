@@ -11,8 +11,6 @@ namespace ModAPI.Common
         private static string _galacticAdventuresPath = null;
         public static string ProcessGalacticAdventures()
         {
-            string path = null;
-
             if (_galacticAdventuresPath != null)
             {
                 return _galacticAdventuresPath;
@@ -20,48 +18,42 @@ namespace ModAPI.Common
 
             try
             {
-                if (!LauncherSettings.ForceGamePath)
+                // attempt to retrieve spore path from registry
+                string path = SporePath.GetFromRegistry(SporePath.Game.GalacticAdventures);
+                if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                 {
-                    path = SporePath.GetFromRegistry(SporePath.Game.GalacticAdventures);
-                }
-
-                if (path != null)
-                {
-                    // move the path to SporebinEP1
                     path = SporePath.MoveToSporebinEP1(path);
                 }
 
-                // If we didn't find the path in the registry or was not valid, ask the user
-                if (path == null || !Directory.Exists(path))
+                // fallback to specified game path
+                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
                 {
-
-                    if (path == null)
+                    path = LauncherSettings.GamePath;
+                    if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                     {
-                        path = LauncherSettings.GamePath;
-                        if (path == null || path.Length == 0)
-                        {
-                            var result = MessageBox.Show(CommonStrings.GalacticAdventuresNotFoundSpecifyManual, CommonStrings.GalacticAdventuresNotFound,
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-                            if (result == DialogResult.OK)
-                            {
-                                path = ShowGalacticAdventuresChooserDialog();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // move the path to SporebinEP1
                         path = SporePath.MoveToSporebinEP1(path);
                     }
                 }
+
+                // ask the user when fallback wasn't found
+                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
+                {
+                    var result = MessageBox.Show(CommonStrings.GalacticAdventuresNotFoundSpecifyManual, CommonStrings.GalacticAdventuresNotFound,
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+                    if (result == DialogResult.OK)
+                    {
+                        path = ShowGalacticAdventuresChooserDialog();
+                    }
+                }
+
+                _galacticAdventuresPath = path;
             }
             catch (Exception)
             {
                 return null;
             }
 
-            _galacticAdventuresPath = path;
             return _galacticAdventuresPath;
         }
 
@@ -69,8 +61,6 @@ namespace ModAPI.Common
         private static string _coreSporePath = null;
         public static string ProcessSpore()
         {
-            string path = null;
-
             if (_coreSporePath != null)
             {
                 return _coreSporePath;
@@ -78,48 +68,42 @@ namespace ModAPI.Common
 
             try
             {
-                if (!LauncherSettings.ForceGamePath)
+                // attempt to retrieve spore path from registry
+                string path = SporePath.GetFromRegistry(SporePath.Game.Spore);
+                if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                 {
-                    path = SporePath.GetFromRegistry(SporePath.Game.Spore);
-                }
-
-                if (path != null)
-                {
-                    // move the path to Sporebin
                     path = SporePath.MoveToSporebin(path);
                 }
 
-                // If we didn't find the path in the registry or was not valid, ask the user
-                if (path == null || !Directory.Exists(path))
+                // fallback to specified game path
+                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
                 {
-
-                    if (path == null)
+                    path = LauncherSettings.SporeGamePath;
+                    if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
                     {
-                        path = LauncherSettings.GamePath;
-                        if (path == null || path.Length == 0)
-                        {
-                            var result = MessageBox.Show(CommonStrings.SporeNotFoundSpecifyManual, CommonStrings.SporeNotFound,
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-
-                            if (result == DialogResult.OK)
-                            {
-                                path = ShowSporeChooserDialog();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // move the path to Sporebin
                         path = SporePath.MoveToSporebin(path);
                     }
                 }
+
+                // ask the user when fallback wasn't found
+                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
+                {
+                    var result = MessageBox.Show(CommonStrings.SporeNotFoundSpecifyManual, CommonStrings.SporeNotFound,
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+                    if (result == DialogResult.OK)
+                    {
+                        path = ShowSporeChooserDialog();
+                    }
+                }
+
+                _coreSporePath = path;
             }
             catch (Exception)
             {
                 return null;
             }
 
-            _coreSporePath = path;
             return _coreSporePath;
         }
 
