@@ -61,18 +61,13 @@ namespace ModAPI.Common
         private static string GetConfigPath()
         {
             var programPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            return Path.Combine(new string[] {programPath, FileName});
+            return Path.Combine(programPath, FileName);
         }
-
 
         public static bool Load()
         {
-            return Load(GetConfigPath());
-        }
-
-        public static bool Load(string path)
-        {
-            if (File.Exists(FileName))
+            string path = GetConfigPath();
+            if (File.Exists(path))
             {
                 string xmlIn = File.ReadAllText(path);
                 if (!String.IsNullOrEmpty(xmlIn))
@@ -100,8 +95,9 @@ namespace ModAPI.Common
             }
         }
 
-        public static void Save(string path)
+        public static void Save()
         {
+            string path = GetConfigPath();
             var document = new XmlDocument();
 
             var mainNode = document.CreateElement("Settings");
@@ -116,11 +112,6 @@ namespace ModAPI.Common
             }
 
             document.Save(path);
-        }
-
-        public static void Save()
-        {
-            Save(GetConfigPath());
         }
     }
 }
