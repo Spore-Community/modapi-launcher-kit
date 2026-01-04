@@ -41,23 +41,6 @@ namespace ModAPI.Common
             }
         }
 
-        public static bool ForceGamePath
-        {
-            get
-            {
-                string value = null;
-                bool result = false;
-                _dictionary.TryGetValue("ForceGamePath", out value);
-                if (value == null) result = false;
-                else result = Boolean.TryParse(value, out result);
-                return result;
-            }
-            set
-            {
-                _dictionary["ForceGamePath"] = value ? "true" : "false";
-            }
-        }
-
         private static string GetConfigPath()
         {
             var programPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
