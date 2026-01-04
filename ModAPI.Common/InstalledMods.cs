@@ -247,21 +247,17 @@ namespace ModAPI.Common
 
             if (File.Exists(path))
             {
-
-                using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                string xmlIn = File.ReadAllText(path);
+                if (!String.IsNullOrEmpty(xmlIn))
                 {
-                    string xmlIn = reader.ReadToEnd();
-                    if (!String.IsNullOrEmpty(xmlIn))
-                    {
-                        var document = new XmlDocument();
-                        document.LoadXml(xmlIn);
+                    var document = new XmlDocument();
+                    document.LoadXml(xmlIn);
 
-                        foreach (XmlNode node in document.ChildNodes)
+                    foreach (XmlNode node in document.ChildNodes)
+                    {
+                        if (node.Name == InstalledMods.ElementName)
                         {
-                            if (node.Name == InstalledMods.ElementName)
-                            {
-                                Load(document, node);
-                            }
+                            Load(document, node);
                         }
                     }
                 }
