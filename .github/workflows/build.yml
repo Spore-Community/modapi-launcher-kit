@@ -12,7 +12,7 @@ jobs:
       legacyModApiUrl: 'https://github.com/emd4600/Spore-ModAPI/releases/latest/download/SporeModAPIlegacydlls.zip'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: ilammy/msvc-dev-cmd@v1
@@ -57,12 +57,12 @@ jobs:
 
           msbuild Package\ModAPI.Updater /p:Configuration=Release
       - name: Upload ModAPI.InterimSetup
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ModAPI.InterimSetup-${{ env.GIT_REVISION }}
           path: Package/ModAPI.InterimSetup/bin/Release/*.exe
       - name: Upload ModAPI.Updater
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ModAPI.Updater-${{ env.GIT_REVISION }}
           path: Package/ModAPI.Updater/bin/Release/*.exe
@@ -71,7 +71,7 @@ jobs:
     needs: [ build ]
     if: github.ref_type == 'tag'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Prepare Environment
@@ -79,12 +79,12 @@ jobs:
           $env:revision = git describe --tags --always
           echo "GIT_REVISION=$env:revision" >> $env:GITHUB_ENV
       - name: Download ModAPI.InterimSetup
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ModAPI.InterimSetup-${{ env.GIT_REVISION }}
           path: artifact
       - name: Download ModAPI.Updater
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ModAPI.Updater-${{ env.GIT_REVISION }}
           path: artifact
@@ -116,7 +116,7 @@ jobs:
     needs: [ build ]
     if: github.ref_type == 'tag'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Prepare Environment
@@ -124,7 +124,7 @@ jobs:
           $env:revision = git describe --tags --always
           echo "GIT_REVISION=$env:revision" >> $env:GITHUB_ENV
       - name: Download ModAPI.Updater
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ModAPI.Updater-${{ env.GIT_REVISION }}
           path: artifact
