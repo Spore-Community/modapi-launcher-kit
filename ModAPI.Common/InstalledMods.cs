@@ -120,7 +120,7 @@ namespace ModAPI.Common
             parent.AppendChild(element);
         }
 
-        public void Load(XmlDocument document, XmlNode node)
+        public void Load(XmlNode node)
         {
             var nameAttribute = node.Attributes.GetNamedItem("name");
             if (nameAttribute != null)
@@ -206,8 +206,9 @@ namespace ModAPI.Common
 
         }
 
-        public void Save(string path)
+        public void Save()
         {
+            string path = GetDefaultPath();
             var document = new XmlDocument();
 
             var mainNode = document.CreateElement(InstalledMods.ElementName);
@@ -221,19 +222,14 @@ namespace ModAPI.Common
             document.Save(path);
         }
 
-        public void Save()
-        {
-            Save(GetDefaultPath());
-        }
-
-        public void Load(XmlDocument document, XmlNode node)
+        public void Load(XmlNode node)
         {
             foreach (XmlNode child in node.ChildNodes)
             {
                 if (child.Name == ModConfiguration.ElementName)
                 {
                     var mod = new ModConfiguration(null);
-                    mod.Load(document, child);
+                    mod.Load(child);
 
                     ModConfigurations.Add(mod);
                 }
@@ -241,10 +237,11 @@ namespace ModAPI.Common
             }
         }
 
-        public bool Load(string path)
+        public bool Load()
         {
             ModConfigurations.Clear();
 
+            string path = GetDefaultPath();
             if (File.Exists(path))
             {
                 string xmlIn = File.ReadAllText(path);
@@ -257,7 +254,7 @@ namespace ModAPI.Common
                     {
                         if (node.Name == InstalledMods.ElementName)
                         {
-                            Load(document, node);
+                            Load(node);
                         }
                     }
                 }
@@ -270,15 +267,10 @@ namespace ModAPI.Common
             }
         }
 
-        public bool Load()
-        {
-            return Load(GetDefaultPath());
-        }
-
         public static string GetDefaultPath()
         {
             var programPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            return Path.Combine(new string[] {programPath, FileName});
+            return Path.Combine(programPath, FileName);
         }
     }
 }
