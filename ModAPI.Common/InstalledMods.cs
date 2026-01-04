@@ -251,15 +251,17 @@ namespace ModAPI.Common
                 using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     string xmlIn = reader.ReadToEnd();
-
-                    var document = new XmlDocument();
-                    document.LoadXml(xmlIn);
-
-                    foreach (XmlNode node in document.ChildNodes)
+                    if (!String.IsNullOrEmpty(xmlIn))
                     {
-                        if (node.Name == InstalledMods.ElementName)
+                        var document = new XmlDocument();
+                        document.LoadXml(xmlIn);
+
+                        foreach (XmlNode node in document.ChildNodes)
                         {
-                            Load(document, node);
+                            if (node.Name == InstalledMods.ElementName)
+                            {
+                                Load(document, node);
+                            }
                         }
                     }
                 }
