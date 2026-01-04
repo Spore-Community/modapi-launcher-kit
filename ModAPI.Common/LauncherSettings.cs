@@ -77,17 +77,19 @@ namespace ModAPI.Common
                 using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     string xmlIn = reader.ReadToEnd();
-
-                    var document = new XmlDocument();
-                    document.LoadXml(xmlIn);
-
-                    foreach (XmlNode node in document.ChildNodes)
+                    if (!String.IsNullOrEmpty(xmlIn))
                     {
-                        if (node.Name == "Settings")
+                        var document = new XmlDocument();
+                        document.LoadXml(xmlIn);
+
+                        foreach (XmlNode node in document.ChildNodes)
                         {
-                            foreach (XmlNode settingNode in node.ChildNodes)
+                            if (node.Name == "Settings")
                             {
-                                _dictionary[settingNode.Name] = settingNode.InnerText;
+                                foreach (XmlNode settingNode in node.ChildNodes)
+                                {
+                                    _dictionary[settingNode.Name] = settingNode.InnerText;
+                                }
                             }
                         }
                     }
