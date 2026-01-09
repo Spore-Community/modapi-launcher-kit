@@ -90,8 +90,10 @@ namespace Spore_ModAPI_Easy_Installer
                 }
                 else
                 {
-                    // 1st: We get the input path of the mod we are going to install
-                    string[] inputPaths = GetInputPaths(); string[] errorStrings = new string[inputPaths.Length];
+                    // ask the user for mod files using a file dialog
+                    string[] inputPaths = ShowFileChooser(FileChooserType.File, Strings.FileChooserTitle,
+                                                            Strings.FileChooserFilter, 4);
+                    string[] errorStrings = new string[inputPaths.Length];
                     if (inputPaths.Length < 1) return;
 
                     List<ResultType> results = new List<ResultType>();
@@ -130,12 +132,12 @@ namespace Spore_ModAPI_Easy_Installer
                         }
                         catch (Exception ex)
                         {
-                            errorStrings[i] = ex.Message; results.Add(ResultType.UnsupportedFile);
+                            errorStrings[i] = ex.Message;
+                            results.Add(ResultType.UnsupportedFile);
                         }
                     }
-                    for (int i = 0; i < results.Count; i++) //foreach (ResultType type in results)
+                    for (int i = 0; i < results.Count; i++)
                     {
-                        //int index = results.IndexOf(type);
                         ResultType type = results[i];
                         outcome += GetResultText(type, Path.GetFileNameWithoutExtension(inputPaths[i]), errorStrings[i]) + "\n";
                     }
@@ -143,23 +145,6 @@ namespace Spore_ModAPI_Easy_Installer
                     ModList.Save();
                     ShowExitMessageBox();
                 }
-            }
-        }
-        static string[] GetInputPaths()
-        {
-            string[] arguments = Environment.GetCommandLineArgs();
-            // If the file path was specified as an argument (i.e. dragged to the installer)
-            if (arguments.Length > 1)
-            { List<string> paths = new List<string>();
-                for (int i = 1; i < arguments.Length; i++) //return arguments[1];
-                {
-                    if (File.Exists(arguments[i]))
-                        paths.Add(arguments[i]);
-                } return paths.ToArray();
-            } else // No file specified, show the user a dialog to choose it
-            {
-                return ShowFileChooser(FileChooserType.File, Strings.FileChooserTitle,
-                    Strings.FileChooserFilter, 4);
             }
         }
         static string[] ShowFileChooser(FileChooserType type, string title, string filter, int filterIndex)
