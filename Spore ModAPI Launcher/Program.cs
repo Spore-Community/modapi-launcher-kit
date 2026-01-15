@@ -252,6 +252,10 @@ namespace SporeModAPI_Launcher
                 }
 
                 IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, modApiDllInjectorPath);
+                if (hDLLInjectorHandle == IntPtr.Zero)
+                {
+                    throw new Win32Exception("Failed to inject DLL: " + modApiDllInjectorPath);
+                }
 
                 string[] dlls = GetDLLsToInject(dllEnding);
 
