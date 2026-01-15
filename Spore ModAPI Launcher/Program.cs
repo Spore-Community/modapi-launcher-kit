@@ -245,8 +245,13 @@ namespace SporeModAPI_Launcher
 
             try
             {
-                const string modApiDllInjector = "ModAPI.DLLInjector.dll";
-                IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, Path.Combine(this.LauncherKitPath, modApiDllInjector));
+                string modApiDllInjectorPath = Path.Combine(this.LauncherKitPath, "ModAPI.DLLInjector.dll");
+                if (!File.Exists(modApiDllInjectorPath))
+                {
+                    throw new FileNotFoundException("Required injector DLL was not found: " + modApiDllInjectorPath);
+                }
+
+                IntPtr hDLLInjectorHandle = Injector.InjectDLL(this.ProcessInfo, modApiDllInjectorPath);
 
                 string[] dlls = GetDLLsToInject(dllEnding);
 
