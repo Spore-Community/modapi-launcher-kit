@@ -184,38 +184,22 @@ namespace Spore_ModAPI_Easy_Installer
 
         static FileType GetFileType(string fileName)
         {
-            if (fileName == null) return FileType.None;
-
-            if (fileName.ToLowerInvariant().EndsWith(".package"))
+            if (String.IsNullOrEmpty(fileName))
             {
-                // check if it's Spore or GA
-                string[] splits;
-                if (fileName.Contains('\\'))
-                {
-                    splits = fileName.Split('\\');
-                }
-                else
-                {
-                    splits = fileName.Split('/');
-                }
+                return FileType.None;
+            }
 
-                if (splits.Length > 1)
-                {
-                    // check the folder that contains the file
-                    if (splits[splits.Length - 2].ToUpper() == "SPORE")
-                    {
-                        return FileType.Spore_Package;
-                    }
-                }
+            fileName = fileName.ToLowerInvariant();
 
-                // default to GA Data
+            if (fileName.EndsWith(".package"))
+            {
                 return FileType.Package;
             }
             else if (fileName.EndsWith(".dll"))
             {
                 return FileType.DLL;
             }
-            else if (fileName.ToLowerInvariant().EndsWith(".sporemod"))
+            else if (fileName.EndsWith(".sporemod"))
             {
                 return FileType.SporeMod;
             }
